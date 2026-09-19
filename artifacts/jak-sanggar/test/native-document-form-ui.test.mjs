@@ -8,6 +8,7 @@ import { PDFDocument } from "pdf-lib";
 
 import * as previous from '../public/assets/native-ui-20260914-v3.mjs';
 import * as autofill from '../public/assets/native-autofill-20260915.mjs';
+import * as workspaceAutofill from '../public/assets/native-autofill-workspace-20260920.mjs';
 import * as fields from '../public/assets/native-fields-20260915.mjs';
 import * as images from '../public/assets/native-images-20260915.mjs';
 import * as documentOrder from '../public/assets/native-document-order-20260919.mjs';
@@ -52,7 +53,7 @@ async function fixture({ extraFields = [], profile = {}, savedValues = {}, catal
   };
   vm.runInNewContext(compiled, {
     exports,
-    require: name => name.includes('document-workspace') ? workspaceStyles : name.includes('document-order') ? documentOrder : name.includes('autofill') ? autofill : name.includes('fields') ? fields : name.includes('images') ? { ...images, renderImages: imageRenderer ?? images.renderImages } : previous,
+    require: name => name.includes('document-workspace') ? workspaceStyles : name.includes('document-order') ? documentOrder : name.includes('autofill-workspace') ? workspaceAutofill : name.includes('autofill') ? autofill : name.includes('fields') ? fields : name.includes('images') ? { ...images, renderImages: imageRenderer ?? images.renderImages } : previous,
     window: {addEventListener() {}, removeEventListener() {}},
     fetch: async (url, options) => url.startsWith("/dokumen-fix/catalog") ? { ok: true, json: async () => catalog } : request ? request(url, options) : documentResponse(JSON.parse(options.body).format),
     AbortSignal,
@@ -155,6 +156,57 @@ test('autofill atas permintaan mengisi kosong tersimpan tanpa menimpa isian manu
   app.button('Isi otomatis yang kosong').props.onClick(); await app.flush();
   assert.equal(app.all().find(node => node.props.id === 'nf-field-NAM_SA2').props.value, 'Sanggar Uji');
   assert.equal((await app.showField('NOM_SUR')).props.value, '007/ABC');
+});
+
+test('hari forum otomatis mengikuti tanggal dan nilai yang sama dikirim ke renderer serta simpan', async () => {
+  let payload, saved;
+  const app = await fixture({ extraFields: [{ key: 'TGL_FOR' }, { key: 'HAR_FOR' }, { key: 'BLN' }, { key: 'THN' }], onSave: async (_key, values) => { saved = values; } });
+  await app.change('TGL_FOR', '2026-09-20');
+  assert.equal((await app.showField('HAR_FOR')).props.value, 'Minggu');
+  await app.change('TGL_FOR', '2026-09-21');
+  assert.equal((await app.showField('HAR_FOR')).props.value, 'Senin');
+  app.setRequest(async (_url, options) => { payload = JSON.parse(options.body); return documentResponse(); });
+  await app.review();
+  assert.equal(payload.nativeTemplate.values.HAR_FOR, 'Senin');
+  assert.equal(payload.nativeTemplate.values.BLN, 'IX');
+  assert.equal(payload.nativeTemplate.values.THN, '2026');
+  assert.equal(payload.nativeTemplate.values.__autofill_generated, undefined);
+  await app.button('Simpan isian').props.onClick(); await app.flush();
+  assert.equal(saved.HAR_FOR, 'Senin');
+  assert.equal(JSON.parse(saved.__autofill_generated).HAR_FOR, 'Senin');
+  await app.change('HAR_FOR', 'Sabtu');
+  await app.change('TGL_FOR', '2026-09-22');
+  assert.equal((await app.showField('HAR_FOR')).props.value, 'Sabtu');
+});
+
+test('ikon bantuan memberi pilihan mandat atas klik dan mempertahankan rincian multiline sampai render', async () => {
+  const app = await fixture({ extraFields: [{ key: 'DAS_MAN', context: 'Berdasarkan {{DAS_MAN}}.' }] });
+  const control = await app.showField('DAS_MAN');
+  assert.equal(control.type, 'textarea');
+  assert.equal(control.props.value, '');
+  const help = app.all().find(node => typeof node.type === 'function' && node.props.name === 'Dasar pemberian mandat');
+  assert.ok(help.props.guidance.meaning);
+  assert.ok(help.props.guidance.sourceHint);
+  const helpTree = help.type(help.props);
+  const choice = app.all(helpTree).find(node => node.type === 'button' && node.props['aria-label']?.startsWith('Gunakan '));
+  assert.ok(choice);
+  choice.props.onClick({ currentTarget: { closest: () => ({ removeAttribute() {} }) } });
+  await app.flush();
+  assert.equal((await app.showField('DAS_MAN')).props.value, help.props.choices[0].value);
+  const manual = 'Keputusan rapat pengurus\nNomor QA/01, 20 September 2026, untuk tugas uji.';
+  await app.change('DAS_MAN', manual);
+  let payload;
+  app.setRequest(async (_url, options) => { payload = JSON.parse(options.body); return documentResponse(); });
+  await app.review();
+  assert.equal(payload.nativeTemplate.values.DAS_MAN, manual);
+});
+
+test('isian pilihan sendiri yang tersimpan beberapa baris tetap dapat diedit sebagai textarea', async () => {
+  const app = await fixture({ extraFields: [{ key: 'BLN' }], savedValues: { 'uji:native-fix-uji': { BLN: 'Catatan lama\nPeriode khusus' } } });
+  await app.showField('BLN');
+  const control = app.all().find(node => node.props.id === 'nf-field-BLN-custom');
+  assert.equal(control.type, 'textarea');
+  assert.equal(control.props.value, 'Catatan lama\nPeriode khusus');
 });
 
 test('pilihan jamak mempertahankan pilihan profil dan teks tambahan sampai render', async () => {

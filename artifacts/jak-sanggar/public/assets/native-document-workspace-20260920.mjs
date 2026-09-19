@@ -48,9 +48,9 @@ export const documentWorkspaceCss = `
 .nf-chevron{display:inline-flex;justify-content:center;align-items:center;width:18px;flex-shrink:0;color:var(--nf-muted);font-size:16px}
 .nf-section-body{padding:16px 18px 18px;scroll-margin-top:110px}
 .nf-workspace .nf-fields{gap:20px 24px}
-.nf-workspace .nf-field{min-width:0}
+.nf-workspace .nf-field{min-width:0;position:relative}
 .nf-workspace .nf-field label{font-size:13px;font-weight:600;line-height:1.5}
-.nf-workspace .nf-labelrow{align-items:center;margin-bottom:7px}
+.nf-workspace .nf-labelrow{align-items:center;margin-bottom:7px;padding-right:32px;min-height:28px}
 .nf-workspace .nf-field input,.nf-workspace .nf-field select,.nf-workspace .nf-field textarea{border-color:#c5d2da;font-size:14px;border-radius:7px;min-height:44px;padding:10px 12px}
 .nf-workspace .nf-field textarea{line-height:1.65}
 .nf-workspace .nf-field input:hover,.nf-workspace .nf-field select:hover,.nf-workspace .nf-field textarea:hover{border-color:#90a99e}
@@ -59,6 +59,22 @@ export const documentWorkspaceCss = `
 .nf-workspace .nf-help summary:hover{color:var(--nf-accent);border-color:var(--nf-accent)}
 .nf-workspace .nf-help-text{z-index:10;font-size:12px;line-height:1.6;border-color:var(--nf-line);box-shadow:0 8px 28px #1230471c}
 .nf-workspace .nf-help-text p{max-width:none}
+.nf-workspace .nf-help-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.nf-workspace .nf-help-heading>button{min-width:34px;min-height:34px;padding:2px 8px;font-size:22px;line-height:1}
+.nf-workspace .nf-help-inline{position:static}
+.nf-workspace .nf-help-inline>summary{position:absolute;top:0;right:0;width:28px;height:28px;font-size:13px;color:var(--nf-accent);background:var(--nf-base)}
+.nf-workspace .nf-help-inline>.nf-help-text{position:static;width:100%;max-height:none;margin-top:12px;padding:16px;background:var(--nf-soft);box-shadow:none;font-size:13px;line-height:1.65;overflow-wrap:anywhere}
+.nf-workspace .nf-help-guide{margin:12px 0 0}
+.nf-workspace .nf-help-guide dt{font-size:12px;font-weight:700;color:var(--nf-ink);margin:12px 0 3px}
+.nf-workspace .nf-help-guide dd{margin:0;color:var(--nf-muted)}
+.nf-workspace .nf-help-choices{border-top:1px solid var(--nf-line);margin-top:14px;padding-top:14px}
+.nf-workspace .nf-help-choices>p{font-size:12px;margin-top:4px}
+.nf-help-choice-list{display:flex;flex-wrap:wrap;gap:7px;max-height:220px;overflow:auto;margin-top:10px;padding:3px}
+.nf-workspace .nf-help-choice-list>button{min-height:40px;text-align:left;font-size:12px;font-weight:500;padding:8px 11px;max-width:100%;white-space:normal;overflow-wrap:anywhere;background:var(--nf-base)}
+.nf-workspace .nf-help-context{margin-top:14px;border-top:1px solid var(--nf-line);padding-top:10px}
+.nf-workspace .nf-help-context>summary{position:static;display:list-item;border:0;border-radius:0;width:auto;height:auto;list-style:revert;font-size:12px;font-weight:500;color:var(--nf-muted)}
+.nf-workspace .nf-help-context>p{margin-top:8px;font-size:12px}
+.nf-workspace .nf-autofill-inline .nf-autofill-help{font-size:12px;margin-top:5px}
 .nf-workspace .nf-section-next{display:block;margin:18px 0 0 auto;font-size:12px;min-height:40px;padding:8px 12px;color:var(--nf-accent)}
 .nf-section-pagination{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px;padding-top:14px;border-top:1px solid var(--nf-line);color:var(--nf-muted);font-size:12px}
 .nf-section-pagination button{min-height:38px;font-size:12px;padding:8px 12px}

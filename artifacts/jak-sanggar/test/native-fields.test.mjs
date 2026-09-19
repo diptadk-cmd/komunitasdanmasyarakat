@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { execFileSync } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
 import { FIELD_GROUPS, fieldMeta, normalizeFieldValue, toDateInput, fromDateInput } from '../public/assets/native-fields-20260915.mjs';
+import { hasFieldGuidance } from '../public/assets/native-field-guidance-20260920.mjs';
 
 // All distinct keys from the reviewed 203-document catalog. Keep this fixture
 // independent of the external production snapshot so tests also run in checkout.
@@ -25,6 +27,97 @@ test('every catalog field has a human label, help, and a known group', () => {
     assert.ok(FIELD_GROUPS.includes(meta.group), key);
     assert.ok(['text', 'textarea', 'select', 'date', 'time', 'number', 'email', 'tel'].includes(meta.type), key);
   }
+});
+
+test('actual catalog has complete actionable guidance, examples and sources for every field', async () => {
+  const catalog = JSON.parse(await readFile(new URL('../public/dokumen-fix/catalog.json', import.meta.url), 'utf8'));
+  const fields = catalog.groups.flatMap(group => group.documents.flatMap(document => document.fields));
+  const actualKeys = [...new Set(fields.map(field => field.key))].sort();
+  assert.deepEqual(actualKeys, [...catalogKeys].sort(), 'Update coverage when the catalog changes');
+  for (const field of fields) {
+    const { guidance, help } = fieldMeta(field);
+    if (!field.key.startsWith('O_')) assert.ok(hasFieldGuidance(field.key), `Missing exact family mapping: ${field.key}`);
+    for (const part of ['meaning', 'howToFill', 'example', 'sourceHint']) {
+      assert.equal(typeof guidance[part], 'string', `${field.key}.${part}`);
+      assert.ok(guidance[part].trim().length > 5, `${field.key}.${part}`);
+      assert.ok(help.includes(guidance[part]), `${field.key}.${part} absent from compatible help`);
+    }
+    assert.doesNotMatch(guidance.meaning, /melengkapi informasi pada kalimat dokumen/, `Generic fallback: ${field.key}`);
+    assert.doesNotMatch(help, /Isi .* sesuai data atau keputusan yang digunakan pada dokumen ini/);
+    assert.doesNotMatch(guidance.example, /\{\{|\}\}/, `Unrendered template token: ${field.key}`);
+  }
+});
+
+test('mandate guidance identifies evidence and suggestions never invent reference facts or fill values', () => {
+  const authorityKeys = ['DAS_MAN', 'DAS_KEW', 'DAS_FOR', 'DAS_SER', 'KUASA', 'KUA_MIT', 'PAS_AD', 'PAS_AD2', 'PAS_AKT', 'MANDAT', 'BAT_KUA', 'UND_KEP'];
+  for (const key of authorityKeys) {
+    const meta = fieldMeta(key);
+    assert.equal(meta.type, 'textarea', key);
+    assert.match(meta.guidance.sourceHint, /dokumen|keputusan|surat|undangan|Anggaran/i, key);
+    assert.match(meta.guidance.example, /\[[^\]]+\]/, key);
+    const oldValue = 'Rujukan lama 0007/A\nTanggal sesuai arsip; catatan khusus tetap disimpan.';
+    assert.equal(normalizeFieldValue(key, oldValue), oldValue);
+    assert.equal(normalizeFieldValue(key, ''), '');
+    assert.equal(Object.hasOwn(meta, 'defaultValue'), false);
+    if (meta.suggestions) {
+      assert.equal(new Set(meta.suggestions).size, meta.suggestions.length);
+      assert.ok(meta.suggestions.every(value => typeof value === 'string' && value.length > 5 && !/\d/.test(value)), key);
+    }
+  }
+  const mandate = fieldMeta('DAS_MAN');
+  assert.deepEqual(mandate.suggestions, ['Keputusan rapat', 'Surat keputusan', 'Surat kuasa', 'Surat penugasan']);
+  assert.match(mandate.guidance.howToFill, /pemberi mandat|cakupan/);
+  assert.match(mandate.guidance.sourceHint, /belum membuktikan mandat/);
+  assert.match(mandate.guidance.example, /\[tugas sesuai dokumen\]/);
+  mandate.suggestions.push('Nilai dari pemanggil');
+  mandate.guidance.example = 'Diubah pemanggil';
+  assert.equal(fieldMeta('DAS_MAN').suggestions.length, 4);
+  assert.notEqual(fieldMeta('DAS_MAN').guidance.example, 'Diubah pemanggil');
+});
+
+test('source instructions isolate parent organisation, signatories and matching person rows', () => {
+  for (const key of catalogKeys.filter(key => key.startsWith('O_'))) {
+    const { guidance } = fieldMeta(key);
+    assert.match(guidance.sourceHint, /khusus organisasi induk, bukan identitas unit sanggar/, key);
+    assert.doesNotMatch(guidance.howToFill, /profil sanggar|kas sanggar|keputusan sanggar/i, key);
+  }
+  for (const key of ['NAM_IN2', 'TEL_IND', 'EMA_IND', 'NIB_IND', 'NPW_IND']) assert.match(fieldMeta(key).guidance.sourceHint, /organisasi induk/, key);
+  assert.match(fieldMeta('PIM_FOR').guidance.howToFill, /belum tentu penandatangan/);
+  assert.match(fieldMeta('NAM_PEN').guidance.howToFill, /Jangan otomatis menyamakan/);
+  assert.match(fieldMeta('NAM_MIT').guidance.sourceHint, /mitra/);
+  for (let n = 1; n <= 8; n++) {
+    const two = String(n).padStart(2, '0');
+    for (const key of [`NAM${two}`, `JAB${two}`, `NIK_I${two}`, `KON${two}`]) assert.match(fieldMeta(key).guidance.meaning, new RegExp(`peserta ${n}`), key);
+    if (n <= 3) for (const key of [`PEL_${n}`, `MATERI_${n}`, `WAKTU_${n}`, `ST_${n}`]) assert.match(fieldMeta(key).guidance.meaning, new RegExp(`(?:pelatih|baris) ${n}`), key);
+  }
+  assert.ok(fieldMeta('JAB_FOR').options.some(option => option.value === 'Ketua Sidang'));
+});
+
+test('instructions distinguish plan, actual result, date evidence and financial units', () => {
+  assert.match(fieldMeta('ANG_MAS').guidance.meaning, /direncanakan/);
+  assert.match(fieldMeta('REA_MAS').guidance.meaning, /benar-benar diterima/);
+  assert.match(fieldMeta('JUM_HAD').guidance.sourceHint, /bukan total anggota/);
+  assert.match(fieldMeta('TGL_BER').guidance.sourceHint, /dapat berbeda/);
+  assert.match(fieldMeta('TGL_BER').guidance.howToFill, /jangan menggantinya dengan hari ini/);
+  assert.match(fieldMeta('NO_BA').guidance.howToFill, /nomor urut saja/);
+  assert.match(fieldMeta('NOM_REK').guidance.howToFill, /nol di awal/);
+  assert.match(fieldMeta('NIL').guidance.howToFill, /awalan Rp sudah/);
+  for (const key of ['IUR_BLN', 'IUR_THN', 'U_DAFTAR']) {
+    assert.match(fieldMeta(key).guidance.howToFill, /nominal uang saja.*terbilang/);
+    assert.doesNotMatch(fieldMeta(key).guidance.example, /per /);
+  }
+  assert.match(fieldMeta('DUR_BAK').guidance.howToFill, /angka saja.*tahun/);
+  assert.notEqual(fieldMeta('BAT_LAP').guidance.meaning, fieldMeta('BAT_SEN').guidance.meaning);
+  assert.match(fieldMeta('DAF_AKU').guidance.howToFill, /Jangan menuliskan kata sandi/);
+});
+
+test('parent logo guidance describes the text field without promising the sanggar image slot', () => {
+  const meta = fieldMeta('O_LOGO');
+  assert.match(meta.guidance.howToFill, /Kolom ini berupa teks/);
+  assert.match(meta.guidance.howToFill, /belum tersedia unggahan gambar terpisah/);
+  assert.match(meta.guidance.howToFill, /Unggahan logo sanggar tidak mengisi gambar/);
+  assert.doesNotMatch(meta.help, /terisi otomatis|dimasukkan ke Word\/PDF|Gunakan bagian Logo|Unggah gambar pada bagian/);
+  assert.match(fieldMeta('LOGO').guidance.howToFill, /Unggah gambar pada bagian/);
 });
 
 test('choices carry no defaults and unknown or zero values remain intact', () => {

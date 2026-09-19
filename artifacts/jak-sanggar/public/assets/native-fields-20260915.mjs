@@ -1,5 +1,6 @@
 // Labels and optional examples for the native document form. Choices never set a
 // default or establish a legal rule; existing and custom values stay available.
+import { fieldGuidance } from './native-field-guidance-20260920.mjs';
 export const FIELD_GROUPS = [
   'Identitas sanggar',
   'Forum dan kegiatan',
@@ -298,17 +299,8 @@ export function fieldMeta(field) {
   if (choices) type = 'select';
   const multiple = ['BID_SEN', 'TAR_MU2', 'TAR_MUS', 'MAK_LOG', 'KET_LOG'].includes(key) || /^BIDANG_/.test(key);
 
-  let help = helpByKey[key] || `Isi ${label.charAt(0).toLowerCase() + label.slice(1)} sesuai data atau keputusan yang digunakan pada dokumen ini.`;
-  if (/^NO_(?:BA|KMM|ATR|KEU|PEL)$/.test(key)) help = 'Isi nomor urut saja, misalnya 001. Kode, bulan, dan tahun sudah tercetak dalam format nomor dokumen.';
-  else if (/^BLN(?:_|$)/.test(key)) help = 'Pilih bulan untuk nomor dokumen. Pilihan menggunakan angka Romawi; gunakan isian sendiri jika register memakai format lain.';
-  else if (/^THN(?:_|$)/.test(key) || key === 'TAH_PAK') help = 'Pilih tahun yang sesuai dokumen, atau tulis tahun lain. Tahun tidak dipilih otomatis.';
-  else if (/^KUO_/.test(key)) help = 'Kuorum adalah jumlah atau bagian peserta yang diperlukan sesuai ketentuan organisasi. Pilihan hanya contoh; pilih atau tulis nilai yang benar-benar berlaku.';
-  else if (/^(ID_|NIK_I)/.test(key)) help = 'Salin identitas yang diperlukan pada template dari data resmi. Pertahankan angka nol di awal dan jangan mengubah nomor menjadi nilai hitung.';
-  else if (/^TER_/.test(key)) help = 'Tuliskan nominal terkait dalam kata, misalnya lima puluh ribu rupiah. Cocokkan dengan kolom nilai uangnya.';
-  else if (type === 'date' && !helpByKey[key]) help = 'Pilih tanggal yang sesuai dokumen. Tanggal tampil sebagai hari, nama bulan, dan tahun. Isian lama yang berupa periode dapat tetap ditulis sendiri.';
-  else if (type === 'time') help = 'Pilih waktu setempat. Jika perlu zona waktu atau keterangan lain, gunakan isian sendiri, misalnya 09.00 WIB.';
-  else if (type === 'tel') help = 'Isi nomor yang dapat dihubungi, termasuk angka nol di awal atau kode negara, misalnya +62. Nomor tidak diubah menjadi nilai hitung.';
-  else if (/^JAB|^ORG_/.test(key)) help = 'Pilih peran atau organ yang sesuai kewenangan sebenarnya. Pilihan hanya contoh; tulis sendiri jika belum tersedia.';
+  const { guidance, suggestions } = fieldGuidance(key, { label, parent: Boolean(parentAliases[originalKey]), legacyHelp: helpByKey[key] });
+  let help = `${guidance.meaning}\n\nCara mengisi: ${guidance.howToFill}\n\nContoh penulisan: ${guidance.example}\n\nAmbil dari: ${guidance.sourceHint}`;
   if (choices && !/pilih|pilihan/i.test(help)) help += ' Pilihan hanya contoh; isian sendiri tetap dapat digunakan.';
   if (multiple) help += ' Boleh memilih lebih dari satu. Tambahkan pilihan lain pada kotak isian sendiri.';
   if (parentAliases[originalKey]) help += ' Kolom ini khusus organisasi induk, bukan identitas unit sanggar.';
@@ -317,7 +309,7 @@ export function fieldMeta(field) {
   // their spelling; the document renderer handles uppercase heading positions.
   const uppercase = /^JUDUL(?:_|$)/.test(key) || (typeof field === 'object' && field?.isHeading === true);
   if (uppercase) help += ' Judul otomatis diubah menjadi HURUF KAPITAL.';
-  return { label, group: found?.group || FIELD_GROUPS[5], type, ...(choices ? { options: choices } : {}), multiple, help, uppercase };
+  return { label, group: found?.group || FIELD_GROUPS[5], type, ...(choices ? { options: choices } : {}), multiple, help, guidance, ...(suggestions ? { suggestions } : {}), uppercase };
 }
 
 export function normalizeFieldValue(field, value) {

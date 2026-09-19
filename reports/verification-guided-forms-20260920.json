@@ -1,0 +1,119 @@
+{
+  "date": "2026-09-20",
+  "scope": "Local Tools Dokumen: autofill, field explanations and selectable guidance",
+  "coverage": {
+    "uniqueFields": 372,
+    "catalogDocuments": 202,
+    "groups": 14
+  },
+  "automated": {
+    "generatedAt": "2026-09-19T20:05:28.054Z",
+    "mode": "quick",
+    "results": [
+      {
+        "id": "unit",
+        "label": "Logika, dokumen, API & regresi",
+        "status": "lulus",
+        "exitCode": 0,
+        "seconds": 13,
+        "counts": {
+          "tests": 396,
+          "pass": 395,
+          "fail": 0,
+          "skipped": 1
+        }
+      },
+      {
+        "id": "routes",
+        "label": "Cakupan rute dan menu",
+        "status": "lulus",
+        "exitCode": 0,
+        "seconds": 2,
+        "counts": {
+          "tests": 11,
+          "pass": 11,
+          "fail": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "id": "types",
+        "label": "TypeScript seluruh workspace",
+        "status": "lulus",
+        "exitCode": 0,
+        "seconds": 17,
+        "counts": {}
+      },
+      {
+        "id": "build",
+        "label": "Build produksi kedua aplikasi dan API",
+        "status": "lulus",
+        "exitCode": 0,
+        "seconds": 23,
+        "counts": {}
+      },
+      {
+        "id": "documents",
+        "label": "Berkas nyata: seluruh template Word dan PDF per kelompok",
+        "args": [
+          "pnpm",
+          "run",
+          "test:documents"
+        ],
+        "omit": true,
+        "status": "belum dijalankan",
+        "seconds": 0
+      },
+      {
+        "id": "e2e",
+        "label": "Browser: 9 peran, navigasi, desktop & ponsel",
+        "args": [
+          "pnpm",
+          "run",
+          "test:e2e"
+        ],
+        "omit": true,
+        "status": "belum dijalankan",
+        "seconds": 0
+      }
+    ]
+  },
+  "browser": {
+    "tool": "cua_repl, Chrome",
+    "environment": "http://localhost:5180/sanggar/dokumen (demo lokal)",
+    "results": [
+      "Tanggal forum 20 September 2026 computes Minggu; after save/reload, 21 September 2026 computes Senin and persists.",
+      "Demo save reports immediate local success; production adapter still waits for server synchronization.",
+      "DAS_MAN guidance exposes meaning, how to fill, source, example and four explicit choices.",
+      "Keputusan rapat suggestion fills only after click and returns focus to textarea.",
+      "Two-line custom mandate remains after save/reload.",
+      "Desktop and 390x844 phone layout inspected; guidance choices visible and keyboard reachable; Escape closes help and restores focus.",
+      "Phone viewport override reset.",
+      "Native PDF preview, filled Word download and PDF download succeed for Firma decision draft."
+    ]
+  },
+  "download": {
+    "docx": "KEPUTUSAN PEMBENTUKAN DAN PENETAPAN SANGGAR - Draf - Sanggar Demo Data Lengkap.docx",
+    "docxBytes": 898139,
+    "pdf": "KEPUTUSAN PEMBENTUKAN DAN PENETAPAN SANGGAR - Draf - Sanggar Demo Data Lengkap.pdf",
+    "pdfBytes": 154953,
+    "pdfPages": 6,
+    "mandatePage": 1,
+    "docxMandateParagraphs": [
+      "1.Dokumen dasar penyelenggara dan mandat Keputusan rapat uji lokal 20 September 2026\nUntuk pemeriksaan autofill dan hasil dokumen.;",
+      "Keputusan rapat uji lokal 20 September 2026\nUntuk pemeriksaan autofill dan hasil dokumen."
+    ],
+    "multilineContentInBoth": true,
+    "docxLineBreakPreserved": true
+  },
+  "visual": {
+    "render": "output/pdf/guided-mandate-proof.png",
+    "result": "Mandate text and line break visible without overlap. Unfilled source fields remain draft placeholders."
+  },
+  "review": "Independent final source review found no blockers.",
+  "limits": [
+    "One real MariaDB/session integration test skipped by quick suite.",
+    "Full browser nine-role suite and all-template conversion suite not rerun in this focused change.",
+    "No production account testing or deployment; no verification of organizational authority source documents."
+  ]
+}

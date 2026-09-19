@@ -1507,7 +1507,7 @@ function DokumenTools() {
 
 // Pertahankan halaman template native yang telah dipakai di produksi.
 function useNativeDokumenAdapter() {
-  const { user } = useAuth();
+  const { user, demoMode } = useAuth();
   const state = useDb();
   // Follow this tab's authenticated identity; a DB refresh must not select a
   // similarly named account or the first sanggar in a curator's local cache.
@@ -1539,7 +1539,7 @@ function useNativeDokumenAdapter() {
       save((s) => {
         s.paketIsian[key] = { ...values };
       });
-      await waitForServer();
+      if (!demoMode) await waitForServer();
     },
   };
 }
@@ -1549,7 +1549,7 @@ function useNativeDokumenAdapter() {
 // makes its dev server reject JS in public/. An absolute URL stays untouched.
 const LetterheadBuilder = lazy(() => import("@/components/documents/LetterheadBuilder"));
 const nativeDokumenModule = new URL(
-  `${import.meta.env.BASE_URL}assets/native-ui-20260915.mjs?v=letterhead-20260920`,
+  `${import.meta.env.BASE_URL}assets/native-ui-20260915.mjs?v=guided-autofill-20260920`,
   window.location.origin,
 ).href;
 const NativeTemplatePage = lazy(async () => {

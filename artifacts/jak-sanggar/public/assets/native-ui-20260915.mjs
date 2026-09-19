@@ -1,6 +1,7 @@
 import { defaults, pilihGrupProfil } from './native-ui-20260914-v3.mjs';
-import { buildAutofill } from './native-autofill-20260915.mjs';
-import { fieldMeta, normalizeFieldValue, toDateInput, fromDateInput } from './native-fields-20260915.mjs?v=forum-roles-1';
+import { buildAutofill, deriveAutofill } from './native-autofill-20260915.mjs?v=guided-1';
+import { workspaceAutofill, GENERATED_AUTOFILL_KEY } from './native-autofill-workspace-20260920.mjs';
+import { fieldMeta, normalizeFieldValue, toDateInput, fromDateInput } from './native-fields-20260915.mjs?v=guided-1';
 import { IMAGE_SLOTS, imageKindForField, imageAutofill, readImageFile, renderImages } from './native-images-20260915.mjs';
 import { orderNativeCatalog } from './native-document-order-20260919.mjs';
 import { documentWorkspaceCss } from './native-document-workspace-20260920.mjs';
@@ -73,9 +74,28 @@ async function readRenderedDocument(response, format) {
 
 export function createTemplatePage(React, LetterheadBuilder, useAdapter) {
   const h = React.createElement;
-  function Help({ name, text, context }) {
-    const close = event => { const details = event.currentTarget.closest('details'); details.removeAttribute('open'); details.querySelector('summary').focus(); };
-    return h('details', { className: 'nf-help', onKeyDown: event => { if (event.key === 'Escape') { event.preventDefault(); close(event); } } }, h('summary', { 'aria-label': `Penjelasan ${name}`, title: `Penjelasan ${name}` }, '?'), h('div', { className: 'nf-help-text', style: { maxHeight: '50vh', overflowY: 'auto' }, tabIndex: 0, role: 'region', 'aria-label': `Isi penjelasan ${name}` }, h('div', { style: { display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', marginBottom: 10 } }, h('strong', null, name), h('button', { type: 'button', onClick: close, 'aria-label': `Tutup penjelasan ${name}`, style: { minWidth: 36, minHeight: 36, padding: '2px 8px', fontSize: 22 } }, '×')), text.split('\n\n').map((paragraph, index) => h('p', { key: index }, paragraph)), context && h('p', { className: 'nf-context' }, 'Dalam dokumen: ', context.replace(/\{\{[^}]+\}\}/g, '…'))));
+  function Help({ name, text, context, guidance, choices = [], onChoose, inputId, currentValue, multiple, disabled }) {
+    const close = event => { const details = event.currentTarget.closest('.nf-help'); details.removeAttribute('open'); details.querySelector('summary').focus(); };
+    function choose(event, value) {
+      onChoose(value);
+      event.currentTarget.closest('.nf-help').removeAttribute('open');
+      setTimeout(() => { const target = document.getElementById(inputId + '-custom') || document.getElementById(inputId); target?.focus(); }, 0);
+    }
+    return h('details', { className: 'nf-help' + (guidance ? ' nf-help-inline' : ''), onToggle: event => { if (guidance && event.target === event.currentTarget && event.currentTarget.open) event.currentTarget.querySelector('.nf-help-text')?.scrollIntoView({ block: 'nearest' }); }, onKeyDown: event => { if (event.key === 'Escape') { event.preventDefault(); close(event); } } },
+      h('summary', { 'aria-label': `Penjelasan ${name}`, title: `Penjelasan ${name}` }, '?'),
+      h('div', { className: 'nf-help-text', role: 'region', 'aria-label': `Isi penjelasan ${name}` },
+        h('div', { className: 'nf-help-heading' }, h('strong', null, name), h('button', { type: 'button', onClick: close, 'aria-label': `Tutup penjelasan ${name}` }, '×')),
+        guidance ? h(React.Fragment, null,
+          h('p', { className: 'nf-help-meaning' }, guidance.meaning),
+          h('dl', { className: 'nf-help-guide' },
+            h('dt', null, 'Cara mengisi'), h('dd', null, guidance.howToFill),
+            h('dt', null, 'Ambil dari'), h('dd', null, guidance.sourceHint),
+            h('dt', null, 'Contoh penulisan'), h('dd', null, guidance.example))) : text.split('\n\n').map((paragraph, index) => h('p', { key: index }, paragraph)),
+        choices.length > 0 && onChoose && h('div', { className: 'nf-help-choices' },
+          h('strong', null, 'Pilihan yang dapat dipakai'),
+          h('p', null, multiple ? 'Klik untuk menambahkan pilihan. Anda tetap dapat menulis sendiri.' : empty(currentValue) ? 'Pilih yang sesuai, lalu lengkapi rinciannya bila perlu.' : 'Memilih di sini mengganti isian kolom ini. Anda tetap dapat mengeditnya.'),
+          h('div', { className: 'nf-help-choice-list' }, choices.map(choice => h('button', { key: choice.value, type: 'button', disabled, onClick: event => choose(event, choice.value), 'aria-label': `Gunakan ${choice.label} untuk ${name}` }, choice.label)))),
+        context && h('details', { className: 'nf-help-context' }, h('summary', null, 'Lihat pemakaian dalam dokumen'), h('p', null, context.replace(/\{\{[^}]+\}\}/g, '…')))));
   }
   return function NativeDocumentPage() {
     const adapter = useAdapter ? useAdapter() : {};
@@ -114,18 +134,21 @@ export function createTemplatePage(React, LetterheadBuilder, useAdapter) {
     const groups = catalog?.groups.filter(g => g.category === category) || [], group = groups.find(g => g.id === groupId) || groups[0];
     const item = group?.documents.find(d => d.id === docId) || group?.documents[0];
     const saveKey = group ? `${adapter.profile?.id || 'kurator'}:native-fix-${group.id}` : '';
-    const autofill = buildAutofill(adapter.profile, adapter.savedValues, saveKey, adapter.relatedSources);
     const edits = drafts[saveKey] || {};
-    const values = { ...autofill.values, ...edits };
+    const fields = item?.fields || [];
+    const autofill = workspaceAutofill(adapter.profile, adapter.savedValues, saveKey, adapter.relatedSources, edits, fields, group?.id || '');
+    const values = autofill.values;
+    const otherSaved = Object.fromEntries(Object.entries(adapter.savedValues || {}).filter(([key]) => key !== saveKey));
+    const availableIdentity = buildAutofill(adapter.profile, otherSaved, saveKey, adapter.relatedSources);
     const imageDefaults = imageAutofill(adapter.profile, adapter.savedValues, saveKey, adapter.relatedSources);
     const imageFallbacks = imageAutofill(adapter.profile, Object.fromEntries(Object.entries(adapter.savedValues || {}).filter(([key]) => key !== saveKey)), saveKey, adapter.relatedSources);
     const imageEdits = imageDrafts[saveKey] || {};
     const images = { ...imageDefaults.images, ...imageEdits };
     const sourceKey = JSON.stringify([saveKey, item?.id, values, images]);
     const latestSource = React.useRef(sourceKey); latestSource.current = sourceKey;
-    const fields = item?.fields || [], isFieldEmpty = f => empty(values[f.key]) && !images[imageKindForField(f.key)], emptyFields = fields.filter(isFieldEmpty);
+    const isFieldEmpty = f => empty(values[f.key]) && !images[imageKindForField(f.key)], emptyFields = fields.filter(isFieldEmpty);
     const imageDirty = Object.entries(imageEdits).some(([key, value]) => value !== (imageDefaults.images[key] || ''));
-    const dirty = imageDirty || Object.keys(edits).some(key => String(edits[key]) !== String(autofill.values[key] ?? ''));
+    const dirty = imageDirty || Object.keys(edits).some(key => String(edits[key]) !== String(autofill.baseValues[key] ?? '')) || fields.some(field => String(values[field.key] ?? '') !== String(autofill.baseValues[field.key] ?? ''));
     const unsaved = dirty || Object.entries(imageDrafts).some(([key, draft]) => key !== saveKey && key.startsWith(`${adapter.profile?.id}:`) && IMAGE_SLOTS.some(slot => Object.hasOwn(draft, slot.id) && draft[slot.id] !== (adapter.savedValues?.[key]?.[slot.key] || ''))) || Object.entries(drafts).some(([key, draft]) => key !== saveKey && key.startsWith(`${adapter.profile?.id}:`) && Object.entries(draft).some(([field, value]) => String(value) !== String(adapter.savedValues?.[key]?.[field] ?? '')));
     React.useEffect(() => { setPreview(''); setStatus(''); setError(''); }, [sourceKey]);
     React.useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
@@ -153,9 +176,11 @@ export function createTemplatePage(React, LetterheadBuilder, useAdapter) {
     function fillEmpty() {
       const otherSaved = Object.fromEntries(Object.entries(adapter.savedValues || {}).filter(([key]) => key !== saveKey));
       const fallback = buildAutofill(adapter.profile, otherSaved, saveKey, adapter.relatedSources);
-      const available = { ...fallback.values, ...Object.fromEntries(Object.entries(autofill.values).filter(([, value]) => !empty(value))) };
-      const patch = Object.fromEntries(Object.entries(available).filter(([key, value]) => empty(values[key]) && !empty(value)));
-      if (!Object.keys(patch).length) { setStatus('Semua data yang tersedia sudah terisi. Lengkapi isian lainnya sesuai keadaan sanggar.'); return; }
+      const available = { ...fallback.values, ...Object.fromEntries(Object.entries(values).filter(([, value]) => !empty(value))) };
+      Object.assign(available, deriveAutofill(adapter.profile, available, { groupId: group.id, fields }).values);
+      const currentKeys = new Set(fields.map(field => field.key));
+      const patch = Object.fromEntries(Object.entries(available).filter(([key, value]) => currentKeys.has(key) && empty(values[key]) && !empty(value)));
+      if (!Object.keys(patch).length) { setStatus('Data yang tersedia sudah terisi. Untuk kolom yang masih kosong, buka ikon ? agar terlihat sumber data, contoh, dan pilihan pengisiannya.'); return; }
       setDrafts(previous => ({ ...previous, [saveKey]: { ...previous[saveKey], ...patch } }));
     }
     async function produce(format, isPreview = false, blank = false) {
@@ -174,19 +199,26 @@ export function createTemplatePage(React, LetterheadBuilder, useAdapter) {
     async function save() {
       if (!adapter.save || busy) return;
       setBusy('save'); setError('');
-      try { const savedImages = Object.fromEntries(IMAGE_SLOTS.filter(slot => Object.hasOwn(images, slot.id)).map(slot => [slot.key, images[slot.id]])); await adapter.save(saveKey, { ...values, ...savedImages }); if (latestSource.current === sourceKey) setStatus('Isian dan gambar tersimpan. Data yang sama siap digunakan pada formulir lain.'); else setStatus('Isian sebelumnya tersimpan. Simpan kembali untuk menyertakan perubahan terbaru.'); }
+      try { const savedImages = Object.fromEntries(IMAGE_SLOTS.filter(slot => Object.hasOwn(images, slot.id)).map(slot => [slot.key, images[slot.id]])); await adapter.save(saveKey, { ...values, ...savedImages, [GENERATED_AUTOFILL_KEY]: JSON.stringify(autofill.generated) }); if (latestSource.current === sourceKey) setStatus('Isian dan gambar tersimpan. Data yang sama siap digunakan pada formulir lain.'); else setStatus('Isian sebelumnya tersimpan. Simpan kembali untuk menyertakan perubahan terbaru.'); }
       catch { setError('Isian belum tersimpan. Periksa koneksi lalu coba kembali.'); } finally { setBusy(''); }
     }
     function renderField(field) {
       const meta = fieldMeta(field), value = values[field.key] ?? '', id = 'nf-field-' + field.key;
       const focusProps = { onFocus: () => setActiveFieldKey(field.key), onBlur: event => { if (!event.currentTarget.contains(event.relatedTarget)) setActiveFieldKey(null); } };
       const imageKind = imageKindForField(field.key);
-      if (imageKind) return h('div', { className: 'nf-field', key: field.key, ...focusProps }, h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: id }, 'Keterangan ' + (imageKind === 'logo' ? 'logo' : 'stempel') + ' (opsional)'), h(Help, { name: meta.label, text: meta.help, context: field.context })), h('input', { id, value, onChange: event => update(field, event.target.value), placeholder: 'Contoh: desain yang disetujui pada rapat' }), h('p', { className: 'nf-count' }, images[imageKind] ? 'Gambar sudah terhubung dari bagian unggah.' : 'Unggah gambar pada bagian Logo, stempel, dan kop surat.'), h('a', { href: '#nf-image-' + imageKind, onClick: event => { event.preventDefault(); setImagesOpen(true); setPendingImageFocus(imageKind); } }, 'Buka unggah ' + (imageKind === 'logo' ? 'logo' : 'stempel')));
+      if (imageKind) return h('div', { className: 'nf-field', key: field.key, ...focusProps }, h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: id }, 'Keterangan ' + (imageKind === 'logo' ? 'logo' : 'stempel') + ' (opsional)')), h('input', { id, value, onChange: event => update(field, event.target.value), placeholder: 'Contoh: desain yang disetujui pada rapat' }), h('p', { className: 'nf-count' }, images[imageKind] ? 'Gambar sudah terhubung dari bagian unggah.' : 'Unggah gambar pada bagian Logo, stempel, dan kop surat.'), h('a', { href: '#nf-image-' + imageKind, onClick: event => { event.preventDefault(); setImagesOpen(true); setPendingImageFocus(imageKind); } }, 'Buka unggah ' + (imageKind === 'logo' ? 'logo' : 'stempel')), h(Help, { name: meta.label, text: meta.help, guidance: meta.guidance, context: field.context }));
       const options = meta.options || [];
       const customKey = saveKey + ':' + field.key;
       const isCustom = custom[customKey] || (!empty(value) && !options.some(option => option.value === value));
       const source = Object.hasOwn(edits, field.key) ? 'Diubah di formulir ini' : autofill.sources[field.key];
       const props = { id, value, maxLength: 10000, onChange: event => update(field, event.target.value), 'aria-describedby': source && !empty(value) ? id + '-source' : undefined };
+      const identityValue = availableIdentity.values[field.key];
+      const choices = [...(identityValue && identityValue !== value ? [{ value: identityValue, label: `${identityValue} — ${availableIdentity.sources[field.key] || 'data sanggar'}` }] : []), ...options, ...(meta.suggestions || []).map(value => ({ value, label: value }))].filter((choice, index, list) => list.findIndex(other => other.value === choice.value) === index);
+      function chooseHelpValue(next) {
+        const selected = meta.multiple ? [...new Set([...String(value).split('\n').filter(Boolean), next])].join('\n') : next;
+        setCustom(previous => ({ ...previous, [customKey]: meta.type === 'select' && !options.some(option => option.value === selected) }));
+        update(field, selected);
+      }
       let control;
       if (meta.multiple && options.length) {
         const selected = String(value).split('\n').map(part => part.trim()).filter(Boolean);
@@ -204,7 +236,7 @@ export function createTemplatePage(React, LetterheadBuilder, useAdapter) {
           if (event.target.value === '__custom') setCustom(previous => ({ ...previous, [customKey]: true }));
           else { setCustom(previous => ({ ...previous, [customKey]: false })); update(field, event.target.value); }
         } }, h('option', { value: '' }, 'Pilih ' + meta.label.toLocaleLowerCase('id-ID')), options.map(option => h('option', { key: option.value, value: option.value }, option.label)), h('option', { value: '__custom' }, 'Tulis sendiri…')),
-        isCustom && h('input', { ...props, id: id + '-custom', className: 'nf-custom', 'aria-label': meta.label + ' — isian sendiri', placeholder: 'Tuliskan pilihan yang sesuai' }));
+        isCustom && h(/[\r\n]/.test(String(value)) ? 'textarea' : 'input', { ...props, ...(/[\r\n]/.test(String(value)) ? { rows: 2 } : {}), id: id + '-custom', className: 'nf-custom', 'aria-label': meta.label + ' — isian sendiri', placeholder: 'Tuliskan pilihan yang sesuai' }));
       } else if (meta.type === 'date') {
         const known = toDateInput(value), manual = custom[customKey] ?? (!empty(value) && !known);
         control = h(React.Fragment, null, h('input', { ...props, type: manual ? 'text' : 'date', value: manual ? value : known, onChange: event => update(field, manual ? event.target.value : fromDateInput(event.target.value)), placeholder: manual ? 'Contoh: 15 September 2026' : undefined }), h('button', { type: 'button', className: 'nf-choice', onClick: () => setCustom(previous => ({ ...previous, [customKey]: !manual })) }, manual ? 'Gunakan kalender' : 'Ketik tanggal sendiri'));
@@ -214,7 +246,7 @@ export function createTemplatePage(React, LetterheadBuilder, useAdapter) {
         control = h(React.Fragment, null, h('input', { ...props, type: manual ? 'text' : 'time', value: manual || known ? value : '', placeholder: manual ? 'Contoh: 09.00 WIB' : undefined }), h('button', { type: 'button', className: 'nf-choice', onClick: () => setCustom(previous => ({ ...previous, [customKey]: !manual })) }, manual ? 'Gunakan pemilih waktu' : 'Ketik waktu sendiri'));
       } else if (meta.type === 'textarea') control = h('textarea', { ...props, rows: 3 });
       else control = h('input', { ...props, type: meta.type === 'number' ? 'text' : meta.type || 'text', inputMode: meta.type === 'number' ? 'decimal' : undefined, style: meta.uppercase ? { textTransform: 'uppercase' } : undefined });
-      return h('div', { className: 'nf-field' + (meta.type === 'textarea' ? ' nf-field-wide' : ''), key: field.key, ...focusProps }, h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: id }, meta.label), h(Help, { name: meta.label, text: meta.help, context: field.context })), control, source && !empty(value) && h('div', { className: source === 'Diubah di formulir ini' ? 'nf-manual' : 'nf-source', id: id + '-source' }, source));
+      return h('div', { className: 'nf-field' + (meta.type === 'textarea' ? ' nf-field-wide' : ''), key: field.key, ...focusProps }, h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: id }, meta.label)), control, source && !empty(value) && h('div', { className: source === 'Diubah di formulir ini' ? 'nf-manual' : 'nf-source', id: id + '-source' }, source), h(Help, { name: meta.label, text: meta.help, guidance: meta.guidance, context: field.context, choices, onChoose: chooseHelpValue, inputId: id, currentValue: value, multiple: meta.multiple, disabled: !!busy }));
     }
     const filterTerm = fieldSearch.trim().toLocaleLowerCase('id-ID');
     const shown = fields.filter(field => (!onlyEmpty || isFieldEmpty(field) || activeFieldKey === field.key) && (!filterTerm || (fieldMeta(field).label + ' ' + field.key).toLocaleLowerCase('id-ID').includes(filterTerm)));
@@ -273,7 +305,7 @@ export function createTemplatePage(React, LetterheadBuilder, useAdapter) {
           h('span', { 'aria-current': view === 'review' ? 'step' : undefined }, '2. Periksa & unduh')),
         view === 'edit' ? h('div', { className: 'nf-editor' },
           h('div', { className: 'nf-editor-overview' }, h('h2', null, 'Lengkapi isian'), fields.length > 0 ? h('div', { className: 'nf-progress-compact' }, h('progress', { max: fields.length || 1, value: filledCount, 'aria-label': 'Kelengkapan isian dokumen' }), h('span', null, `${filledCount} dari ${fields.length} terisi`)) : h('p', { className: 'nf-count' }, 'Dokumen ini tidak memerlukan isian.')),
-          fields.length > 0 && h('div', { className: 'nf-autofill-inline' }, h('p', null, sourcedCount ? `${sourcedCount} isian sudah terisi dari data sanggar. Periksa satu bagian setiap kali.` : 'Lengkapi satu bagian setiap kali. Isian tetap ada saat berpindah bagian.'), h('button', { type: 'button', onClick: fillEmpty }, 'Isi otomatis yang kosong')),
+          fields.length > 0 && h('div', { className: 'nf-autofill-inline' }, h('div', null, h('p', null, sourcedCount ? `${sourcedCount} isian terisi dari profil, isian tersimpan, atau dihitung dari isian terkait.` : 'Data yang tersedia terisi otomatis. Lengkapi satu bagian setiap kali.'), h('p', { className: 'nf-autofill-help' }, 'Klik ? untuk arti kolom, sumber data, contoh, dan pilihan. Isian Anda tetap dipertahankan.')), h('button', { type: 'button', onClick: fillEmpty }, 'Isi otomatis yang kosong')),
           fields.length > 0 && h('div', { className: 'nf-toolbar' }, h('div', { className: 'nf-searchfields' }, h('label', { htmlFor: 'nf-field-search' }, 'Cari isian'), h('input', { id: 'nf-field-search', type: 'search', value: fieldSearch, onChange: event => setFieldSearch(event.target.value), placeholder: 'Cari nama, nomor, tanggal…' })), h('label', { className: 'nf-filter' }, h('input', { type: 'checkbox', checked: onlyEmpty, onChange: event => setOnlyEmpty(event.target.checked) }), 'Hanya yang kosong')),
           filtering ? h('div', { className: 'nf-search-results' },
             h('div', { className: 'nf-search-result-caption' }, h('p', null, `${shown.length} isian sesuai pencarian`), h('button', { type: 'button', onClick: () => { setFieldSearch(''); setOnlyEmpty(false); setPendingSectionFocus('nf-field-search'); } }, 'Tampilkan semua bagian')),
