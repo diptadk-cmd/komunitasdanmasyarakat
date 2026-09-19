@@ -282,6 +282,7 @@ export function fieldMeta(field) {
   else if (key === 'JEN_PRO') choices = options(['Pembentukan', 'Penetapan', 'Penataan administrasi', 'Pembentukan dan penetapan']);
   else if (key === 'TIN_POK') choices = options(['Membentuk', 'Menetapkan', 'Menegaskan keberadaan']);
   else if (['KOTA', 'KOT'].includes(key)) choices = options(cities);
+  else if (key === 'JAB_FOR') choices = options(['Ketua Sidang', ...roles]);
   else if (/^JAB(?:_|\d)/.test(key)) choices = options(roles);
   else if (['ORG_PEN', 'ORG_IND'].includes(key)) choices = options(['Musyawarah Anggota', 'Rapat Pengurus', 'Pengurus Yayasan', 'Pengurus Perkumpulan', 'Pengurus Koperasi', 'Direksi Perseroan', 'Sekutu Pengurus']);
   else if (['BID_SEN', 'TAR_MU2', 'TAR_MUS'].includes(key)) choices = options(arts);

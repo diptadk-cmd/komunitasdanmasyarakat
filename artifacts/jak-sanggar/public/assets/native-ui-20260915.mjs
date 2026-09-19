@@ -1,6 +1,6 @@
 import { defaults, pilihGrupProfil } from './native-ui-20260914-v3.mjs';
 import { buildAutofill } from './native-autofill-20260915.mjs';
-import { fieldMeta, normalizeFieldValue, toDateInput, fromDateInput } from './native-fields-20260915.mjs?v=help-2';
+import { fieldMeta, normalizeFieldValue, toDateInput, fromDateInput } from './native-fields-20260915.mjs?v=forum-roles-1';
 import { IMAGE_SLOTS, imageKindForField, imageAutofill, readImageFile, renderImages } from './native-images-20260915.mjs';
 import { orderNativeCatalog } from './native-document-order-20260919.mjs';
 import { documentWorkspaceCss } from './native-document-workspace-20260920.mjs';
