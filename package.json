@@ -1,0 +1,34 @@
+{
+  "name": "workspace",
+  "version": "3.0.0",
+  "license": "MIT",
+  "scripts": {
+    "preinstall": "node ./scripts/ensure-pnpm.mjs",
+    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "typecheck:libs": "tsc --build",
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
+    "test": "pnpm -r --if-present run test",
+    "verify": "node scripts/test-repository.mjs",
+    "dev:app": "node ./scripts/run-dev.mjs app",
+    "dev:konsol": "node ./scripts/run-dev.mjs konsol",
+    "dev:demo:app": "node ./scripts/run-dev.mjs demo-app",
+    "dev:demo:konsol": "node ./scripts/run-dev.mjs demo-konsol",
+    "dev:api": "node ./scripts/run-dev.mjs api",
+    "build:production": "node scripts/build-production.mjs",
+    "test:all": "node scripts/test-repository.mjs",
+    "test:quick": "node scripts/test-repository.mjs --quick",
+    "test:navigation": "node --test tests/navigation-coverage.test.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:list": "playwright test --list",
+    "test:report": "playwright show-report output/test-reports/e2e/html",
+    "test:coverage": "node scripts/feature-coverage.mjs"
+  },
+  "private": true,
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "prettier": "^3.8.1",
+    "sharp": "^0.34.5",
+    "typescript": "~5.9.2"
+  },
+  "packageManager": "pnpm@11.17.0"
+}

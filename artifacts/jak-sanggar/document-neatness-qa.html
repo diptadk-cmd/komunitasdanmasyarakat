@@ -1,0 +1,17 @@
+<!doctype html><html lang="id"><meta charset="utf-8"><title>Uji kerapian dokumen</title><body>
+<h1>Uji judul otomatis</h1><p id="result">Memeriksa...</p><div id="sample"></div>
+<script type="module">
+import {normalisasiJudulDokumen} from '/src/lib/dokumen-heading.ts';
+import {anotasiTabelDokumenTemplate} from '/src/lib/dokumen-template-layout.ts';
+import {bangunHtmlUnduhanDokumen} from '/src/lib/dokumen-export.ts';
+const original='<div data-dokumen-heading="title"><strong>Formulir pendaftaran sanggar melati</strong><br>Nomor: <span>01/Ab/2026</span><br>Tanggal: <i>14 September 2026</i></div><p>Isi tentang pelaksanaan tetap seperti ini.</p><h3>Pasal 10</h3><h2>Surat &lt;permohonan&gt; anggota</h2>';
+const result=normalisasiJudulDokumen(original);
+const doc=new DOMParser().parseFromString(result,'text/html');
+const checks=[doc.querySelector('strong').textContent==='FORMULIR PENDAFTARAN SANGGAR MELATI',doc.querySelector('span').textContent==='01/Ab/2026',doc.querySelector('i').textContent==='14 September 2026',doc.querySelector('p').textContent==='Isi tentang pelaksanaan tetap seperti ini.',doc.querySelector('h3').textContent==='Pasal 10',doc.querySelector('h2').textContent==='SURAT <PERMOHONAN> ANGGOTA',normalisasiJudulDokumen(result)===result];
+const form=anotasiTabelDokumenTemplate('<table data-docx-source-table="true" data-docx-table-border="layout" data-docx-column-count="1"><tr><td><p><strong>Formulir data sanggar Melati</strong></p><p>Nomor: 01/Ab/2026</p></td></tr></table>');
+checks.push(form.includes('FORMULIR DATA SANGGAR MELATI'),form.includes('Nomor: 01/Ab/2026'));
+const exported=bangunHtmlUnduhanDokumen({title:'Uji formulir',bodyHtml:original+form});
+checks.push(exported.includes('FORMULIR PENDAFTARAN SANGGAR MELATI'),exported.includes('01/Ab/2026'));
+document.getElementById('sample').innerHTML=result+form;
+document.getElementById('result').textContent=checks.every(Boolean)?`LULUS: ${checks.length} pemeriksaan browser`:`GAGAL: ${checks.map((ok,i)=>ok?'':i+1).filter(Boolean).join(',')}`;
+</script></body></html>

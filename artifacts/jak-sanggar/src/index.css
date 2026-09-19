@@ -1,0 +1,564 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+}
+
+/* ===== LIGHT (default): permukaan putih murni dengan aksen portal ===== */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 216 91% 13%;
+  --border: 214 20% 82%;
+  --input: 0 0% 100%;
+  --ring: 228 60% 35%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 216 91% 13%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 216 91% 13%;
+
+  --primary: 228 60% 35%;
+  --primary-foreground: 48 33% 98%;
+  --primary-border: 216 75% 24%;
+
+  --secondary: 216 26% 93%;
+  --secondary-foreground: 216 70% 18%;
+  --secondary-border: 214 20% 82%;
+
+  --muted: 0 0% 96%;
+  --muted-foreground: 214 17% 38%;
+
+  --accent: 42 60% 67%;
+  --accent-foreground: 216 91% 13%;
+
+  /* Destructive = merah bahaya */
+  --destructive: 0 72% 48%;
+  --destructive-foreground: 0 0% 100%;
+  --destructive-border: 0 62% 38%;
+
+  --chart-1: 228 60% 35%;
+  --chart-2: 42 60% 52%;
+  --chart-3: 18 78% 48%;
+  --chart-4: 95 42% 42%;
+  --chart-5: 330 45% 48%;
+
+  --sidebar: 216 91% 13%;
+  --sidebar-foreground: 48 25% 94%;
+  --sidebar-border: 216 55% 22%;
+  --sidebar-primary: 42 60% 67%;
+  --sidebar-primary-foreground: 216 91% 13%;
+  --sidebar-accent: 228 60% 35%;
+  --sidebar-accent-foreground: 48 33% 98%;
+  --sidebar-ring: 42 60% 67%;
+
+  --button-outline: hsl(40 18% 78%);
+
+  --app-font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --app-font-serif: "Playfair Display", Georgia, serif;
+  --app-font-mono: ui-monospace, Menlo, monospace;
+  --radius: 0.9rem;
+
+  /* Token aksen emas */
+  --gold: 40 72% 48%;
+  --gold-soft: 42 78% 62%;
+  --gold-deep: 36 68% 38%;
+  --navy-deep: 216 91% 13%;
+}
+
+/* Permukaan putih setelah login, dengan aksen hijau untuk navigasi. */
+:root:not(.dark) .app-shell-clean {
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --border: 214 25% 89%;
+  --input: 0 0% 100%;
+  --ring: 174 62% 32%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 174 62% 30%;
+  --primary-foreground: 0 0% 100%;
+  --primary-border: 174 66% 24%;
+  --secondary: 210 24% 96%;
+  --secondary-foreground: 222 36% 18%;
+  --secondary-border: 214 25% 89%;
+  --muted: 210 24% 96%;
+  --muted-foreground: 215 16% 42%;
+  --accent: 174 62% 32%;
+  --accent-foreground: 0 0% 100%;
+  --chart-1: 174 62% 32%;
+  --chart-2: 40 58% 52%;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 222 36% 18%;
+  --sidebar-border: 214 25% 89%;
+  --sidebar-primary: 174 62% 30%;
+  --sidebar-primary-foreground: 174 72% 18%;
+  --sidebar-accent: 174 42% 94%;
+  --sidebar-accent-foreground: 174 72% 18%;
+  --sidebar-ring: 174 62% 32%;
+  --navy-deep: 222 47% 11%;
+  --radius: 0.75rem;
+}
+
+/* Putih tetap solid di atas ilustrasi atau elemen berwarna saat bergulir. */
+:root:not(.dark) .glass {
+  background: #ffffff;
+}
+:root:not(.dark) .batik-pattern {
+  background-image: none;
+}
+:root:not(.dark) .jak-sync-status {
+  background: #ffffff;
+}
+
+/* ===== DARK (standard dark) ===== */
+.dark {
+  --background: 156 30% 7%;
+  --foreground: 150 14% 92%;
+  --border: 155 20% 18%;
+  --input: 155 20% 20%;
+  --ring: 10 90% 56%;
+  --card: 156 26% 10%;
+  --card-foreground: 150 14% 92%;
+  --popover: 156 26% 10%;
+  --popover-foreground: 150 14% 92%;
+
+  /* Di mode gelap primary jadi oranye agar CTA menonjol di hijau gelap */
+  --primary: 10 95% 56%;
+  --primary-foreground: 0 0% 100%;
+  --primary-border: 12 80% 44%;
+
+  --secondary: 155 20% 18%;
+  --secondary-foreground: 150 14% 92%;
+  --secondary-border: 155 18% 24%;
+
+  --muted: 155 20% 16%;
+  --muted-foreground: 150 8% 66%;
+
+  --accent: 10 95% 56%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 75% 58%;
+  --destructive-foreground: 0 0% 100%;
+  --destructive-border: 0 60% 42%;
+
+  --chart-1: 10 90% 60%;
+  --chart-2: 150 50% 55%;
+  --chart-3: 95 58% 55%;
+  --chart-4: 42 80% 58%;
+  --chart-5: 330 70% 62%;
+
+  --sidebar: 156 80% 5%;
+  --sidebar-foreground: 150 14% 92%;
+  --sidebar-border: 155 30% 13%;
+  --sidebar-primary: 10 95% 58%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 152 40% 12%;
+  --sidebar-accent-foreground: 150 14% 92%;
+  --sidebar-ring: 10 95% 58%;
+
+  --button-outline: hsl(155 20% 28%);
+}
+
+/* ===== DARK LUXURY (premium) — apply with both .dark + .luxury ===== */
+.dark.luxury,
+.luxury.dark,
+.luxury {
+  --background: 158 60% 4%;
+  --foreground: 40 25% 92%;
+  --border: 156 40% 13%;
+  --input: 156 40% 15%;
+  --ring: 12 95% 58%;
+  --card: 158 50% 7%;
+  --card-foreground: 40 25% 92%;
+  --popover: 158 50% 7%;
+  --popover-foreground: 40 25% 92%;
+
+  --primary: 12 95% 58%;
+  --primary-foreground: 158 60% 6%;
+  --primary-border: 12 80% 44%;
+
+  --secondary: 156 35% 11%;
+  --secondary-foreground: 40 25% 92%;
+  --secondary-border: 156 30% 17%;
+
+  --muted: 156 35% 10%;
+  --muted-foreground: 40 12% 70%;
+
+  --accent: 12 100% 60%;
+  --accent-foreground: 158 60% 6%;
+
+  --destructive: 0 75% 58%;
+  --destructive-foreground: 40 25% 95%;
+  --destructive-border: 0 60% 42%;
+
+  --chart-1: 12 100% 62%;
+  --chart-2: 150 55% 55%;
+  --chart-3: 95 58% 58%;
+  --chart-4: 42 85% 60%;
+  --chart-5: 330 70% 64%;
+
+  --sidebar: 158 75% 3%;
+  --sidebar-foreground: 40 25% 92%;
+  --sidebar-border: 156 50% 9%;
+  --sidebar-primary: 12 100% 60%;
+  --sidebar-primary-foreground: 158 60% 4%;
+  --sidebar-accent: 156 50% 9%;
+  --sidebar-accent-foreground: 40 25% 92%;
+  --sidebar-ring: 12 100% 60%;
+
+  --button-outline: hsl(156 40% 20%);
+}
+
+/* ===== HIGH CONTRAST (aksesibilitas) — dikombinasikan dengan tema apa pun ===== */
+.high-contrast {
+  --border: 150 20% 55%;
+  --input: 150 20% 55%;
+  --muted-foreground: 150 14% 22%;
+}
+.dark.high-contrast {
+  --border: 150 16% 42%;
+  --input: 150 16% 42%;
+  --muted-foreground: 150 10% 82%;
+}
+.luxury.high-contrast {
+  --border: 156 24% 40%;
+  --input: 156 24% 40%;
+  --muted-foreground: 40 18% 84%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "ss01";
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.012em;
+  }
+  ::selection {
+    background: hsl(var(--accent) / 0.4);
+    color: hsl(var(--accent-foreground));
+  }
+}
+
+@layer utilities {
+  /* Watermark Betawi halus — segitiga tumpal + titik pucuk rebung */
+  .batik-pattern {
+    background-image:
+      radial-gradient(
+        circle at 18% 28%,
+        hsl(var(--accent) / 0.07) 0,
+        transparent 24%
+      ),
+      radial-gradient(
+        circle at 82% 72%,
+        hsl(var(--primary) / 0.05) 0,
+        transparent 24%
+      );
+  }
+
+  .betawi-watermark {
+    position: relative;
+  }
+  .betawi-watermark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><g fill='none' stroke='%23243b91' stroke-width='0.8' opacity='0.18'><path d='M30 150 L60 90 L90 150 Z'/><path d='M90 150 L120 90 L150 150 Z'/><path d='M0 90 L30 30 L60 90 Z'/><path d='M120 90 L150 30 L180 90 Z'/><circle cx='90' cy='60' r='3'/><circle cx='90' cy='60' r='8'/><path d='M85 30 L90 22 L95 30 L90 38 Z'/></g></svg>");
+    background-size: 320px 320px;
+    background-repeat: repeat;
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+    z-index: 0;
+  }
+  .dark .betawi-watermark::before {
+    mix-blend-mode: screen;
+    opacity: 0.2;
+  }
+
+  .betawi-watermark > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Permukaan putih transparan ringan untuk header/dropdown. */
+  .glass {
+    background: hsl(var(--card) / 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border));
+  }
+  .glass-dark {
+    background: hsl(var(--sidebar) / 0.72);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(var(--sidebar-border) / 0.7);
+  }
+
+  /* Kartu putih dengan elevasi halus dan tanpa glow. */
+  .premium-card {
+    border: 1px solid hsl(var(--border));
+    box-shadow:
+      0 1px 2px hsl(var(--navy-deep) / 0.04),
+      0 8px 24px -20px hsl(var(--navy-deep) / 0.18);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 220ms;
+  }
+  .premium-card:hover {
+    transform: translateY(-1px);
+    border-color: hsl(var(--primary) / 0.28);
+    box-shadow:
+      0 2px 5px hsl(var(--navy-deep) / 0.06),
+      0 14px 30px -20px hsl(var(--navy-deep) / 0.24);
+  }
+  .dark .premium-card:hover {
+    box-shadow:
+      0 14px 32px -10px hsl(var(--gold) / 0.22),
+      0 0 0 1px hsl(var(--gold) / 0.32);
+  }
+
+  /* Tombol gradien emas medalion */
+  .btn-gold {
+    background: linear-gradient(
+      135deg,
+      hsl(42 78% 58%) 0%,
+      hsl(38 72% 44%) 55%,
+      hsl(42 70% 52%) 100%
+    );
+    color: hsl(155 40% 12%);
+    border: 1px solid hsl(36 68% 34%);
+    box-shadow:
+      0 1px 0 hsl(42 80% 78% / 0.75) inset,
+      0 6px 14px -6px hsl(36 60% 30% / 0.45);
+    transition: all 200ms;
+  }
+  .btn-gold:hover {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow:
+      0 1px 0 hsl(42 80% 82% / 0.8) inset,
+      0 10px 20px -6px hsl(36 60% 32% / 0.5),
+      0 0 18px hsl(40 72% 48% / 0.3);
+  }
+  .btn-gold:active {
+    transform: translateY(0);
+  }
+
+  /* Glow aksen pada teks/elemen */
+  .gold-glow {
+    text-shadow:
+      0 0 12px hsl(var(--gold) / 0.55),
+      0 0 28px hsl(var(--gold) / 0.25);
+  }
+  .gold-ring-focus:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 3px hsl(var(--accent) / 0.35),
+      0 0 0 1px hsl(var(--accent));
+  }
+
+  /* Pembatas tumpal */
+  .tumpal-divider {
+    background-image:
+      linear-gradient(
+        45deg,
+        transparent 49%,
+        hsl(var(--accent) / 0.5) 49%,
+        hsl(var(--accent) / 0.5) 51%,
+        transparent 51%
+      ),
+      linear-gradient(
+        -45deg,
+        transparent 49%,
+        hsl(var(--accent) / 0.5) 49%,
+        hsl(var(--accent) / 0.5) 51%,
+        transparent 51%
+      );
+    background-size: 14px 14px;
+    background-position: 0 0;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent) / 0.6);
+  }
+
+  /* Keyframes partikel debu aksen */
+  @keyframes gold-drift {
+    0% {
+      transform: translateY(0) translateX(0) scale(1);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.85;
+    }
+    100% {
+      transform: translateY(-120vh) translateX(20px) scale(1.2);
+      opacity: 0;
+    }
+  }
+  .gold-dust-particle {
+    animation: gold-drift linear infinite;
+    background: radial-gradient(
+      circle,
+      hsl(14 100% 68% / 0.95) 0%,
+      hsl(12 100% 58% / 0) 70%
+    );
+    border-radius: 999px;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+
+  /* Keyframes tumpal spinner */
+  @keyframes tumpal-spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .tumpal-spinner {
+    animation: tumpal-spin 1.4s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  }
+
+  /* Transisi antar halaman */
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .page-enter {
+    animation: fade-up 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* ===== Aturan HIGH CONTRAST (di luar @layer agar menang atas utilities Tailwind) ===== */
+.high-contrast :is(.text-\[10px\], .text-\[11px\], .text-xs) {
+  font-weight: 600;
+  opacity: 1 !important;
+}
+.high-contrast
+  :is(
+    .opacity-60,
+    .opacity-70,
+    .opacity-75,
+    .opacity-80,
+    .opacity-85,
+    .opacity-90
+  ) {
+  opacity: 1 !important;
+}
+.high-contrast .text-muted-foreground {
+  color: hsl(var(--muted-foreground));
+}
+.high-contrast .glass,
+.high-contrast .glass-dark {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.high-contrast .glass {
+  background: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
+}
+.high-contrast .glass-dark {
+  background: hsl(var(--sidebar));
+  border: 1.5px solid hsl(var(--sidebar-border));
+}
+.high-contrast :is(.premium-card, .border, .border-border) {
+  border-width: 1.5px;
+}
+.high-contrast .btn-gold {
+  background: hsl(40 72% 42%);
+  border: 1.5px solid hsl(36 68% 30%);
+  box-shadow: none;
+  color: hsl(155 40% 10%);
+}
+.high-contrast .gold-glow {
+  text-shadow: none;
+}
+@keyframes transaction-alert-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}

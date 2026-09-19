@@ -1,0 +1,513 @@
+/* Registration landing page refresh. Scoped to the role chooser so form routes stay unchanged. */
+body:has([data-testid^="link-daftar-"]) {
+  --register-forest: #102f25;
+  --register-forest-soft: #1d4a39;
+  --register-ivory: #f7f1e8;
+  --register-paper: #fffdf8;
+  --register-ink: #19382d;
+  --register-muted: #68776d;
+  --register-gold: #d6b46a;
+  --register-coral: #c97959;
+  background: var(--register-ivory);
+}
+
+body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen {
+  position: relative;
+  padding: 22px 24px 52px !important;
+  background:
+    radial-gradient(circle at 8% 10%, rgba(214, 180, 106, 0.16), transparent 22rem),
+    radial-gradient(circle at 94% 82%, rgba(201, 121, 89, 0.1), transparent 25rem),
+    var(--register-ivory) !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.2;
+  background-image: linear-gradient(135deg, rgba(16, 47, 37, 0.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(to bottom, black, transparent 70%);
+}
+
+body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen > div.max-w-6xl {
+  position: relative;
+  max-width: 1240px;
+}
+
+body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen > div.max-w-6xl > div:first-child {
+  min-height: 42px;
+}
+
+body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen > div.max-w-6xl > div:first-child a {
+  border: 1px solid rgba(16, 47, 37, 0.16);
+  border-radius: 999px;
+  padding: 9px 14px;
+  color: var(--register-ink);
+  background: rgba(255, 253, 248, 0.72);
+  box-shadow: 0 8px 22px rgba(16, 47, 37, 0.06);
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen > div.max-w-6xl > div:first-child a:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 47, 37, 0.32);
+  background: var(--register-paper);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 365px;
+  margin-top: 26px !important;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 64px clamp(28px, 7vw, 88px) 58px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 32px;
+  text-align: left;
+  color: #fff9eb;
+  background:
+    linear-gradient(90deg, rgba(10, 39, 30, 0.98) 0%, rgba(16, 60, 45, 0.93) 42%, rgba(16, 60, 45, 0.38) 100%),
+    url('/assets/dashboard-betawi-20260910.png') 68% center / cover no-repeat;
+  box-shadow: 0 24px 60px rgba(16, 47, 37, 0.16);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header::after {
+  position: absolute;
+  z-index: -1;
+  right: 5%;
+  bottom: -100px;
+  width: 330px;
+  height: 330px;
+  border: 1px solid rgba(214, 180, 106, 0.32);
+  border-radius: 50%;
+  content: "";
+  box-shadow: 0 0 0 22px rgba(214, 180, 106, 0.04), 0 0 0 44px rgba(214, 180, 106, 0.03);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header > div:first-child {
+  align-items: center;
+  gap: 11px;
+  color: var(--register-gold);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header > div:first-child span {
+  background: var(--register-gold) !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header h1 {
+  max-width: 620px;
+  margin-top: 15px !important;
+  color: #fff9eb;
+  font-size: clamp(2.25rem, 5vw, 4.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header > p {
+  max-width: 510px;
+  margin-top: 19px !important;
+  color: rgba(255, 249, 235, 0.76);
+  font-size: 0.98rem;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header > div:last-child {
+  margin-top: 28px;
+  opacity: 0.55 !important;
+  filter: brightness(0) invert(1);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 17px !important;
+  margin-top: 24px !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a {
+  min-width: 0;
+  color: var(--register-ink);
+  text-decoration: none;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div {
+  position: relative;
+  min-height: 244px;
+  padding: 25px !important;
+  overflow: hidden;
+  border: 1px solid rgba(16, 47, 37, 0.13) !important;
+  border-radius: 22px !important;
+  background: rgba(255, 253, 248, 0.91) !important;
+  box-shadow: 0 10px 26px rgba(16, 47, 37, 0.07);
+  transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, background 200ms ease;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div::before {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  color: rgba(16, 47, 37, 0.2);
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(1) > div::before { content: "01"; }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(2) > div::before { content: "02"; }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(3) > div::before { content: "03"; }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(4) > div::before { content: "04"; }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(5) > div::before { content: "05"; }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(6) > div::before { content: "06"; }
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:hover > div,
+body:has([data-testid^="link-daftar-"]) #root header + div > a:focus-visible > div {
+  transform: translateY(-6px);
+  border-color: rgba(201, 121, 89, 0.55) !important;
+  background: #fffefa !important;
+  box-shadow: 0 18px 34px rgba(16, 47, 37, 0.13);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:first-of-type {
+  width: 58px;
+  height: 58px;
+  border: 1px solid rgba(201, 121, 89, 0.23);
+  border-radius: 17px;
+  background: rgba(201, 121, 89, 0.1);
+  color: var(--register-coral);
+  box-shadow: inset 0 0 0 7px rgba(255, 253, 248, 0.6);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:hover > div > div:first-of-type {
+  background: rgba(214, 180, 106, 0.18);
+  color: var(--register-forest);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div h2 {
+  margin-top: 18px !important;
+  color: var(--register-ink);
+  font-size: 1.4rem;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div p {
+  color: var(--register-muted);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div p:last-of-type {
+  color: var(--register-coral);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:last-child {
+  border-color: rgba(16, 47, 37, 0.11);
+  color: var(--register-forest-soft);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div + p {
+  max-width: 640px;
+  margin-top: 27px !important;
+  padding: 12px 16px;
+  border: 1px solid rgba(16, 47, 37, 0.1);
+  border-radius: 14px;
+  color: var(--register-muted);
+  background: rgba(255, 253, 248, 0.62);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div + p svg {
+  color: var(--register-coral);
+}
+
+@media (max-width: 1024px) {
+  body:has([data-testid^="link-daftar-"]) #root header + div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen {
+    padding: 14px 14px 34px !important;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header {
+    min-height: 425px;
+    margin-top: 18px !important;
+    padding: 34px 24px 30px;
+    border-radius: 25px;
+    background-position: 72% center;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header h1 {
+    max-width: 360px;
+    font-size: clamp(2.35rem, 12vw, 3.35rem);
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header > p {
+    max-width: 330px;
+    font-size: 0.9rem;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header + div {
+    grid-template-columns: 1fr;
+    gap: 12px !important;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header + div > a > div {
+    min-height: 0;
+    padding: 21px !important;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header + div h2 {
+    margin-top: 14px !important;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header + div + p {
+    font-size: 0.72rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:has([data-testid^="link-daftar-"]) #root header + div > a > div,
+  body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen > div.max-w-6xl > div:first-child a {
+    transition: none;
+  }
+}
+
+/* Compact single-page role hub refinements. */
+body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen {
+  padding-bottom: 36px !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header {
+  min-height: 300px;
+  padding-top: 48px;
+  padding-bottom: 44px;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div::before {
+  grid-column: 1 / -1;
+  padding: 0 4px 1px;
+  color: var(--register-forest);
+  content: "Pilih jalur yang paling sesuai";
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div {
+  row-gap: 13px !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  column-gap: 17px;
+  align-content: start;
+  min-height: 190px;
+  padding: 22px !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:first-of-type {
+  position: relative;
+  z-index: 1;
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 19px;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:first-of-type::after {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  width: 13px;
+  height: 13px;
+  border: 3px solid var(--register-paper);
+  border-radius: 50%;
+  content: "";
+  background: currentColor;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:first-of-type svg {
+  width: 25px;
+  height: 25px;
+  stroke-width: 1.8;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > h2 {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+  margin-top: 0 !important;
+  font-size: 1.28rem;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > p {
+  grid-column: 2;
+  margin-top: 7px !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:last-child {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  align-self: end;
+  margin-top: 15px !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(1) > div > div:first-of-type {
+  color: #b96045;
+  background: rgba(201, 121, 89, 0.14);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(2) > div > div:first-of-type {
+  color: #9a7626;
+  background: rgba(214, 180, 106, 0.2);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(3) > div > div:first-of-type {
+  color: #356a58;
+  background: rgba(77, 141, 112, 0.14);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(4) > div > div:first-of-type {
+  color: #a96535;
+  background: rgba(205, 143, 83, 0.16);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(5) > div > div:first-of-type {
+  color: #875d34;
+  background: rgba(178, 137, 66, 0.16);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(6) > div > div:first-of-type {
+  color: #3d6870;
+  background: rgba(79, 144, 150, 0.14);
+}
+
+@media (max-width: 640px) {
+  body:has([data-testid^="link-daftar-"]) #root header {
+    min-height: 365px;
+    padding-top: 32px;
+    padding-bottom: 28px;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header + div::before {
+    font-size: 1.2rem;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header + div > a > div {
+    min-height: 0;
+    padding: 18px !important;
+  }
+}
+
+/* Final visual pass: clearer icon language, cleaner card rhythm, no competing watermark. */
+body:has([data-testid^="link-daftar-"]) #root > div.min-h-screen > img {
+  display: none;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header > div:first-child > span {
+  background: transparent !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header > div:first-child > span:first-child,
+body:has([data-testid^="link-daftar-"]) #root header > div:first-child > span:last-child {
+  background: var(--register-gold) !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header > div:first-child > span:nth-child(2) {
+  padding: 4px 8px;
+  color: var(--register-gold) !important;
+  background: transparent !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div {
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  min-height: 204px;
+  border-top-color: var(--role-color) !important;
+  background: linear-gradient(145deg, rgba(255, 253, 248, 0.98), rgba(250, 246, 238, 0.88)) !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  border-radius: 22px 22px 0 0;
+  content: "";
+  background: var(--role-color);
+  opacity: 0.86;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(1) > div { --role-color: #c97959; --role-soft: rgba(201, 121, 89, 0.14); }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(2) > div { --role-color: #9a7626; --role-soft: rgba(214, 180, 106, 0.2); }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(3) > div { --role-color: #356a58; --role-soft: rgba(77, 141, 112, 0.14); }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(4) > div { --role-color: #a96535; --role-soft: rgba(205, 143, 83, 0.16); }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(5) > div { --role-color: #875d34; --role-soft: rgba(178, 137, 66, 0.16); }
+body:has([data-testid^="link-daftar-"]) #root header + div > a:nth-child(6) > div { --role-color: #3d6870; --role-soft: rgba(79, 144, 150, 0.14); }
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:first-of-type {
+  border-color: color-mix(in srgb, var(--role-color) 34%, transparent);
+  background: var(--role-soft);
+  color: var(--role-color);
+  box-shadow: inset 0 0 0 7px rgba(255, 253, 248, 0.62), 0 8px 18px rgba(16, 47, 37, 0.08);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:first-of-type::after {
+  border-color: var(--register-paper);
+  background: var(--role-color);
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:first-of-type svg {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > h2 {
+  position: relative;
+  z-index: 1;
+  font-size: 1.34rem;
+  letter-spacing: -0.025em;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > p:first-of-type {
+  grid-row: 2;
+  color: var(--register-muted) !important;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > p:nth-of-type(2) {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  margin-top: 10px !important;
+  color: var(--role-color) !important;
+  font-size: 0.62rem;
+  line-height: 1.35;
+  text-align: center;
+  letter-spacing: 0.14em;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:last-child {
+  grid-row: 3;
+}
+
+body:has([data-testid^="link-daftar-"]) #root header + div > a:hover > div > div:first-of-type {
+  color: var(--role-color);
+  background: color-mix(in srgb, var(--role-soft) 72%, var(--register-gold));
+}
+
+@media (max-width: 640px) {
+  body:has([data-testid^="link-daftar-"]) #root header + div > a > div {
+    grid-template-columns: 56px minmax(0, 1fr);
+    min-height: 178px;
+  }
+
+  body:has([data-testid^="link-daftar-"]) #root header + div > a > div > div:first-of-type {
+    width: 56px;
+    height: 56px;
+  }
+}

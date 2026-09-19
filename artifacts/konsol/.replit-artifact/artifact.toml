@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/konsol/"
+title = "Konsol Kurator Jak Sanggar"
+version = "1.0.0"
+id = "artifacts/konsol"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/konsol/" ]
+localPort = 23721
+
+[services.development]
+run = "pnpm --filter @workspace/konsol run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/konsol", "run", "build" ]
+publicDir = "artifacts/konsol/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23721"
+BASE_PATH = "/konsol/"

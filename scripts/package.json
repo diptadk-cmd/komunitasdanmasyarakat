@@ -1,0 +1,17 @@
+{
+  "name": "@workspace/scripts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "hello": "tsx ./src/hello.ts",
+    "convert:dokumen-paket": "tsx ./src/convert-dokumen-paket.ts",
+    "convert:mandiri-reference": "tsx ./src/convert-mandiri-non-bh-reference.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "mammoth": "^1.12.0",
+    "tsx": "catalog:"
+  }
+}

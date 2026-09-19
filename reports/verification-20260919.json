@@ -1,0 +1,60 @@
+{
+  "generatedAt": "2026-09-19T16:00:39.527Z",
+  "mode": "quick",
+  "results": [
+    {
+      "id": "unit",
+      "label": "Logika, dokumen, API & regresi",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 7,
+      "counts": {
+        "tests": 273,
+        "pass": 272,
+        "fail": 0,
+        "skipped": 1
+      }
+    },
+    {
+      "id": "routes",
+      "label": "Cakupan rute dan menu",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 2,
+      "counts": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "types",
+      "label": "TypeScript seluruh workspace",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 14,
+      "counts": {}
+    },
+    {
+      "id": "build",
+      "label": "Build produksi kedua aplikasi dan API",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 21,
+      "counts": {}
+    },
+    {
+      "id": "e2e",
+      "label": "Browser: 9 peran, navigasi, desktop & ponsel",
+      "args": [
+        "pnpm",
+        "run",
+        "test:e2e"
+      ],
+      "omit": true,
+      "status": "belum dijalankan",
+      "seconds": 0
+    }
+  ]
+}

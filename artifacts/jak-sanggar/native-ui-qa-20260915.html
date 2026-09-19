@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Uji formulir dokumen sanggar</title><style>body{margin:0;background:#edf2f6;font:15px/1.5 system-ui,sans-serif}#root{max-width:1240px;margin:auto;padding:20px}</style></head><body><div id="root"></div><script type="module">
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import {createTemplatePage} from './public/assets/native-ui-20260915.mjs';
+const profile={id:'qa-sanggar',role:'sanggar',namaSanggar:'Sanggar Uji Budaya',namaKetua:'Ketua Uji',noHp:'080000000000',email:'qa@example.invalid',alamat:'Jalan Contoh Nomor 1',wilayah:'Jakarta Pusat',bentukKedudukan:'mandiri-non-bh',jenisKesenian:['Tari'],tanggalBerdiri:'2020-05-20'};
+let stored={};
+const Page=createTemplatePage(React,null,()=>{const [savedValues,setSavedValues]=React.useState(stored);return {profile,savedValues,save:async(key,values)=>{stored={...stored,[key]:{...values}};setSavedValues(stored)}}});
+createRoot(document.getElementById('root')).render(React.createElement(Page));
+</script></body></html>

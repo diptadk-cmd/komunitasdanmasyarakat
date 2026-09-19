@@ -1,0 +1,758 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+  - name: auth
+  - name: users
+  - name: members
+  - name: uploads
+  - name: settings
+  - name: dokumen-arsip
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: authLogin
+      tags: [auth]
+      summary: Login dengan username + password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Berhasil login
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+        "401":
+          description: Kredensial salah
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /auth/logout:
+    post:
+      operationId: authLogout
+      tags: [auth]
+      summary: Logout sesi aktif
+      responses:
+        "204":
+          description: OK
+
+  /auth/me:
+    get:
+      operationId: authMe
+      tags: [auth]
+      summary: User aktif berdasarkan cookie sesi
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+        "401":
+          description: Belum login
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /auth/register:
+    post:
+      operationId: authRegister
+      tags: [auth]
+      summary: Registrasi mandiri; Mitra wajib memiliki toko offline di peta, NIB maksimal 6 bulan, serta dokumen RT/RW dan kelurahan yang diverifikasi Kurator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterMemberRequest" }
+      responses:
+        "201":
+          description: Created (cookie sesi hanya untuk peran yang tidak memerlukan persetujuan)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "409":
+          description: Username sudah dipakai
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /auth/password-reset/request:
+    post:
+      operationId: requestPasswordReset
+      tags: [auth]
+      summary: Minta OTP pemulihan password melalui email terdaftar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasswordResetRequest" }
+      responses:
+        "202":
+          description: Permintaan diterima tanpa membocorkan apakah email terdaftar
+          content:
+            application/json:
+              schema:
+                { $ref: "#/components/schemas/PasswordResetRequestAccepted" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "429":
+          description: Terlalu banyak permintaan
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+        "503":
+          description: Kanal pengiriman OTP belum tersedia
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /auth/password-reset/verify:
+    post:
+      operationId: verifyPasswordReset
+      tags: [auth]
+      summary: Verifikasi OTP dan terbitkan token reset sekali pakai
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasswordResetVerifyRequest" }
+      responses:
+        "200":
+          description: OTP valid
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PasswordResetVerified" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "429":
+          description: Batas percobaan OTP tercapai
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /auth/password-reset/confirm:
+    post:
+      operationId: confirmPasswordReset
+      tags: [auth]
+      summary: Simpan password baru dan cabut semua sesi lama
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasswordResetConfirmRequest" }
+      responses:
+        "204":
+          description: Password berhasil diubah
+        "400": { $ref: "#/components/responses/BadRequest" }
+
+  /members:
+    get:
+      operationId: listMembers
+      tags: [members]
+      summary: Daftar anggota (pelatih/seniman). Sanggar melihat anggotanya sendiri; kurator/admin semua.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AuthUser" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      operationId: createMember
+      tags: [members]
+      summary: Buat akun anggota langsung (sanggar untuk sanggarnya sendiri, atau kurator)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateMemberRequest" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409":
+          description: Username sudah dipakai
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /members/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string, format: uuid }
+    patch:
+      operationId: updateMember
+      tags: [members]
+      summary: Ubah keanggotaan (status/mutasi/promosi). Sanggar pemilik atau kurator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateMemberRequest" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: Daftar semua user (kurator/admin only)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AuthUser" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Buat user baru (kurator/admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateUserRequest" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409":
+          description: Username sudah dipakai
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /users/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      operationId: getUser
+      tags: [users]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      operationId: updateUser
+      tags: [users]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateUserRequest" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthUser" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      responses:
+        "204": { description: Deleted }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /uploads:
+    post:
+      operationId: createUpload
+      tags: [uploads]
+      summary: Unggah berkas (multipart/form-data, field "file")
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Upload" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "413":
+          description: Berkas terlalu besar
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApiError" }
+
+  /settings:
+    get:
+      operationId: listSettings
+      tags: [settings]
+      summary: Daftar pengaturan global (singleton) yang dibagikan ke semua peran
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Setting" }
+
+  /settings/{key}:
+    parameters:
+      - in: path
+        name: key
+        required: true
+        schema: { type: string }
+    put:
+      operationId: putSetting
+      tags: [settings]
+      summary: Simpan/timpa satu pengaturan global (kurator only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SettingInput" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Setting" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /dokumen-arsip:
+    get:
+      operationId: listDokumenArsip
+      tags: [dokumen-arsip]
+      summary: Daftar arsip dokumen. Sanggar melihat miliknya sendiri; kurator/admin semua.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/DokumenArsip" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /dokumen-arsip/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string }
+    put:
+      operationId: putDokumenArsip
+      tags: [dokumen-arsip]
+      summary: Buat/perbarui satu entri arsip (upsert; id dibuat klien)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DokumenArsipInput" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DokumenArsip" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+    delete:
+      operationId: deleteDokumenArsip
+      tags: [dokumen-arsip]
+      summary: Hapus satu entri arsip
+      responses:
+        "204": { description: Deleted }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /uploads/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      operationId: getUpload
+      tags: [uploads]
+      summary: Metadata + URL unduh berkas (perlu sesi login)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Upload" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  responses:
+    BadRequest:
+      description: Permintaan tidak valid
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+    Unauthorized:
+      description: Belum login
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+    Forbidden:
+      description: Tidak punya akses
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+    NotFound:
+      description: Tidak ditemukan
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ApiError" }
+
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status: { type: string }
+      required: [status]
+
+    ApiError:
+      type: object
+      properties:
+        error: { type: string }
+      required: [error]
+
+    AuthUser:
+      type: object
+      description: User profile (tanpa password hash).
+      properties:
+        id: { type: string, format: uuid }
+        username: { type: string }
+        role:
+          type: string
+          enum:
+            [
+              kurator,
+              admin,
+              juri,
+              sanggar,
+              pelatih,
+              seniman,
+              pengrajin,
+              mitra_pengrajin,
+              sewa,
+            ]
+        status: { type: string }
+        profile:
+          type: object
+          additionalProperties: true
+          description: Field tambahan per peran (mis. namaSanggar, sanggarId, dll)
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+      required: [id, username, role, status, profile, createdAt, updatedAt]
+
+    LoginRequest:
+      type: object
+      properties:
+        username: { type: string, minLength: 1 }
+        password: { type: string, minLength: 1 }
+        expectedRole:
+          type: string
+          enum:
+            [
+              kurator,
+              admin,
+              juri,
+              sanggar,
+              pelatih,
+              seniman,
+              pengrajin,
+              mitra_pengrajin,
+              sewa,
+            ]
+          description: >-
+            Bila diisi, login hanya diterima jika peran akun sama persis.
+            Server menolak SEBELUM membuat sesi/cookie sehingga sesi lama
+            pengguna tidak ikut terganti.
+        tabSession:
+          type: boolean
+          default: false
+          description: >-
+            Khusus pengujian development: kembalikan token sesi untuk disimpan
+            per tab dan jangan membuat cookie sesi bersama.
+      required: [username, password]
+
+    PasswordResetRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        email: { type: string, format: email, minLength: 3, maxLength: 254 }
+      required: [email]
+
+    PasswordResetRequestAccepted:
+      type: object
+      additionalProperties: false
+      properties:
+        requestId: { type: string, format: uuid }
+        devOtp:
+          type: string
+          pattern: "^[0-9]{6}$"
+          description: Hanya dikembalikan pada development saat flag eksplisit aktif.
+      required: [requestId]
+
+    PasswordResetVerifyRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        requestId: { type: string, format: uuid }
+        otp: { type: string, pattern: "^[0-9]{6}$" }
+      required: [requestId, otp]
+
+    PasswordResetVerified:
+      type: object
+      additionalProperties: false
+      properties:
+        resetToken: { type: string, minLength: 64, maxLength: 64 }
+      required: [resetToken]
+
+    PasswordResetConfirmRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        requestId: { type: string, format: uuid }
+        resetToken: { type: string, minLength: 64, maxLength: 64 }
+        newPassword: { type: string, minLength: 8, maxLength: 256 }
+      required: [requestId, resetToken, newPassword]
+
+    CreateUserRequest:
+      type: object
+      properties:
+        username: { type: string, minLength: 3 }
+        password: { type: string, minLength: 8 }
+        role:
+          type: string
+          enum:
+            [
+              kurator,
+              admin,
+              juri,
+              sanggar,
+              pelatih,
+              seniman,
+              pengrajin,
+              mitra_pengrajin,
+              sewa,
+            ]
+        status: { type: string, default: aktif }
+        profile:
+          type: object
+          additionalProperties: true
+      required: [username, password, role]
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        password:
+          type: ["string", "null"]
+          minLength: 8
+        status: { type: string }
+        profile:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+
+    RegisterMemberRequest:
+      type: object
+      description: Registrasi mandiri akun pengguna non-administratif.
+      properties:
+        username: { type: string, minLength: 3 }
+        password: { type: string, minLength: 8 }
+        role:
+          type: string
+          enum:
+            [pelatih, seniman, sanggar, juri, pengrajin, mitra_pengrajin, sewa]
+        profile:
+          type: object
+          additionalProperties: true
+          description: Field keanggotaan (nama, usia, sanggarUsername, status, dll)
+      required: [username, password, role, profile]
+
+    CreateMemberRequest:
+      type: object
+      description: Buat akun anggota langsung oleh sanggar. sanggarUsername dipaksa server = sanggar pemanggil.
+      properties:
+        username: { type: string, minLength: 3 }
+        password: { type: string, minLength: 8 }
+        role:
+          type: string
+          enum: [pelatih, seniman]
+        profile:
+          type: object
+          additionalProperties: true
+      required: [username, password, role, profile]
+
+    UpdateMemberRequest:
+      type: object
+      description: Patch keanggotaan. `profile` digabung (merge) ke profil tersimpan.
+      properties:
+        role:
+          type: string
+          enum: [pelatih, seniman]
+          description: Promosi/demosi peran anggota
+        profile:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+
+    Setting:
+      type: object
+      description: Pengaturan global singleton (key/value JSON).
+      properties:
+        key: { type: string }
+        value:
+          description: Nilai JSON arbitrer (objek, array, atau primitif).
+        updatedAt: { type: string, format: date-time }
+      required: [key, value, updatedAt]
+
+    SettingInput:
+      type: object
+      properties:
+        value:
+          description: Nilai JSON arbitrer yang akan disimpan.
+      required: [value]
+
+    DokumenArsip:
+      type: object
+      description: Entri arsip dokumen administrasi milik satu sanggar.
+      properties:
+        id: { type: string }
+        sanggarUsername: { type: string }
+        templateId: { type: string }
+        judul: { type: string }
+        bentukId: { type: string }
+        nilai:
+          type: object
+          additionalProperties: { type: string }
+        createdAt:
+          {
+            type: number,
+            description: Epoch milidetik (kompatibel store lokal),
+          }
+        updatedAt: { type: number, description: Epoch milidetik }
+      required:
+        [
+          id,
+          sanggarUsername,
+          templateId,
+          judul,
+          bentukId,
+          nilai,
+          createdAt,
+          updatedAt,
+        ]
+
+    DokumenArsipInput:
+      type: object
+      description: >-
+        Isi entri arsip untuk upsert. `sanggarUsername` hanya dihormati untuk
+        kurator/admin; sesi sanggar dipaksa memakai username-nya sendiri.
+      properties:
+        templateId: { type: string, minLength: 1 }
+        judul: { type: string, minLength: 1 }
+        bentukId: { type: string, minLength: 1 }
+        nilai:
+          type: object
+          additionalProperties: { type: string }
+        createdAt: { type: number }
+        updatedAt: { type: number }
+        sanggarUsername: { type: string }
+      required: [templateId, judul, bentukId, nilai, createdAt, updatedAt]
+      additionalProperties: false
+
+    Upload:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        url: { type: string, description: URL unduh berkas }
+        publicUrl:
+          {
+            type: string,
+            description: URL media publik setelah karya diterbitkan,
+          }
+        contentType: { type: string }
+        mediaKind:
+          type: string
+          enum: [audio, video, image, document, other]
+        sizeBytes: { type: integer }
+        originalName:
+          type: ["string", "null"]
+        createdAt: { type: string, format: date-time }
+      required:
+        [id, url, publicUrl, contentType, mediaKind, sizeBytes, createdAt]

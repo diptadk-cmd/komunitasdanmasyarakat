@@ -1,0 +1,32 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
+  "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": ".tsbuildinfo",
+    "noEmit": true,
+    "jsx": "preserve",
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "types": ["node", "vite/client"],
+    "paths": {
+      "@/components/communications/*": ["../jak-sanggar/src/components/communications/*"],
+      "@/lib/communications": ["../jak-sanggar/src/lib/communications.ts"],
+      "@/*": ["./src/*"],
+      "@sanggar-doc-layout": ["../jak-sanggar/src/lib/dokumen-template-layout.ts"],
+      "@sanggar-doc-export": ["../jak-sanggar/src/lib/dokumen-export.ts"],
+      "@sanggar-paged-preview": ["../jak-sanggar/src/components/dokumen/PagedDocumentPreview.tsx"]
+    }
+  },
+  "references": [
+    {
+      "path": "../../lib/api-client-react"
+    },
+    {
+      "path": "../../lib/jaksanggar-core"
+    }
+  ]
+}

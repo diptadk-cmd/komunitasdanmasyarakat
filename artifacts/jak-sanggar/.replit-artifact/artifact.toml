@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Jak Sanggar"
+version = "1.0.0"
+id = "artifacts/jak-sanggar"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24228
+
+[services.development]
+run = "pnpm --filter @workspace/jak-sanggar run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/jak-sanggar", "run", "build" ]
+publicDir = "artifacts/jak-sanggar/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24228"
+BASE_PATH = "/"

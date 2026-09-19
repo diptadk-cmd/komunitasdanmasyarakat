@@ -1,0 +1,4249 @@
+{
+  "schemaVersion": 1,
+  "method": "AST TypeScript dari kode produksi; pencocokan matchRoute Wouter dan parser regexparam terpasang; tanpa server, browser, atau eksekusi transaksi.",
+  "limitations": [
+    "Rute yang cocok belum membuktikan halaman berhasil dimuat atau proses bisnis berhasil.",
+    "Tautan dinamis belum dievaluasi; nilainya dapat bergantung pada data, peran, dan server.",
+    "Guard autentikasi/otorisasi belum dijalankan oleh tes statis ini.",
+    "Fallback NotFound tidak dihitung sebagai rute valid.",
+    "Skema http/https/mailto/tel/data/blob dan URL // diinventaris sebagai pengecualian jaringan, bukan lulus fungsi.",
+    "Inventaris seluruh src mencakup komponen yang mungkin tidak lagi dijangkau dari App."
+  ],
+  "roles": [
+    {
+      "role": "kurator",
+      "label": "Kurator",
+      "api": "Sesi dan pembatasan akses; akun/blokir; kurasi; penugasan juri; dokumen; data, berita, tampilan, waktu, rekapan",
+      "device": "Ekspor/cetak dokumen, unggah media, panggilan audio/video"
+    },
+    {
+      "role": "admin",
+      "label": "Admin",
+      "api": "Hak kelola berita, banner, slider, info budaya; publikasi tampil di akun lain",
+      "device": "Unggah gambar/video dan tampilan responsif"
+    },
+    {
+      "role": "sanggar",
+      "label": "Sanggar",
+      "api": "Profil; keanggotaan; jadwal/absensi; kas/iuran/honor; kurasi; aset; kerja sama; pesanan sewa; dokumen",
+      "device": "Dokumen PDF/DOCX, geolokasi, unggah, PWA, panggilan"
+    },
+    {
+      "role": "pelatih",
+      "label": "Pelatih",
+      "api": "Daftar latih; profil; honor/slip; penugasan; kelas privat; sertifikat",
+      "device": "Unggah bukti, unduh/cetak slip dan sertifikat, panggilan"
+    },
+    {
+      "role": "seniman",
+      "label": "Seniman",
+      "api": "Profil; absensi; tagihan/iuran; honor; penugasan; riwayat; sertifikat",
+      "device": "Kamera/geolokasi absensi jika dipakai, unggah bukti, unduh, panggilan"
+    },
+    {
+      "role": "juri",
+      "label": "Juri",
+      "api": "Sanggar yang ditugaskan; simpan skor; finalisasi; batas akses penilaian",
+      "device": "Baca lampiran, cetak laporan, panggilan"
+    },
+    {
+      "role": "pengrajin",
+      "label": "Pengrajin",
+      "api": "Produk/stok/harga; pesanan; ongkir; verifikasi bayar; pengiriman; kanal dan kerja sama",
+      "device": "Foto produk, dokumen transaksi/tanda tangan, notifikasi, panggilan"
+    },
+    {
+      "role": "mitra_pengrajin",
+      "label": "Mitra pengrajin",
+      "api": "Verifikasi toko dan pembatasan katalog; katalog/pesanan; kerja sama; layanan; pembayaran/penerimaan",
+      "device": "Geolokasi toko, unggah NIB/surat, dokumen, panggilan"
+    },
+    {
+      "role": "sewa",
+      "label": "Konsumen",
+      "api": "Katalog lintas kategori; pesanan sewa; persetujuan; kontrak; pembayaran; status transaksi",
+      "device": "Tanda tangan, unggah bukti, PDF/DOCX, panggilan"
+    }
+  ],
+  "applications": [
+    {
+      "id": "jak-sanggar",
+      "base": "/",
+      "routes": [
+        {
+          "pattern": "/",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 701,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/lupa-password",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 702,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 703,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar/sanggar",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 704,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar/pelatih",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 705,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar/seniman",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 706,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar/konsumen",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 707,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar/sewa",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 708,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar/pengrajin",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 711,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar/mitra",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 712,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/daftar/mitra-pengrajin",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 713,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/syarat-ketentuan",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 716,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/kebijakan-privasi",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 717,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/toko/pengrajin/:id",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 718,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/rekapan",
+          "roles": [
+            "admin",
+            "juri",
+            "mitra_pengrajin",
+            "pelatih",
+            "pengrajin",
+            "sanggar",
+            "seniman",
+            "sewa"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 720,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pesan",
+          "roles": [
+            "admin",
+            "juri",
+            "mitra_pengrajin",
+            "pelatih",
+            "pengrajin",
+            "sanggar",
+            "seniman",
+            "sewa"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 730,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/layanan/pesanan/:id",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 734,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/layanan/pesanan",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 745,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/layanan/item/:id",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 756,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/layanan/:kategori",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 767,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/layanan",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 778,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/katalog",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 789,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/kerjasama",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 800,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/paket",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 811,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/pesanan",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 814,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra/profil",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 825,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra",
+          "roles": [
+            "mitra_pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 834,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/mitra-pengrajin/*?",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 846,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pengrajin/pesanan-produk",
+          "roles": [
+            "pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 850,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pengrajin/toko-peta",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 860,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pengrajin/produk",
+          "roles": [
+            "pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 863,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pengrajin/kanal",
+          "roles": [
+            "pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 872,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pengrajin/dokumen",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 881,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pengrajin",
+          "roles": [
+            "pengrajin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 885,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 895,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/pusat-kendali",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 904,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/profil",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 913,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/karya",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 922,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/dokumen",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 931,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/keanggotaan",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 940,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/rapor-apresiasi",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 949,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/regenerasi",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 958,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/latihan",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 967,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/pembinaan",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 976,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/kurasi",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 985,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/aset",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 994,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/sarpras",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1003,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/kerjasama",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1012,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/kerjasama/permintaan",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1021,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/kerjasama/:id",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1030,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/permintaan-sewa",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1039,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/permintaan-sewa/:id",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1048,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sanggar/buku-kas",
+          "roles": [
+            "sanggar"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1057,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1067,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/daftar-latih",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1076,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/profil",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1085,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/absen",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1094,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/honor",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1103,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/slip",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1112,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/honor-proyek",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1121,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/permintaan-sdm",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1130,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/penugasan-sewa",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1139,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/penugasan-sewa/:id",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1148,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/kelas-privat/:id",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1157,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/kelas-privat",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1166,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pelatih/sertifikat",
+          "roles": [
+            "pelatih"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1175,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1185,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/profil",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1194,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/absen",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1203,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/keuangan",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1212,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/tagihan",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1219,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/honor-komersial",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1228,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/riwayat",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1237,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/permintaan-sdm",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1246,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/penugasan-sewa",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1255,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/penugasan-sewa/:id",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1264,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/seniman/sertifikat",
+          "roles": [
+            "seniman"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1273,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/juri",
+          "roles": [
+            "juri"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1283,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/juri/profil",
+          "roles": [
+            "juri"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1292,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/juri/:id",
+          "roles": [
+            "juri"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1301,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/admin",
+          "roles": [
+            "admin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1311,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/admin/berita",
+          "roles": [
+            "admin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1320,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/admin/banner",
+          "roles": [
+            "admin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1329,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/admin/slider",
+          "roles": [
+            "admin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1338,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/admin/info-budaya",
+          "roles": [
+            "admin"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1347,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/kurator/*?",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1358,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/konsumen/pesanan/:id",
+          "roles": [
+            "sewa"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1365,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/konsumen/pesanan",
+          "roles": [
+            "sewa"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1374,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/konsumen/item/:id",
+          "roles": [
+            "sewa"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1383,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/konsumen/katalog/:kategori",
+          "roles": [
+            "sewa"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1392,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/konsumen",
+          "roles": [
+            "sewa"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1401,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/sewa/*?",
+          "roles": [
+            "publik"
+          ],
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1411,
+          "parameterized": true,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        }
+      ],
+      "unresolvedRoutes": [],
+      "navigation": [
+        {
+          "role": "sanggar",
+          "label": "Beranda",
+          "href": "/sanggar",
+          "route": "/sanggar"
+        },
+        {
+          "role": "sanggar",
+          "label": "Pusat Kendali AI",
+          "href": "/sanggar/pusat-kendali",
+          "route": "/sanggar/pusat-kendali"
+        },
+        {
+          "role": "sanggar",
+          "label": "Profil Sanggar",
+          "href": "/sanggar/profil",
+          "route": "/sanggar/profil"
+        },
+        {
+          "role": "sanggar",
+          "label": "Publikasi Karya",
+          "href": "/sanggar/karya",
+          "route": "/sanggar/karya"
+        },
+        {
+          "role": "sanggar",
+          "label": "Keanggotaan",
+          "href": "/sanggar/keanggotaan",
+          "route": "/sanggar/keanggotaan"
+        },
+        {
+          "role": "sanggar",
+          "label": "Rapor & Apresiasi",
+          "href": "/sanggar/rapor-apresiasi",
+          "parent": "Keanggotaan",
+          "route": "/sanggar/rapor-apresiasi"
+        },
+        {
+          "role": "sanggar",
+          "label": "Regenerasi",
+          "href": "/sanggar/regenerasi",
+          "parent": "Keanggotaan",
+          "route": "/sanggar/regenerasi"
+        },
+        {
+          "role": "sanggar",
+          "label": "Latihan",
+          "href": "/sanggar/latihan",
+          "route": "/sanggar/latihan"
+        },
+        {
+          "role": "sanggar",
+          "label": "Pembinaan",
+          "href": "/sanggar/pembinaan",
+          "route": "/sanggar/pembinaan"
+        },
+        {
+          "role": "sanggar",
+          "label": "Kurasi Sanggar",
+          "href": "/sanggar/kurasi",
+          "parent": "Pembinaan",
+          "route": "/sanggar/kurasi"
+        },
+        {
+          "role": "sanggar",
+          "label": "Aset & Sarana",
+          "href": "/sanggar/aset",
+          "route": "/sanggar/aset"
+        },
+        {
+          "role": "sanggar",
+          "label": "Sarana & Prasarana",
+          "href": "/sanggar/sarpras",
+          "parent": "Aset & Sarana",
+          "route": "/sanggar/sarpras"
+        },
+        {
+          "role": "sanggar",
+          "label": "Kerjasama",
+          "href": "/sanggar/kerjasama",
+          "route": "/sanggar/kerjasama"
+        },
+        {
+          "role": "sanggar",
+          "label": "Permintaan",
+          "href": "/sanggar/kerjasama/permintaan",
+          "parent": "Kerjasama",
+          "route": "/sanggar/kerjasama/permintaan"
+        },
+        {
+          "role": "sanggar",
+          "label": "Permintaan Layanan Masuk",
+          "href": "/sanggar/permintaan-sewa",
+          "route": "/sanggar/permintaan-sewa"
+        },
+        {
+          "role": "sanggar",
+          "label": "Buku Kas",
+          "href": "/sanggar/buku-kas",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "role": "sanggar",
+          "label": "Tools Dokumen",
+          "href": "/sanggar/dokumen",
+          "route": "/sanggar/dokumen"
+        },
+        {
+          "role": "sanggar",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "sanggar",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        },
+        {
+          "role": "pelatih",
+          "label": "Beranda",
+          "href": "/pelatih",
+          "route": "/pelatih"
+        },
+        {
+          "role": "pelatih",
+          "label": "Profil Saya",
+          "href": "/pelatih/profil",
+          "route": "/pelatih/profil"
+        },
+        {
+          "role": "pelatih",
+          "label": "Daftar Latih",
+          "href": "/pelatih/daftar-latih",
+          "route": "/pelatih/daftar-latih"
+        },
+        {
+          "role": "pelatih",
+          "label": "Pengajuan Honor",
+          "href": "/pelatih/honor",
+          "route": "/pelatih/honor"
+        },
+        {
+          "role": "pelatih",
+          "label": "Arsip E-Slip",
+          "href": "/pelatih/slip",
+          "route": "/pelatih/slip"
+        },
+        {
+          "role": "pelatih",
+          "label": "Dana Proyek",
+          "href": "/pelatih/honor-proyek",
+          "route": "/pelatih/honor-proyek"
+        },
+        {
+          "role": "pelatih",
+          "label": "Permintaan SDM",
+          "href": "/pelatih/permintaan-sdm",
+          "route": "/pelatih/permintaan-sdm"
+        },
+        {
+          "role": "pelatih",
+          "label": "Penugasan Sewa",
+          "href": "/pelatih/penugasan-sewa",
+          "route": "/pelatih/penugasan-sewa"
+        },
+        {
+          "role": "pelatih",
+          "label": "Pesanan Kelas Privat",
+          "href": "/pelatih/kelas-privat",
+          "route": "/pelatih/kelas-privat"
+        },
+        {
+          "role": "pelatih",
+          "label": "Sertifikat & Penghargaan",
+          "href": "/pelatih/sertifikat",
+          "route": "/pelatih/sertifikat"
+        },
+        {
+          "role": "pelatih",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "pelatih",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        },
+        {
+          "role": "seniman",
+          "label": "Beranda",
+          "href": "/seniman",
+          "route": "/seniman"
+        },
+        {
+          "role": "seniman",
+          "label": "Profil Saya",
+          "href": "/seniman/profil",
+          "route": "/seniman/profil"
+        },
+        {
+          "role": "seniman",
+          "label": "Absen Latihan",
+          "href": "/seniman/absen",
+          "route": "/seniman/absen"
+        },
+        {
+          "role": "seniman",
+          "label": "Keuangan",
+          "href": "/seniman/keuangan",
+          "route": "/seniman/keuangan"
+        },
+        {
+          "role": "seniman",
+          "label": "Tagihan Saya",
+          "href": "/seniman/tagihan",
+          "parent": "Keuangan",
+          "route": "/seniman/tagihan"
+        },
+        {
+          "role": "seniman",
+          "label": "Dana Proyek Seni",
+          "href": "/seniman/honor-komersial",
+          "parent": "Keuangan",
+          "route": "/seniman/honor-komersial"
+        },
+        {
+          "role": "seniman",
+          "label": "Permintaan SDM",
+          "href": "/seniman/permintaan-sdm",
+          "route": "/seniman/permintaan-sdm"
+        },
+        {
+          "role": "seniman",
+          "label": "Penugasan Sewa",
+          "href": "/seniman/penugasan-sewa",
+          "route": "/seniman/penugasan-sewa"
+        },
+        {
+          "role": "seniman",
+          "label": "Riwayat",
+          "href": "/seniman/riwayat",
+          "route": "/seniman/riwayat"
+        },
+        {
+          "role": "seniman",
+          "label": "Sertifikat & Penghargaan",
+          "href": "/seniman/sertifikat",
+          "route": "/seniman/sertifikat"
+        },
+        {
+          "role": "seniman",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "seniman",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        },
+        {
+          "role": "juri",
+          "label": "Tugas Penilaian",
+          "href": "/juri",
+          "route": "/juri"
+        },
+        {
+          "role": "juri",
+          "label": "Profil Saya",
+          "href": "/juri/profil",
+          "route": "/juri/profil"
+        },
+        {
+          "role": "juri",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "juri",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        },
+        {
+          "role": "admin",
+          "label": "Beranda",
+          "href": "/admin",
+          "route": "/admin"
+        },
+        {
+          "role": "admin",
+          "label": "Konten",
+          "href": "/admin/berita",
+          "route": "/admin/berita"
+        },
+        {
+          "role": "admin",
+          "label": "Banner",
+          "href": "/admin/banner",
+          "parent": "Konten",
+          "route": "/admin/banner"
+        },
+        {
+          "role": "admin",
+          "label": "Slider",
+          "href": "/admin/slider",
+          "parent": "Konten",
+          "route": "/admin/slider"
+        },
+        {
+          "role": "admin",
+          "label": "Informasi Kebudayaan",
+          "href": "/admin/info-budaya",
+          "parent": "Konten",
+          "route": "/admin/info-budaya"
+        },
+        {
+          "role": "admin",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "admin",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        },
+        {
+          "role": "sewa",
+          "label": "Beranda Konsumen",
+          "href": "/konsumen",
+          "route": "/konsumen"
+        },
+        {
+          "role": "sewa",
+          "label": "Sanggar",
+          "href": "/konsumen/katalog/sanggar",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "role": "sewa",
+          "label": "SDM",
+          "href": "/konsumen/katalog/sdm",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "role": "sewa",
+          "label": "Perlengkapan",
+          "href": "/konsumen/katalog/perlengkapan",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "role": "sewa",
+          "label": "Kostum",
+          "href": "/konsumen/katalog/kostum",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "role": "sewa",
+          "label": "Tempat Latihan",
+          "href": "/konsumen/katalog/tempat",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "role": "sewa",
+          "label": "Kerajinan & Jasa",
+          "href": "/konsumen/katalog/kerajinan",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "role": "sewa",
+          "label": "Pesanan Saya",
+          "href": "/konsumen/pesanan",
+          "route": "/konsumen/pesanan"
+        },
+        {
+          "role": "sewa",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "sewa",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        },
+        {
+          "role": "pengrajin",
+          "label": "Profil Toko",
+          "href": "/pengrajin",
+          "route": "/pengrajin"
+        },
+        {
+          "role": "pengrajin",
+          "label": "Produk Khas Jakarta",
+          "href": "/pengrajin/produk",
+          "route": "/pengrajin/produk"
+        },
+        {
+          "role": "pengrajin",
+          "label": "Order & Dokumen Transaksi",
+          "href": "/pengrajin/pesanan-produk",
+          "route": "/pengrajin/pesanan-produk"
+        },
+        {
+          "role": "pengrajin",
+          "label": "Layanan & Kerja Sama",
+          "href": "/pengrajin/kanal",
+          "route": "/pengrajin/kanal"
+        },
+        {
+          "role": "pengrajin",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "pengrajin",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Profil & Marketplace",
+          "href": "/mitra/profil",
+          "route": "/mitra/profil"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Ringkasan Mitra",
+          "href": "/mitra",
+          "route": "/mitra"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Katalog Pengrajin",
+          "href": "/mitra/katalog",
+          "route": "/mitra/katalog"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Sanggar & Layanan",
+          "href": "/mitra/layanan",
+          "route": "/mitra/layanan"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Kerja Sama Masuk",
+          "href": "/mitra/kerjasama",
+          "route": "/mitra/kerjasama"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Pesanan & Dokumen Transaksi",
+          "href": "/mitra/pesanan",
+          "route": "/mitra/pesanan"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Pesanan Layanan",
+          "href": "/mitra/layanan/pesanan",
+          "route": "/mitra/layanan/pesanan"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "mitra_pengrajin",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        }
+      ],
+      "links": [
+        {
+          "target": "/",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 211,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/sanggar",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 249,
+          "result": "route-matched",
+          "route": "/sanggar"
+        },
+        {
+          "target": "/sanggar/pusat-kendali",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 254,
+          "result": "route-matched",
+          "route": "/sanggar/pusat-kendali"
+        },
+        {
+          "target": "/sanggar/profil",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 259,
+          "result": "route-matched",
+          "route": "/sanggar/profil"
+        },
+        {
+          "target": "/sanggar/karya",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 264,
+          "result": "route-matched",
+          "route": "/sanggar/karya"
+        },
+        {
+          "target": "/sanggar/keanggotaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 269,
+          "result": "route-matched",
+          "route": "/sanggar/keanggotaan"
+        },
+        {
+          "target": "/sanggar/rapor-apresiasi",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 274,
+          "result": "route-matched",
+          "route": "/sanggar/rapor-apresiasi"
+        },
+        {
+          "target": "/sanggar/regenerasi",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 279,
+          "result": "route-matched",
+          "route": "/sanggar/regenerasi"
+        },
+        {
+          "target": "/sanggar/latihan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 286,
+          "result": "route-matched",
+          "route": "/sanggar/latihan"
+        },
+        {
+          "target": "/sanggar/pembinaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 291,
+          "result": "route-matched",
+          "route": "/sanggar/pembinaan"
+        },
+        {
+          "target": "/sanggar/kurasi",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 296,
+          "result": "route-matched",
+          "route": "/sanggar/kurasi"
+        },
+        {
+          "target": "/sanggar/aset",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 303,
+          "result": "route-matched",
+          "route": "/sanggar/aset"
+        },
+        {
+          "target": "/sanggar/sarpras",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 308,
+          "result": "route-matched",
+          "route": "/sanggar/sarpras"
+        },
+        {
+          "target": "/sanggar/kerjasama",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 315,
+          "result": "route-matched",
+          "route": "/sanggar/kerjasama"
+        },
+        {
+          "target": "/sanggar/kerjasama/permintaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 320,
+          "result": "route-matched",
+          "route": "/sanggar/kerjasama/permintaan"
+        },
+        {
+          "target": "/sanggar/permintaan-sewa",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 327,
+          "result": "route-matched",
+          "route": "/sanggar/permintaan-sewa"
+        },
+        {
+          "target": "/sanggar/buku-kas",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 332,
+          "result": "route-matched",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "target": "/sanggar/dokumen",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 337,
+          "result": "route-matched",
+          "route": "/sanggar/dokumen"
+        },
+        {
+          "target": "/pelatih",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 344,
+          "result": "route-matched",
+          "route": "/pelatih"
+        },
+        {
+          "target": "/pelatih/profil",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 349,
+          "result": "route-matched",
+          "route": "/pelatih/profil"
+        },
+        {
+          "target": "/pelatih/daftar-latih",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 354,
+          "result": "route-matched",
+          "route": "/pelatih/daftar-latih"
+        },
+        {
+          "target": "/pelatih/honor",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 359,
+          "result": "route-matched",
+          "route": "/pelatih/honor"
+        },
+        {
+          "target": "/pelatih/slip",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 364,
+          "result": "route-matched",
+          "route": "/pelatih/slip"
+        },
+        {
+          "target": "/pelatih/honor-proyek",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 369,
+          "result": "route-matched",
+          "route": "/pelatih/honor-proyek"
+        },
+        {
+          "target": "/pelatih/permintaan-sdm",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 374,
+          "result": "route-matched",
+          "route": "/pelatih/permintaan-sdm"
+        },
+        {
+          "target": "/pelatih/penugasan-sewa",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 379,
+          "result": "route-matched",
+          "route": "/pelatih/penugasan-sewa"
+        },
+        {
+          "target": "/pelatih/kelas-privat",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 384,
+          "result": "route-matched",
+          "route": "/pelatih/kelas-privat"
+        },
+        {
+          "target": "/pelatih/sertifikat",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 389,
+          "result": "route-matched",
+          "route": "/pelatih/sertifikat"
+        },
+        {
+          "target": "/seniman",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 396,
+          "result": "route-matched",
+          "route": "/seniman"
+        },
+        {
+          "target": "/seniman/profil",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 401,
+          "result": "route-matched",
+          "route": "/seniman/profil"
+        },
+        {
+          "target": "/seniman/absen",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 406,
+          "result": "route-matched",
+          "route": "/seniman/absen"
+        },
+        {
+          "target": "/seniman/keuangan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 411,
+          "result": "route-matched",
+          "route": "/seniman/keuangan"
+        },
+        {
+          "target": "/seniman/tagihan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 416,
+          "result": "route-matched",
+          "route": "/seniman/tagihan"
+        },
+        {
+          "target": "/seniman/honor-komersial",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 421,
+          "result": "route-matched",
+          "route": "/seniman/honor-komersial"
+        },
+        {
+          "target": "/seniman/permintaan-sdm",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 428,
+          "result": "route-matched",
+          "route": "/seniman/permintaan-sdm"
+        },
+        {
+          "target": "/seniman/penugasan-sewa",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 433,
+          "result": "route-matched",
+          "route": "/seniman/penugasan-sewa"
+        },
+        {
+          "target": "/seniman/riwayat",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 438,
+          "result": "route-matched",
+          "route": "/seniman/riwayat"
+        },
+        {
+          "target": "/seniman/sertifikat",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 443,
+          "result": "route-matched",
+          "route": "/seniman/sertifikat"
+        },
+        {
+          "target": "/juri",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 450,
+          "result": "route-matched",
+          "route": "/juri"
+        },
+        {
+          "target": "/juri/profil",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 455,
+          "result": "route-matched",
+          "route": "/juri/profil"
+        },
+        {
+          "target": "/admin",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 462,
+          "result": "route-matched",
+          "route": "/admin"
+        },
+        {
+          "target": "/admin/berita",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 467,
+          "result": "route-matched",
+          "route": "/admin/berita"
+        },
+        {
+          "target": "/admin/banner",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 472,
+          "result": "route-matched",
+          "route": "/admin/banner"
+        },
+        {
+          "target": "/admin/slider",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 477,
+          "result": "route-matched",
+          "route": "/admin/slider"
+        },
+        {
+          "target": "/admin/info-budaya",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 482,
+          "result": "route-matched",
+          "route": "/admin/info-budaya"
+        },
+        {
+          "target": "/konsumen",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 491,
+          "result": "route-matched",
+          "route": "/konsumen"
+        },
+        {
+          "target": "/konsumen/katalog/sanggar",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 496,
+          "result": "route-matched",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "target": "/konsumen/katalog/sdm",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 501,
+          "result": "route-matched",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "target": "/konsumen/katalog/perlengkapan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 506,
+          "result": "route-matched",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "target": "/konsumen/katalog/kostum",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 511,
+          "result": "route-matched",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "target": "/konsumen/katalog/tempat",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 516,
+          "result": "route-matched",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "target": "/konsumen/katalog/kerajinan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 521,
+          "result": "route-matched",
+          "route": "/konsumen/katalog/:kategori"
+        },
+        {
+          "target": "/konsumen/pesanan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 526,
+          "result": "route-matched",
+          "route": "/konsumen/pesanan"
+        },
+        {
+          "target": "/pengrajin",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 533,
+          "result": "route-matched",
+          "route": "/pengrajin"
+        },
+        {
+          "target": "/pengrajin/produk",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 538,
+          "result": "route-matched",
+          "route": "/pengrajin/produk"
+        },
+        {
+          "target": "/pengrajin/pesanan-produk",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 543,
+          "result": "route-matched",
+          "route": "/pengrajin/pesanan-produk"
+        },
+        {
+          "target": "/pengrajin/kanal",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 548,
+          "result": "route-matched",
+          "route": "/pengrajin/kanal"
+        },
+        {
+          "target": "/mitra/profil",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 555,
+          "result": "route-matched",
+          "route": "/mitra/profil"
+        },
+        {
+          "target": "/mitra",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 560,
+          "result": "route-matched",
+          "route": "/mitra"
+        },
+        {
+          "target": "/mitra/katalog",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 565,
+          "result": "route-matched",
+          "route": "/mitra/katalog"
+        },
+        {
+          "target": "/mitra/layanan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 570,
+          "result": "route-matched",
+          "route": "/mitra/layanan"
+        },
+        {
+          "target": "/mitra/kerjasama",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 575,
+          "result": "route-matched",
+          "route": "/mitra/kerjasama"
+        },
+        {
+          "target": "/mitra/pesanan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 580,
+          "result": "route-matched",
+          "route": "/mitra/pesanan"
+        },
+        {
+          "target": "/mitra/layanan/pesanan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 585,
+          "result": "route-matched",
+          "route": "/mitra/layanan/pesanan"
+        },
+        {
+          "target": "/rekapan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 592,
+          "result": "route-matched",
+          "route": "/rekapan"
+        },
+        {
+          "target": "/pesan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 605,
+          "result": "route-matched",
+          "route": "/pesan"
+        },
+        {
+          "target": "/mitra/profil",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 637,
+          "result": "route-matched",
+          "route": "/mitra/profil"
+        },
+        {
+          "target": "/daftar/konsumen",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 709,
+          "result": "route-matched",
+          "route": "/daftar/konsumen"
+        },
+        {
+          "target": "/daftar/mitra",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 714,
+          "result": "route-matched",
+          "route": "/daftar/mitra"
+        },
+        {
+          "target": "/mitra/katalog",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 812,
+          "result": "route-matched",
+          "route": "/mitra/katalog"
+        },
+        {
+          "target": "/pengrajin",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 861,
+          "result": "route-matched",
+          "route": "/pengrajin"
+        },
+        {
+          "target": "/pengrajin",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 882,
+          "result": "route-matched",
+          "route": "/pengrajin"
+        },
+        {
+          "target": "/seniman/tagihan",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1215,
+          "result": "route-matched",
+          "route": "/seniman/tagihan"
+        },
+        {
+          "target": "/pesan",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/communications/CommunicationAccess.tsx",
+          "line": 42,
+          "result": "route-matched",
+          "route": "/pesan"
+        },
+        {
+          "target": "#dashboard-main",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/layout/AppShell.tsx",
+          "line": 492,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "/",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/components/layout/AppShell.tsx",
+          "line": 761,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/components/layout/BackButton.tsx",
+          "line": 11,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "mailto:pengaduan@komunitasdanmasyarakat.com",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/legal/RegistrationAgreementContent.tsx",
+          "line": 179,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://wa.me/628138882691",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/legal/RegistrationAgreementContent.tsx",
+          "line": 187,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "/mitra/pesanan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/components/system/TransactionAlert.tsx",
+          "line": 28,
+          "result": "route-matched",
+          "route": "/mitra/pesanan"
+        },
+        {
+          "target": "/mitra/pesanan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/components/system/TransactionAlert.tsx",
+          "line": 36,
+          "result": "route-matched",
+          "route": "/mitra/pesanan"
+        },
+        {
+          "target": "/pengrajin/pesanan-produk",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/components/system/TransactionAlert.tsx",
+          "line": 50,
+          "result": "route-matched",
+          "route": "/pengrajin/pesanan-produk"
+        },
+        {
+          "target": "/pengrajin/pesanan-produk",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/components/system/TransactionAlert.tsx",
+          "line": 58,
+          "result": "route-matched",
+          "route": "/pengrajin/pesanan-produk"
+        },
+        {
+          "target": "/pengrajin/pesanan-produk",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/components/system/TransactionAlert.tsx",
+          "line": 66,
+          "result": "route-matched",
+          "route": "/pengrajin/pesanan-produk"
+        },
+        {
+          "target": "/sanggar/keanggotaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 18,
+          "result": "route-matched",
+          "route": "/sanggar/keanggotaan"
+        },
+        {
+          "target": "/sanggar/buku-kas",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 19,
+          "result": "route-matched",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "target": "/sanggar/permintaan-sewa",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 20,
+          "result": "route-matched",
+          "route": "/sanggar/permintaan-sewa"
+        },
+        {
+          "target": "/pelatih/penugasan-sewa",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 26,
+          "result": "route-matched",
+          "route": "/pelatih/penugasan-sewa"
+        },
+        {
+          "target": "/pelatih/honor",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 27,
+          "result": "route-matched",
+          "route": "/pelatih/honor"
+        },
+        {
+          "target": "/seniman/penugasan-sewa",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 31,
+          "result": "route-matched",
+          "route": "/seniman/penugasan-sewa"
+        },
+        {
+          "target": "/seniman/tagihan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 32,
+          "result": "route-matched",
+          "route": "/seniman/tagihan"
+        },
+        {
+          "target": "/juri",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 36,
+          "result": "route-matched",
+          "route": "/juri"
+        },
+        {
+          "target": "/pengrajin/pesanan-produk",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 57,
+          "result": "route-matched",
+          "route": "/pengrajin/pesanan-produk"
+        },
+        {
+          "target": "/mitra/pesanan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 73,
+          "result": "route-matched",
+          "route": "/mitra/pesanan"
+        },
+        {
+          "target": "/admin/banner",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 78,
+          "result": "route-matched",
+          "route": "/admin/banner"
+        },
+        {
+          "target": "/",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/ForgotPassword.tsx",
+          "line": 127,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/ForgotPassword.tsx",
+          "line": 232,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "https://ahu.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 48,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://oss.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 54,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://coretaxdjp.pajak.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 60,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://www.bpjsketenagakerjaan.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 66,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://dinaskebudayaan.jakarta.go.id/",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 72,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://bakesbangpol.jakarta.go.id/",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 78,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://www.bankdki.co.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 85,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://jakevo.jakarta.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 91,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 395,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/lupa-password",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 445,
+          "result": "route-matched",
+          "route": "/lupa-password"
+        },
+        {
+          "target": "/lupa-password",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 526,
+          "result": "route-matched",
+          "route": "/lupa-password"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 538,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "https://ahu.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 92,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://oss.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 93,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://coretaxdjp.pajak.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 96,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://www.bpjsketenagakerjaan.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 101,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://dinaskebudayaan.jakarta.go.id/",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 106,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://bakesbangpol.jakarta.go.id/",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 109,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://www.bankdki.co.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 112,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "https://jakevo.jakarta.go.id",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 115,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "/lupa-password",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1170,
+          "result": "route-matched",
+          "route": "/lupa-password"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1251,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "#masuk",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1289,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "#direktori-sanggar",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1293,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "/daftar",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1299,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "#berita",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1305,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "#berita",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1312,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "#media",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1319,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "#berita",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1325,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "#bantuan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1329,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "#berita",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1333,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "/lupa-password",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1973,
+          "result": "route-matched",
+          "route": "/lupa-password"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1985,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/daftar/sanggar",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterChoice.tsx",
+          "line": 21,
+          "result": "route-matched",
+          "route": "/daftar/sanggar"
+        },
+        {
+          "target": "/daftar/pelatih",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterChoice.tsx",
+          "line": 29,
+          "result": "route-matched",
+          "route": "/daftar/pelatih"
+        },
+        {
+          "target": "/daftar/seniman",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterChoice.tsx",
+          "line": 36,
+          "result": "route-matched",
+          "route": "/daftar/seniman"
+        },
+        {
+          "target": "/daftar/pengrajin",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterChoice.tsx",
+          "line": 43,
+          "result": "route-matched",
+          "route": "/daftar/pengrajin"
+        },
+        {
+          "target": "/daftar/mitra",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterChoice.tsx",
+          "line": 51,
+          "result": "route-matched",
+          "route": "/daftar/mitra"
+        },
+        {
+          "target": "/daftar/konsumen",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterChoice.tsx",
+          "line": 59,
+          "result": "route-matched",
+          "route": "/daftar/konsumen"
+        },
+        {
+          "target": "/",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterChoice.tsx",
+          "line": 84,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/syarat-ketentuan",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 167,
+          "result": "route-matched",
+          "route": "/syarat-ketentuan"
+        },
+        {
+          "target": "/kebijakan-privasi",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 175,
+          "result": "route-matched",
+          "route": "/kebijakan-privasi"
+        },
+        {
+          "target": "/sanggar",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 420,
+          "result": "route-matched",
+          "route": "/sanggar"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 438,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 642,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/juri",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 778,
+          "result": "route-matched",
+          "route": "/juri"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 795,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 914,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 1089,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 1108,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 1374,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/konsumen",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 1496,
+          "result": "route-matched",
+          "route": "/konsumen"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 1513,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 1626,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/pengrajin",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 1892,
+          "result": "route-matched",
+          "route": "/pengrajin"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 1911,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 2319,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/mitra/profil",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 2623,
+          "result": "route-matched",
+          "route": "/mitra/profil"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 2642,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterForms.tsx",
+          "line": 2988,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "/juri",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/juri/JuriPages.tsx",
+          "line": 427,
+          "result": "route-matched",
+          "route": "/juri"
+        },
+        {
+          "target": "/daftar",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/pages/legal/LegalPages.tsx",
+          "line": 20,
+          "result": "route-matched",
+          "route": "/daftar"
+        },
+        {
+          "target": "mailto:pengaduan@komunitasdanmasyarakat.com",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/legal/LegalPages.tsx",
+          "line": 69,
+          "result": "external-or-browser-resource",
+          "reason": "Skema eksternal diizinkan untuk inventaris; jaringan/ketersediaan tidak diuji."
+        },
+        {
+          "target": "/pengrajin/pesanan-produk",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/KerjasamaMitra.tsx",
+          "line": 430,
+          "result": "route-matched",
+          "route": "/pengrajin/pesanan-produk"
+        },
+        {
+          "target": "/mitra/pesanan",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/KerjasamaMitra.tsx",
+          "line": 747,
+          "result": "route-matched",
+          "route": "/mitra/pesanan"
+        },
+        {
+          "target": "/",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PublicStore.tsx",
+          "line": 190,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PublicStore.tsx",
+          "line": 203,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/sanggar/profil",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/DokumenTools.tsx",
+          "line": 1123,
+          "result": "route-matched",
+          "route": "/sanggar/profil"
+        },
+        {
+          "target": "/sanggar/kerjasama/permintaan",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Detail.tsx",
+          "line": 82,
+          "result": "route-matched",
+          "route": "/sanggar/kerjasama/permintaan"
+        },
+        {
+          "target": "/sanggar/kerjasama/permintaan",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Detail.tsx",
+          "line": 95,
+          "result": "route-matched",
+          "route": "/sanggar/kerjasama/permintaan"
+        },
+        {
+          "target": "/sanggar/kerjasama/permintaan",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Detail.tsx",
+          "line": 132,
+          "result": "route-matched",
+          "route": "/sanggar/kerjasama/permintaan"
+        },
+        {
+          "target": "/sanggar/kerjasama/permintaan",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Detail.tsx",
+          "line": 367,
+          "result": "route-matched",
+          "route": "/sanggar/kerjasama/permintaan"
+        },
+        {
+          "target": "/sanggar/profil",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 97,
+          "result": "route-matched",
+          "route": "/sanggar/profil"
+        },
+        {
+          "target": "/sanggar/keanggotaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 100,
+          "result": "route-matched",
+          "route": "/sanggar/keanggotaan"
+        },
+        {
+          "target": "/sanggar/latihan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 103,
+          "result": "route-matched",
+          "route": "/sanggar/latihan"
+        },
+        {
+          "target": "/sanggar/dokumen",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 106,
+          "result": "route-matched",
+          "route": "/sanggar/dokumen"
+        },
+        {
+          "target": "/sanggar/aset",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 109,
+          "result": "route-matched",
+          "route": "/sanggar/aset"
+        },
+        {
+          "target": "/sanggar/kurasi",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 112,
+          "result": "route-matched",
+          "route": "/sanggar/kurasi"
+        },
+        {
+          "target": "/sanggar",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 115,
+          "result": "route-matched",
+          "route": "/sanggar"
+        },
+        {
+          "target": "/sanggar/profil",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 193,
+          "result": "route-matched",
+          "route": "/sanggar/profil"
+        },
+        {
+          "target": "/sanggar/keanggotaan",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 194,
+          "result": "route-matched",
+          "route": "/sanggar/keanggotaan"
+        },
+        {
+          "target": "/sanggar/latihan",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 195,
+          "result": "route-matched",
+          "route": "/sanggar/latihan"
+        },
+        {
+          "target": "/sanggar/dokumen",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 196,
+          "result": "route-matched",
+          "route": "/sanggar/dokumen"
+        },
+        {
+          "target": "/sanggar/buku-kas",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 197,
+          "result": "route-matched",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "target": "/sanggar/keanggotaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 104,
+          "result": "route-matched",
+          "route": "/sanggar/keanggotaan"
+        },
+        {
+          "target": "/sanggar/buku-kas",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 111,
+          "result": "route-matched",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "target": "/sanggar/buku-kas",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 118,
+          "result": "route-matched",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "target": "/sanggar/kerjasama/permintaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 125,
+          "result": "route-matched",
+          "route": "/sanggar/kerjasama/permintaan"
+        },
+        {
+          "target": "/sanggar/keanggotaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 137,
+          "result": "route-matched",
+          "route": "/sanggar/keanggotaan"
+        },
+        {
+          "target": "/sanggar/latihan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 143,
+          "result": "route-matched",
+          "route": "/sanggar/latihan"
+        },
+        {
+          "target": "/sanggar/pembinaan",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 149,
+          "result": "route-matched",
+          "route": "/sanggar/pembinaan"
+        },
+        {
+          "target": "/sanggar/aset",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 157,
+          "result": "route-matched",
+          "route": "/sanggar/aset"
+        },
+        {
+          "target": "/sanggar/kerjasama",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 163,
+          "result": "route-matched",
+          "route": "/sanggar/kerjasama"
+        },
+        {
+          "target": "/sanggar/buku-kas",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 169,
+          "result": "route-matched",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "target": "/sanggar/dokumen",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 175,
+          "result": "route-matched",
+          "route": "/sanggar/dokumen"
+        },
+        {
+          "target": "/sanggar/karya",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 181,
+          "result": "route-matched",
+          "route": "/sanggar/karya"
+        },
+        {
+          "target": "/pesan",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 195,
+          "result": "route-matched",
+          "route": "/pesan"
+        },
+        {
+          "target": "/sanggar/profil",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 213,
+          "result": "route-matched",
+          "route": "/sanggar/profil"
+        },
+        {
+          "target": "/sanggar/karya",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 217,
+          "result": "route-matched",
+          "route": "/sanggar/karya"
+        },
+        {
+          "target": "/sanggar/buku-kas",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 395,
+          "result": "route-matched",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "target": "/sanggar/buku-kas",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 481,
+          "result": "route-matched",
+          "route": "/sanggar/buku-kas"
+        },
+        {
+          "target": "/sanggar/latihan",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 524,
+          "result": "route-matched",
+          "route": "/sanggar/latihan"
+        }
+      ],
+      "dynamicLinks": [
+        {
+          "expression": "{roleHomePath(user.role)}",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 242
+        },
+        {
+          "expression": "{legacyPartnerPath(params[\"*\"])}",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 847
+        },
+        {
+          "expression": "{legacyConsumerPath(params[\"*\"])}",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/App.tsx",
+          "line": 1412
+        },
+        {
+          "expression": "{item.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/layout/AppShell.tsx",
+          "line": 204
+        },
+        {
+          "expression": "{child.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/layout/AppShell.tsx",
+          "line": 243
+        },
+        {
+          "expression": "{\n                  nav.find((item) =>\n                    [\n                      \"/\",\n                      \"/sanggar\",\n                      \"/seniman\",\n                      \"/pelatih\",\n          ",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/layout/AppShell.tsx",
+          "line": 604
+        },
+        {
+          "expression": "profilePath",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/components/layout/AppShell.tsx",
+          "line": 748
+        },
+        {
+          "expression": "{n.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/layout/AppShell.tsx",
+          "line": 831
+        },
+        {
+          "expression": "to",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/components/layout/BackButton.tsx",
+          "line": 11
+        },
+        {
+          "expression": "{backTo}",
+          "kind": "jsx:to",
+          "file": "artifacts/jak-sanggar/src/components/layout/PageHeader.tsx",
+          "line": 19
+        },
+        {
+          "expression": "{value}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/system/CreativeMedia.tsx",
+          "line": 412
+        },
+        {
+          "expression": "item.href",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/components/system/GlobalActions.tsx",
+          "line": 52
+        },
+        {
+          "expression": "child.href",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/components/system/GlobalActions.tsx",
+          "line": 53
+        },
+        {
+          "expression": "href",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/components/system/GlobalActions.tsx",
+          "line": 64
+        },
+        {
+          "expression": "notice.href",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/components/system/GlobalActions.tsx",
+          "line": 121
+        },
+        {
+          "expression": "{mapsUrl(lat, lng as number)}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/components/system/ShareLocation.tsx",
+          "line": 127
+        },
+        {
+          "expression": "active.href",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/components/system/TransactionAlert.tsx",
+          "line": 219
+        },
+        {
+          "expression": "`/konsumen/pesanan/${encodeURIComponent(item.id)}`",
+          "kind": "object:href",
+          "file": "artifacts/jak-sanggar/src/lib/global-notices.ts",
+          "line": 39
+        },
+        {
+          "expression": "{service.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 99
+        },
+        {
+          "expression": "`/${user.role}`",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/auth/Login.tsx",
+          "line": 309
+        },
+        {
+          "expression": "{`/toko/pengrajin/${selected.storeId}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 635
+        },
+        {
+          "expression": "{selected.marketplaceUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 644
+        },
+        {
+          "expression": "{`https://www.google.com/maps/search/?api=1&query=${selected.lat},${selected.lng}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 654
+        },
+        {
+          "expression": "{service.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 684
+        },
+        {
+          "expression": "{item.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1400
+        },
+        {
+          "expression": "{item.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1405
+        },
+        {
+          "expression": "roleHomePath(user.role)",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/auth/PortalLogin.tsx",
+          "line": 1868
+        },
+        {
+          "expression": "{o.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/auth/RegisterChoice.tsx",
+          "line": 111
+        },
+        {
+          "expression": "`/juri/${t.sanggarId}`",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/juri/JuriPages.tsx",
+          "line": 138
+        },
+        {
+          "expression": "{file.url ?? file.dataUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/juri/JuriPages.tsx",
+          "line": 516
+        },
+        {
+          "expression": "{item.cekOngkirUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/mitra-pengrajin/MitraPengrajinHome.tsx",
+          "line": 223
+        },
+        {
+          "expression": "{\n                            order.pengiriman.buktiResi.dataUrl ||\n                            order.pengiriman.buktiResi.url\n                          }",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/mitra-pengrajin/MitraPengrajinHome.tsx",
+          "line": 1354
+        },
+        {
+          "expression": "{order.pengiriman.liveLocationUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/mitra-pengrajin/MitraPengrajinHome.tsx",
+          "line": 1368
+        },
+        {
+          "expression": "{`https://www.google.com/maps?q=${draft.latTokoOffline},${draft.lngTokoOffline}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/mitra-pengrajin/MitraPengrajinHome.tsx",
+          "line": 2013
+        },
+        {
+          "expression": "{document.url ?? document.dataUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/mitra-pengrajin/MitraPengrajinHome.tsx",
+          "line": 2087
+        },
+        {
+          "expression": "{item.url}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/mitra-pengrajin/MitraPengrajinHome.tsx",
+          "line": 2265
+        },
+        {
+          "expression": "{item.url}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/mitra-pengrajin/MitraPengrajinHome.tsx",
+          "line": 2275
+        },
+        {
+          "expression": "{item.jadwal.tautanRapat}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/KerjasamaMitra.tsx",
+          "line": 118
+        },
+        {
+          "expression": "{media.url}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/KerjasamaMitra.tsx",
+          "line": 163
+        },
+        {
+          "expression": "{`/toko/pengrajin/${storeId}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PengrajinHome.tsx",
+          "line": 722
+        },
+        {
+          "expression": "{mapsUrl(draft.lat, draft.lng)}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PengrajinHome.tsx",
+          "line": 956
+        },
+        {
+          "expression": "{dokumen.url || dokumen.dataUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PengrajinHome.tsx",
+          "line": 1515
+        },
+        {
+          "expression": "{penyediaTerpilih.cekOngkirUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PesananProduk.tsx",
+          "line": 480
+        },
+        {
+          "expression": "{`https://wa.me/${wa}?text=${encodeURIComponent(`Halo ${store.namaUsaha}, saya melihat toko Anda di Jak Sanggar.`)}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PublicStore.tsx",
+          "line": 263
+        },
+        {
+          "expression": "{`mailto:${store.email}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PublicStore.tsx",
+          "line": 274
+        },
+        {
+          "expression": "{mapsUrl(store.lat, store.lng)}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PublicStore.tsx",
+          "line": 281
+        },
+        {
+          "expression": "{market.url}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/pengrajin/PublicStore.tsx",
+          "line": 387
+        },
+        {
+          "expression": "{mapsUrl(item.lat, item.lng as number)}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Katalog.tsx",
+          "line": 345
+        },
+        {
+          "expression": "`/sanggar/kerjasama/${id}`",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Katalog.tsx",
+          "line": 368
+        },
+        {
+          "expression": "{`/toko/pengrajin/${item.publicId}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Katalog.tsx",
+          "line": 431
+        },
+        {
+          "expression": "{`https://wa.me/${wa}?text=${encodeURIComponent(`Halo ${item.namaUsaha}, Sanggar kami tertarik bekerja sama untuk ${item.produk.nama} melalui Jak Sanggar.`)}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Katalog.tsx",
+          "line": 438
+        },
+        {
+          "expression": "{`/sanggar/kerjasama/${k.id}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/kerjasama/Permintaan.tsx",
+          "line": 41
+        },
+        {
+          "expression": "{v.contoh.dataUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/Kurasi.tsx",
+          "line": 855
+        },
+        {
+          "expression": "{f.url ?? f.dataUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/Kurasi.tsx",
+          "line": 877
+        },
+        {
+          "expression": "{`${basePath}/${p.id}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PermintaanSewa.tsx",
+          "line": 165
+        },
+        {
+          "expression": "{basePath}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PermintaanSewa.tsx",
+          "line": 238
+        },
+        {
+          "expression": "{basePath}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PermintaanSewa.tsx",
+          "line": 248
+        },
+        {
+          "expression": "{basePath}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PermintaanSewa.tsx",
+          "line": 482
+        },
+        {
+          "expression": "{mapsUrl(sg.lat, sg.lng as number)}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/Profile.tsx",
+          "line": 440
+        },
+        {
+          "expression": "item.href",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/PusatKendali.tsx",
+          "line": 241
+        },
+        {
+          "expression": "{action.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 275
+        },
+        {
+          "expression": "{t.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sanggar/SanggarHome.tsx",
+          "line": 316
+        },
+        {
+          "expression": "{`${baseHref}/penugasan-sewa/${p.id}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sdm/PenugasanSewa.tsx",
+          "line": 56
+        },
+        {
+          "expression": "{`${baseHref}/penugasan-sewa`}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sdm/PenugasanSewa.tsx",
+          "line": 97
+        },
+        {
+          "expression": "{`${baseHref}/penugasan-sewa`}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sdm/PenugasanSewa.tsx",
+          "line": 105
+        },
+        {
+          "expression": "{`${baseHref}/penugasan-sewa`}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sdm/PenugasanSewa.tsx",
+          "line": 134
+        },
+        {
+          "expression": "{`${basePath}/pesanan`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPages.tsx",
+          "line": 189
+        },
+        {
+          "expression": "{`${basePath}/${basePath === \"/konsumen\" ? \"katalog/\" : \"\"}${k}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPages.tsx",
+          "line": 204
+        },
+        {
+          "expression": "{basePath}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPages.tsx",
+          "line": 389
+        },
+        {
+          "expression": "`${basePath}/${basePath === \"/konsumen\" ? \"katalog/\" : \"\"}${k}`",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPages.tsx",
+          "line": 398
+        },
+        {
+          "expression": "{`${basePath}/item/${item.id}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPages.tsx",
+          "line": 541
+        },
+        {
+          "expression": "{`/toko/pengrajin/${item.publicId}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPages.tsx",
+          "line": 703
+        },
+        {
+          "expression": "{`https://wa.me/${wa}?text=${encodeURIComponent(`Halo ${item.namaUsaha}, saya tertarik menyewa/memesan ${item.produk.nama} melalui Jak Sanggar.`)}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPages.tsx",
+          "line": 710
+        },
+        {
+          "expression": "{mapsUrl(s.lat, s.lng as number)}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPages.tsx",
+          "line": 779
+        },
+        {
+          "expression": "{basePath}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 156
+        },
+        {
+          "expression": "`${basePath}/pesanan/${r.pemesanan.id}`",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 206
+        },
+        {
+          "expression": "{basePath}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 430
+        },
+        {
+          "expression": "{basePath}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 440
+        },
+        {
+          "expression": "{`${basePath}/pesanan/${p.id}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 457
+        },
+        {
+          "expression": "{`${basePath}/pesanan`}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 517
+        },
+        {
+          "expression": "{`${basePath}/pesanan`}",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 528
+        },
+        {
+          "expression": "`${layananBasePath(user.role)}/pesanan`",
+          "kind": "call:navigate",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 661
+        },
+        {
+          "expression": "{\n          actorRole === \"sewa\"\n            ? `${layananBasePath(user.role)}/pesanan`\n            : actorRole === \"sanggar\"\n              ? \"/sanggar/permintaan-sewa\"\n              : `/${user.role}/p",
+          "kind": "jsx:backTo",
+          "file": "artifacts/jak-sanggar/src/pages/sewa/SewaPemesanan.tsx",
+          "line": 716
+        }
+      ]
+    },
+    {
+      "id": "konsol",
+      "base": "/konsol",
+      "routes": [
+        {
+          "pattern": "/",
+          "roles": [
+            "kurator",
+            "publik"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 179,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pesan",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 180,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/akun",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 183,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/manajemen",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 192,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/dokumen",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 201,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/kurasi",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 210,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/penugasan",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 219,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/kerjasama",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 228,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/info-budaya",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 237,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/media-kreatif",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 246,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/pengumuman",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 255,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/staff",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 264,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/tampilan",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 273,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/waktu",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 282,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        },
+        {
+          "pattern": "/rekapan",
+          "roles": [
+            "kurator"
+          ],
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 291,
+          "parameterized": false,
+          "status": "inventaris; kontrak rute diuji, alur bisnis belum dibuktikan"
+        }
+      ],
+      "unresolvedRoutes": [],
+      "navigation": [
+        {
+          "role": "kurator",
+          "label": "Dasbor",
+          "href": "/",
+          "route": "/"
+        },
+        {
+          "role": "kurator",
+          "label": "Akun Pengguna",
+          "href": "/akun",
+          "route": "/akun"
+        },
+        {
+          "role": "kurator",
+          "label": "Manajemen Data",
+          "href": "/manajemen",
+          "route": "/manajemen"
+        },
+        {
+          "role": "kurator",
+          "label": "Studio Dokumen",
+          "href": "/dokumen",
+          "route": "/dokumen"
+        },
+        {
+          "role": "kurator",
+          "label": "Sistem Kurasi",
+          "href": "/kurasi",
+          "route": "/kurasi"
+        },
+        {
+          "role": "kurator",
+          "label": "Penugasan Juri",
+          "href": "/penugasan",
+          "route": "/penugasan"
+        },
+        {
+          "role": "kurator",
+          "label": "Pengawasan Kerjasama",
+          "href": "/kerjasama",
+          "route": "/kerjasama"
+        },
+        {
+          "role": "kurator",
+          "label": "Media Kreatif",
+          "href": "/media-kreatif",
+          "route": "/media-kreatif"
+        },
+        {
+          "role": "kurator",
+          "label": "Berita & Pengumuman",
+          "href": "/pengumuman",
+          "route": "/pengumuman"
+        },
+        {
+          "role": "kurator",
+          "label": "Admin & Juri",
+          "href": "/staff",
+          "route": "/staff"
+        },
+        {
+          "role": "kurator",
+          "label": "Tampilan",
+          "href": "/tampilan",
+          "route": "/tampilan"
+        },
+        {
+          "role": "kurator",
+          "label": "Waktu & Sistem",
+          "href": "/waktu",
+          "route": "/waktu"
+        },
+        {
+          "role": "kurator",
+          "label": "Rekapan",
+          "href": "/rekapan",
+          "route": "/rekapan"
+        },
+        {
+          "role": "kurator",
+          "label": "Pesan & Percakapan",
+          "href": "/pesan",
+          "route": "/pesan"
+        }
+      ],
+      "links": [
+        {
+          "target": "/",
+          "kind": "jsx:to",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 89,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 94,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/akun",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 97,
+          "result": "route-matched",
+          "route": "/akun"
+        },
+        {
+          "target": "/manajemen",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 102,
+          "result": "route-matched",
+          "route": "/manajemen"
+        },
+        {
+          "target": "/dokumen",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 107,
+          "result": "route-matched",
+          "route": "/dokumen"
+        },
+        {
+          "target": "/kurasi",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 112,
+          "result": "route-matched",
+          "route": "/kurasi"
+        },
+        {
+          "target": "/penugasan",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 117,
+          "result": "route-matched",
+          "route": "/penugasan"
+        },
+        {
+          "target": "/kerjasama",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 122,
+          "result": "route-matched",
+          "route": "/kerjasama"
+        },
+        {
+          "target": "/media-kreatif",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 127,
+          "result": "route-matched",
+          "route": "/media-kreatif"
+        },
+        {
+          "target": "/pengumuman",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 132,
+          "result": "route-matched",
+          "route": "/pengumuman"
+        },
+        {
+          "target": "/staff",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 137,
+          "result": "route-matched",
+          "route": "/staff"
+        },
+        {
+          "target": "/tampilan",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 142,
+          "result": "route-matched",
+          "route": "/tampilan"
+        },
+        {
+          "target": "/waktu",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 147,
+          "result": "route-matched",
+          "route": "/waktu"
+        },
+        {
+          "target": "/rekapan",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 152,
+          "result": "route-matched",
+          "route": "/rekapan"
+        },
+        {
+          "target": "/pesan",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/App.tsx",
+          "line": 157,
+          "result": "route-matched",
+          "route": "/pesan"
+        },
+        {
+          "target": "#dashboard-main",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/layout/AppShell.tsx",
+          "line": 489,
+          "result": "same-document",
+          "reason": "Anchor/dokumen yang sama; keberadaan elemen target belum diuji."
+        },
+        {
+          "target": "/akun",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/layout/AppShell.tsx",
+          "line": 654,
+          "result": "route-matched",
+          "route": "/akun"
+        },
+        {
+          "target": "/",
+          "kind": "call:navigate",
+          "file": "artifacts/konsol/src/components/layout/AppShell.tsx",
+          "line": 780,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/",
+          "kind": "call:navigate",
+          "file": "artifacts/konsol/src/components/layout/BackButton.tsx",
+          "line": 11,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/",
+          "kind": "call:navigate",
+          "file": "artifacts/konsol/src/pages/auth/Login.tsx",
+          "line": 50,
+          "result": "route-matched",
+          "route": "/"
+        },
+        {
+          "target": "/akun",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 10,
+          "result": "route-matched",
+          "route": "/akun"
+        },
+        {
+          "target": "/dokumen",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 11,
+          "result": "route-matched",
+          "route": "/dokumen"
+        },
+        {
+          "target": "/kurasi",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 12,
+          "result": "route-matched",
+          "route": "/kurasi"
+        },
+        {
+          "target": "/penugasan",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 13,
+          "result": "route-matched",
+          "route": "/penugasan"
+        },
+        {
+          "target": "/media-kreatif",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 14,
+          "result": "route-matched",
+          "route": "/media-kreatif"
+        },
+        {
+          "target": "/rekapan",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 15,
+          "result": "route-matched",
+          "route": "/rekapan"
+        },
+        {
+          "target": "/akun",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 31,
+          "result": "route-matched",
+          "route": "/akun"
+        },
+        {
+          "target": "/akun",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 32,
+          "result": "route-matched",
+          "route": "/akun"
+        },
+        {
+          "target": "/akun",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 33,
+          "result": "route-matched",
+          "route": "/akun"
+        },
+        {
+          "target": "/manajemen",
+          "kind": "object:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 34,
+          "result": "route-matched",
+          "route": "/manajemen"
+        },
+        {
+          "target": "/akun",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 54,
+          "result": "route-matched",
+          "route": "/akun"
+        },
+        {
+          "target": "/kerjasama",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 55,
+          "result": "route-matched",
+          "route": "/kerjasama"
+        },
+        {
+          "target": "/manajemen",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 57,
+          "result": "route-matched",
+          "route": "/manajemen"
+        },
+        {
+          "target": "/rekapan",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 65,
+          "result": "route-matched",
+          "route": "/rekapan"
+        },
+        {
+          "target": "/manajemen",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 66,
+          "result": "route-matched",
+          "route": "/manajemen"
+        },
+        {
+          "target": "/pengumuman",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 70,
+          "result": "route-matched",
+          "route": "/pengumuman"
+        }
+      ],
+      "dynamicLinks": [
+        {
+          "expression": "{mainAppUrl(`/${target.role}`)}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/ImpersonationBanner.tsx",
+          "line": 65
+        },
+        {
+          "expression": "{item.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/layout/AppShell.tsx",
+          "line": 208
+        },
+        {
+          "expression": "{child.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/layout/AppShell.tsx",
+          "line": 247
+        },
+        {
+          "expression": "{\n                  nav.find((item) =>\n                    [\n                      \"/\",\n                      \"/sanggar\",\n                      \"/seniman\",\n                      \"/pelatih\",\n          ",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/layout/AppShell.tsx",
+          "line": 595
+        },
+        {
+          "expression": "profilePath",
+          "kind": "call:navigate",
+          "file": "artifacts/konsol/src/components/layout/AppShell.tsx",
+          "line": 767
+        },
+        {
+          "expression": "{n.href}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/layout/AppShell.tsx",
+          "line": 850
+        },
+        {
+          "expression": "to",
+          "kind": "call:navigate",
+          "file": "artifacts/konsol/src/components/layout/BackButton.tsx",
+          "line": 11
+        },
+        {
+          "expression": "{backTo}",
+          "kind": "jsx:to",
+          "file": "artifacts/konsol/src/components/layout/PageHeader.tsx",
+          "line": 19
+        },
+        {
+          "expression": "{value}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/system/CreativeMedia.tsx",
+          "line": 144
+        },
+        {
+          "expression": "{value}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/components/system/CreativeMedia.tsx",
+          "line": 250
+        },
+        {
+          "expression": "{mainAppUrl()}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/auth/Login.tsx",
+          "line": 139
+        },
+        {
+          "expression": "{href}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 47
+        },
+        {
+          "expression": "{href}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorHome.tsx",
+          "line": 60
+        },
+        {
+          "expression": "{f.url ?? f.dataUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorManajemenData.tsx",
+          "line": 1010
+        },
+        {
+          "expression": "{`https://www.google.com/maps?q=${mitra.latTokoOffline},${mitra.lngTokoOffline}`}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorPages.tsx",
+          "line": 1203
+        },
+        {
+          "expression": "{document.url ?? document.dataUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorPages.tsx",
+          "line": 1241
+        },
+        {
+          "expression": "{v.contoh.dataUrl}",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorPages.tsx",
+          "line": 3350
+        },
+        {
+          "expression": "{\n                                    participant.ktpUrl || participant.ktpDataUrl\n                                  }",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorPages.tsx",
+          "line": 3635
+        },
+        {
+          "expression": "{\n                                    participant.selfieUrl ||\n                                    participant.selfieDataUrl\n                                  }",
+          "kind": "jsx:href",
+          "file": "artifacts/konsol/src/pages/kurator/KuratorPages.tsx",
+          "line": 3648
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "routePatterns": 107,
+    "navigationItems": 93,
+    "staticLinks": 235,
+    "dynamicLinks": 102,
+    "missingRoutes": [],
+    "unresolvedRoutes": []
+  }
+}
