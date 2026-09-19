@@ -2,6 +2,7 @@ import { defaults, pilihGrupProfil } from './native-ui-20260914-v3.mjs';
 import { buildAutofill } from './native-autofill-20260915.mjs';
 import { fieldMeta, normalizeFieldValue, toDateInput, fromDateInput } from './native-fields-20260915.mjs?v=help-2';
 import { IMAGE_SLOTS, imageKindForField, imageAutofill, readImageFile, renderImages } from './native-images-20260915.mjs';
+import { orderNativeCatalog } from './native-document-order-20260919.mjs';
 export { defaults, pilihGrupProfil };
 
 const css = `
@@ -13,6 +14,61 @@ const css = `
 `;
 const empty = value => !String(value ?? '').trim() || /^[-–—]+$/.test(String(value).trim());
 function download(blob, name) { const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = name; link.click(); setTimeout(() => URL.revokeObjectURL(url), 30000); }
+
+async function readRenderedDocument(response, format) {
+  if (!response.ok) {
+    let message = response.status === 401
+      ? 'Sesi Anda telah berakhir. Masuk kembali lalu buat dokumen lagi.'
+      : 'Layanan pembuat dokumen belum tersedia. Coba lagi sebentar.';
+    try { const detail = await response.json(); if (typeof detail.error === 'string' && detail.error.trim()) message = detail.error; } catch {}
+    throw new Error(message);
+  }
+  const label = format === 'word' ? 'Word' : 'PDF';
+  const invalid = () => new Error(`Layanan pembuat dokumen belum mengirim file ${label} yang valid. Coba lagi sebentar atau hubungi pengelola jika masalah berulang.`);
+  const mime = (response.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  const allowed = format === 'word'
+    ? ['', 'application/octet-stream', 'application/zip', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    : ['', 'application/octet-stream', 'application/pdf'];
+  if (!allowed.includes(mime)) throw invalid();
+  let blob;
+  try { blob = await response.blob(); }
+  catch (error) {
+    if (error?.name === 'AbortError' || error?.name === 'TimeoutError') throw error;
+    throw new Error('Unduhan dokumen terputus. Periksa koneksi lalu coba kembali.');
+  }
+  if (!blob || !Number.isFinite(blob.size) || blob.size < 8) throw invalid();
+  const header = new Uint8Array(await blob.slice(0, 8).arrayBuffer());
+  if (format === 'pdf') {
+    const tail = await blob.slice(Math.max(0, blob.size - 1024)).text();
+    if (String.fromCharCode(...header.slice(0, 5)) !== '%PDF-' || !tail.includes('%%EOF')) throw invalid();
+  } else {
+    // A DOCX is an OOXML ZIP package, not just an arbitrary ZIP response.
+    // Check the central directory before accepting a download as a Word file.
+    if (header[0] !== 0x50 || header[1] !== 0x4b || header[2] !== 3 || header[3] !== 4) throw invalid();
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    let end = -1;
+    for (let offset = bytes.length - 22; offset >= Math.max(0, bytes.length - 65557); offset--) {
+      if (view.getUint32(offset, true) === 0x06054b50 && offset + 22 + view.getUint16(offset + 20, true) === bytes.length) { end = offset; break; }
+    }
+    if (end < 0) throw invalid();
+    const entries = view.getUint16(end + 10, true), directorySize = view.getUint32(end + 12, true), directoryStart = view.getUint32(end + 16, true);
+    if (!entries || directoryStart + directorySize > end) throw invalid();
+    const names = new Set();
+    let offset = directoryStart;
+    for (let index = 0; index < entries; index++) {
+      if (offset + 46 > end || view.getUint32(offset, true) !== 0x02014b50) throw invalid();
+      const nameLength = view.getUint16(offset + 28, true), extraLength = view.getUint16(offset + 30, true), commentLength = view.getUint16(offset + 32, true);
+      const next = offset + 46 + nameLength + extraLength + commentLength;
+      if (next > directoryStart + directorySize) throw invalid();
+      names.add(new TextDecoder().decode(bytes.subarray(offset + 46, offset + 46 + nameLength)));
+      offset = next;
+    }
+    if (!names.has('[Content_Types].xml') || !names.has('word/document.xml')) throw invalid();
+  }
+  const expectedMime = format === 'word' ? 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' : 'application/pdf';
+  return blob.type === expectedMime ? blob : blob.slice(0, blob.size, expectedMime);
+}
 
 export function createTemplatePage(React, _Legacy, useAdapter) {
   const h = React.createElement;
@@ -30,8 +86,9 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
       let cancelled = false;
       fetch('/dokumen-fix/catalog.json?v=20260915', { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error('Daftar dokumen belum tersedia. Muat ulang halaman.'); return r.json(); }).then(c => {
         if (cancelled) return;
-        const initial = pilihGrupProfil(c, adapter.profile);
-        setCatalog(c); setCategory(initial?.category || ''); setGroup(initial?.id || ''); setDoc(initial?.documents[0]?.id || '');
+        const orderedCatalog = orderNativeCatalog(c);
+        const initial = pilihGrupProfil(orderedCatalog, adapter.profile);
+        setCatalog(orderedCatalog); setCategory(initial?.category || ''); setGroup(initial?.id || ''); setDoc(initial?.documents[0]?.id || '');
       }).catch(e => !cancelled && setError(e.message));
       return () => { cancelled = true; };
     }, [adapter.profile?.id]);
@@ -82,15 +139,15 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
     async function produce(format, isPreview = false, blank = false) {
       if (!item || busy) return;
       setBusy(blank ? 'blank' : isPreview ? 'preview' : format); setError(''); setStatus('');
+      if (isPreview) setPreview('');
       try {
         const attachedImages = blank ? {} : await renderImages(images);
-        const response = await fetch('/api/documents/render', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ format, html: '', nativeTemplate: { groupId: group.id, documentId: item.id, values: blank ? {} : values, ...(Object.keys(attachedImages).length ? { images: attachedImages } : {}) } }) });
-        if (!response.ok) { let message = 'Dokumen belum berhasil dibuat. Coba kembali.'; try { message = (await response.json()).error || message; } catch {} throw new Error(message); }
-        const blob = await response.blob();
+        const response = await fetch('/api/documents/render', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(75000), body: JSON.stringify({ format, html: '', nativeTemplate: { groupId: group.id, documentId: item.id, values: blank ? {} : values, ...(Object.keys(attachedImages).length ? { images: attachedImages } : {}) } }) });
+        const blob = await readRenderedDocument(response, format);
         if (latestSource.current !== sourceKey) { setStatus('Isian telah berubah. Buat pratinjau atau unduh kembali untuk memakai isian terbaru.'); return; }
         if (isPreview) setPreview(URL.createObjectURL(blob));
         else { download(blob, item.title.toLocaleUpperCase('id-ID') + (!blank && emptyFields.length ? ' - Draf' : '') + (!blank && adapter.profile?.namaSanggar ? ' - ' + adapter.profile.namaSanggar : '') + (format === 'word' ? '.docx' : '.pdf')); setStatus(blank ? 'Template kosong berhasil diunduh.' : emptyFields.length ? `Draf berhasil diunduh. Lengkapi ${emptyFields.length} isian kosong sebelum digunakan.` : 'Dokumen berhasil diunduh.'); }
-      } catch (e) { setError(e.message); } finally { setBusy(''); }
+      } catch (e) { setError(e?.name === 'AbortError' || e?.name === 'TimeoutError' ? 'Pembuatan dokumen terlalu lama. Coba kembali sebentar lagi.' : e?.name === 'TypeError' ? 'Layanan pembuat dokumen tidak dapat dihubungi. Periksa koneksi lalu coba kembali.' : e?.message || 'Dokumen belum berhasil dibuat. Coba kembali.'); } finally { setBusy(''); }
     }
     async function save() {
       if (!adapter.save || busy) return;

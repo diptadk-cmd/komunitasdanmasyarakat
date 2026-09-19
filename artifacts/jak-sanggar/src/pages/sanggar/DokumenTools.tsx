@@ -1548,7 +1548,7 @@ function useNativeDokumenAdapter() {
 // `?import` query to relative dynamic imports even with @vite-ignore, which
 // makes its dev server reject JS in public/. An absolute URL stays untouched.
 const nativeDokumenModule = new URL(
-  `${import.meta.env.BASE_URL}assets/native-ui-20260915.mjs?v=help-2`,
+  `${import.meta.env.BASE_URL}assets/native-ui-20260915.mjs?v=renderer-order-20260919`,
   window.location.origin,
 ).href;
 const NativeTemplatePage = lazy(async () => {

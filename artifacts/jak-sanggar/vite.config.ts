@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { localDocumentRendererPlugin } from "./config/local-document-renderer";
 
 const rawPort = process.env.PORT ?? "5173";
 
@@ -67,10 +68,14 @@ function vendorChunk(id: string): string | undefined {
 
 export default defineConfig({
   base: basePath,
+  // API-backed and demo servers can run together without replacing each
+  // other's optimized React modules during a dependency/config refresh.
+  cacheDir: path.resolve(import.meta.dirname, `node_modules/.vite-port-${port}`),
   plugins: [
     react(),
     tailwindcss(),
     runtimeErrorOverlay(),
+    ...(demoMode ? [localDocumentRendererPlugin(process.env.DOCUMENT_RENDERER_URL)] : []),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [

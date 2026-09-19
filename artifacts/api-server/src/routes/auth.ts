@@ -37,6 +37,7 @@ import { logger } from "../lib/logger";
 import { normalizeUniqueProfileEmail, UserEmailError } from "../lib/user-email";
 import { validateImpersonationTarget } from "../lib/impersonation-policy";
 import { isBlockedAccountStatus } from "../lib/account-status";
+import { documentRendererUrl } from "../lib/document-renderer";
 
 const router: IRouter = Router();
 
@@ -493,7 +494,7 @@ router.post("/documents/render", requireAuth, documentRenderLimit, async (req, r
     return;
   }
   try {
-    const result = await fetch(process.env["DOCUMENT_RENDERER_URL"] || "http://renderer:3001/render", {
+    const result = await fetch(documentRendererUrl(), {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(req.body), signal: AbortSignal.timeout(60_000),
     });
@@ -501,7 +502,9 @@ router.post("/documents/render", requireAuth, documentRenderLimit, async (req, r
       .set("Content-Type", result.headers.get("content-type") || "application/octet-stream")
       .send(Buffer.from(await result.arrayBuffer()));
   } catch {
-    res.status(503).json({ error: "Generator dokumen belum tersedia. Coba lagi sebentar." });
+    res.status(503).json({ error: process.env["NODE_ENV"] === "production"
+      ? "Generator dokumen belum tersedia. Coba lagi sebentar."
+      : "Generator dokumen lokal belum aktif. Jalankan MULAI-GENERATOR-DOKUMEN.bat lalu coba kembali." });
   }
 });
 

@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { loadEnvFile } from "node:process";
 import { fileURLToPath } from "node:url";
+import { ensureDocumentRenderer, usesBundledDocumentRenderer } from "./start-document-renderer.mjs";
 
 const workspaceRoot = fileURLToPath(new URL("../", import.meta.url));
 for (const filename of [".env", ".env.smtp"]) {
@@ -59,7 +60,10 @@ const configs = {
   },
   api: {
     filter: "@workspace/api-server",
-    env: { NODE_ENV: "development", PORT: "3000" },
+    env: {
+      NODE_ENV: "development", PORT: "3000",
+      MARIADB_URL: process.env.MARIADB_URL || process.env.DATABASE_URL || "mysql://root@127.0.0.1:3306/jaksanggar",
+    },
   },
 };
 
@@ -69,6 +73,10 @@ if (!config) {
     "Target tidak dikenal. Gunakan: app, konsol, demo-app, demo-konsol, atau api.",
   );
   process.exit(1);
+}
+
+if ((target === "api" && usesBundledDocumentRenderer()) || target === "demo-app") {
+  await ensureDocumentRenderer();
 }
 
 // Node >=18.20.2 refuses to spawn .cmd shims without a shell (EINVAL), so

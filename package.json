@@ -14,6 +14,7 @@
     "dev:demo:app": "node ./scripts/run-dev.mjs demo-app",
     "dev:demo:konsol": "node ./scripts/run-dev.mjs demo-konsol",
     "dev:api": "node ./scripts/run-dev.mjs api",
+    "dev:renderer": "node ./scripts/start-document-renderer.mjs",
     "build:production": "node scripts/build-production.mjs",
     "test:all": "node scripts/test-repository.mjs",
     "test:quick": "node scripts/test-repository.mjs --quick",
@@ -21,7 +22,8 @@
     "test:e2e": "playwright test",
     "test:e2e:list": "playwright test --list",
     "test:report": "playwright show-report output/test-reports/e2e/html",
-    "test:coverage": "node scripts/feature-coverage.mjs"
+    "test:coverage": "node scripts/feature-coverage.mjs",
+    "test:documents": "node scripts/test-documents.mjs"
   },
   "private": true,
   "devDependencies": {

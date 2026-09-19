@@ -36,6 +36,7 @@ minimumReleaseAgeExclude:
 
 packages:
   - artifacts/*
+  - services/*
   - lib/*
   - lib/integrations/*
   - scripts
@@ -165,6 +166,8 @@ overrides:
   "yaml@>=2.0.0 <3.0.0": "2.8.3"
 
 allowBuilds:
+  # Package ships built dist files; postinstall only prints a promotional message.
+  '@turbodocx/html-to-docx': false
   core-js: true
   # Paged.js memakai es5-ext untuk kompatibilitas lama; skrip postinstall-nya
   # tidak diperlukan pada build browser modern dan sengaja tidak dijalankan.

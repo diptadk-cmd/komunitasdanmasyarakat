@@ -1,0 +1,1733 @@
+{
+  "generatedAt": "2026-09-19T16:30:34.283Z",
+  "results": [
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849268,
+      "milliseconds": 182
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135022,
+      "milliseconds": 6433
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838065,
+      "milliseconds": 54
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847787,
+      "milliseconds": 222
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855870,
+      "milliseconds": 201
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "formulir-data-badan-dan-operasional-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838815,
+      "milliseconds": 77
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 97
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 78
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847423,
+      "milliseconds": 95
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 63
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 63
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838443,
+      "milliseconds": 50
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850393,
+      "milliseconds": 91
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861384,
+      "milliseconds": 268
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838536,
+      "milliseconds": 47
+    },
+    {
+      "group": "mandiri-badan-usaha-firma",
+      "document": "surat-pernyataan-status-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838141,
+      "milliseconds": 48
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849279,
+      "milliseconds": 101
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135308,
+      "milliseconds": 5025
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838063,
+      "milliseconds": 35
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847787,
+      "milliseconds": 206
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855890,
+      "milliseconds": 189
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "formulir-data-badan-dan-operasional-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838848,
+      "milliseconds": 47
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 95
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 67
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847431,
+      "milliseconds": 91
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 48
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 50
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838445,
+      "milliseconds": 36
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850417,
+      "milliseconds": 101
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861391,
+      "milliseconds": 228
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838543,
+      "milliseconds": 42
+    },
+    {
+      "group": "mandiri-badan-usaha-persekutuan-komanditer",
+      "document": "surat-pernyataan-status-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838168,
+      "milliseconds": 38
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849313,
+      "milliseconds": 98
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135180,
+      "milliseconds": 4677
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838062,
+      "milliseconds": 47
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847787,
+      "milliseconds": 213
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855936,
+      "milliseconds": 207
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "formulir-data-badan-dan-operasional-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838776,
+      "milliseconds": 61
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 114
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 79
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847452,
+      "milliseconds": 88
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 49
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 64
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838445,
+      "milliseconds": 65
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850498,
+      "milliseconds": 95
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861444,
+      "milliseconds": 267
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838544,
+      "milliseconds": 43
+    },
+    {
+      "group": "mandiri-berbadan-hukum-koperasi",
+      "document": "surat-pernyataan-status-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838089,
+      "milliseconds": 57
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849270,
+      "milliseconds": 125
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135089,
+      "milliseconds": 4803
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838064,
+      "milliseconds": 36
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847787,
+      "milliseconds": 180
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855886,
+      "milliseconds": 205
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "formulir-data-badan-dan-operasional-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838773,
+      "milliseconds": 49
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 89
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 54
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847429,
+      "milliseconds": 82
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 58
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 60
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838448,
+      "milliseconds": 37
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850476,
+      "milliseconds": 94
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861417,
+      "milliseconds": 246
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838546,
+      "milliseconds": 66
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perkumpulan",
+      "document": "surat-pernyataan-status-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838095,
+      "milliseconds": 44
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849284,
+      "milliseconds": 95
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135089,
+      "milliseconds": 3954
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838061,
+      "milliseconds": 31
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847787,
+      "milliseconds": 196
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855902,
+      "milliseconds": 227
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "formulir-data-badan-dan-operasional-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838839,
+      "milliseconds": 48
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 106
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 74
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847440,
+      "milliseconds": 79
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 58
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 59
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838430,
+      "milliseconds": 39
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850512,
+      "milliseconds": 93
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861402,
+      "milliseconds": 242
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838526,
+      "milliseconds": 43
+    },
+    {
+      "group": "mandiri-berbadan-hukum-perseroan-terbatas",
+      "document": "surat-pernyataan-status-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838141,
+      "milliseconds": 46
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849322,
+      "milliseconds": 94
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135501,
+      "milliseconds": 4073
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838060,
+      "milliseconds": 38
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847779,
+      "milliseconds": 206
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855939,
+      "milliseconds": 208
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "formulir-data-badan-dan-operasional-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838750,
+      "milliseconds": 55
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 94
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 101
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847459,
+      "milliseconds": 79
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 66
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 48
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838443,
+      "milliseconds": 35
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850566,
+      "milliseconds": 88
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861478,
+      "milliseconds": 260
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838541,
+      "milliseconds": 55
+    },
+    {
+      "group": "mandiri-berbadan-hukum-yayasan",
+      "document": "surat-pernyataan-status-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838085,
+      "milliseconds": 33
+    },
+    {
+      "group": "mandiri-nonbadan-hukum",
+      "document": "anggaran-dasar-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847449,
+      "milliseconds": 68
+    },
+    {
+      "group": "mandiri-nonbadan-hukum",
+      "document": "anggaran-dasar-sanggar",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 141915,
+      "milliseconds": 4123
+    },
+    {
+      "group": "mandiri-nonbadan-hukum",
+      "document": "anggaran-rumah-tangga-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 857443,
+      "milliseconds": 126
+    },
+    {
+      "group": "mandiri-nonbadan-hukum",
+      "document": "berita-acara-pembentukan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849146,
+      "milliseconds": 139
+    },
+    {
+      "group": "mandiri-nonbadan-hukum",
+      "document": "keputusan-atribut-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851205,
+      "milliseconds": 135
+    },
+    {
+      "group": "mandiri-nonbadan-hukum",
+      "document": "keputusan-keuangan-dan-komponen-biaya",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 845950,
+      "milliseconds": 103
+    },
+    {
+      "group": "mandiri-nonbadan-hukum",
+      "document": "keputusan-pelatih-dan-lampiran",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841014,
+      "milliseconds": 64
+    },
+    {
+      "group": "mandiri-nonbadan-hukum",
+      "document": "keputusan-pembentukan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847799,
+      "milliseconds": 92
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849304,
+      "milliseconds": 112
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135111,
+      "milliseconds": 4085
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838062,
+      "milliseconds": 35
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855438,
+      "milliseconds": 348
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855914,
+      "milliseconds": 196
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "formulir-data-induk-dan-unit-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 839795,
+      "milliseconds": 67
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 106
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 78
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847441,
+      "milliseconds": 80
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 48
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 49
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838445,
+      "milliseconds": 46
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850668,
+      "milliseconds": 84
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861444,
+      "milliseconds": 294
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838544,
+      "milliseconds": 45
+    },
+    {
+      "group": "unit-badan-hukum-koperasi",
+      "document": "surat-pernyataan-kedudukan-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838136,
+      "milliseconds": 47
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849318,
+      "milliseconds": 100
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135139,
+      "milliseconds": 3952
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838064,
+      "milliseconds": 35
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855438,
+      "milliseconds": 278
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855927,
+      "milliseconds": 237
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "formulir-data-induk-dan-unit-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 839799,
+      "milliseconds": 58
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 107
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 69
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847462,
+      "milliseconds": 77
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 56
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 55
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838448,
+      "milliseconds": 36
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850698,
+      "milliseconds": 85
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861417,
+      "milliseconds": 256
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838546,
+      "milliseconds": 43
+    },
+    {
+      "group": "unit-badan-hukum-perkumpulan",
+      "document": "surat-pernyataan-kedudukan-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838136,
+      "milliseconds": 36
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849308,
+      "milliseconds": 100
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135105,
+      "milliseconds": 4718
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838061,
+      "milliseconds": 33
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855438,
+      "milliseconds": 309
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855921,
+      "milliseconds": 240
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "formulir-data-induk-dan-unit-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 839820,
+      "milliseconds": 52
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 105
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 56
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847453,
+      "milliseconds": 88
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 48
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 51
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838430,
+      "milliseconds": 39
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850710,
+      "milliseconds": 94
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861402,
+      "milliseconds": 288
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838526,
+      "milliseconds": 48
+    },
+    {
+      "group": "unit-badan-hukum-perseroan-terbatas",
+      "document": "surat-pernyataan-kedudukan-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838136,
+      "milliseconds": 42
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849307,
+      "milliseconds": 109
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135424,
+      "milliseconds": 4740
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838060,
+      "milliseconds": 41
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855438,
+      "milliseconds": 314
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855913,
+      "milliseconds": 242
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "formulir-data-induk-dan-unit-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 839794,
+      "milliseconds": 63
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 120
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 69
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847442,
+      "milliseconds": 70
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 59
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 61
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838443,
+      "milliseconds": 50
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850741,
+      "milliseconds": 94
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861478,
+      "milliseconds": 276
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838541,
+      "milliseconds": 51
+    },
+    {
+      "group": "unit-badan-hukum-yayasan",
+      "document": "surat-pernyataan-kedudukan-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838136,
+      "milliseconds": 50
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849304,
+      "milliseconds": 98
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135117,
+      "milliseconds": 4662
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838065,
+      "milliseconds": 32
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855438,
+      "milliseconds": 315
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855911,
+      "milliseconds": 210
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "formulir-data-induk-dan-unit-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 839810,
+      "milliseconds": 58
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 121
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 64
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847448,
+      "milliseconds": 72
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 55
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 47
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838443,
+      "milliseconds": 55
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850604,
+      "milliseconds": 91
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861384,
+      "milliseconds": 264
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838536,
+      "milliseconds": 47
+    },
+    {
+      "group": "unit-badan-usaha-firma",
+      "document": "surat-pernyataan-kedudukan-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838136,
+      "milliseconds": 53
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849315,
+      "milliseconds": 89
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "berita-acara-forum-penetapan",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 135133,
+      "milliseconds": 4682
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838063,
+      "milliseconds": 50
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "buku-administrasi-operasional",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855438,
+      "milliseconds": 303
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855923,
+      "milliseconds": 222
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "formulir-data-induk-dan-unit-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 839828,
+      "milliseconds": 71
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 91
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 65
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847455,
+      "milliseconds": 72
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 56
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 50
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838445,
+      "milliseconds": 38
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850635,
+      "milliseconds": 90
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861391,
+      "milliseconds": 239
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838543,
+      "milliseconds": 41
+    },
+    {
+      "group": "unit-badan-usaha-persekutuan-komanditer",
+      "document": "surat-pernyataan-kedudukan-dan-kewenangan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838136,
+      "milliseconds": 53
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "anggaran-dasar-organisasi-induk",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849513,
+      "milliseconds": 77
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "anggaran-dasar-organisasi-induk",
+      "format": "pdf",
+      "status": "lulus",
+      "bytes": 143643,
+      "milliseconds": 4874
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "anggaran-rumah-tangga-organisasi-induk",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 860119,
+      "milliseconds": 162
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "berita-acara-forum-penetapan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 849288,
+      "milliseconds": 116
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "berita-acara-pembentukan-organisasi-induk",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 848515,
+      "milliseconds": 126
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "berita-acara-serah-terima-pengelolaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838056,
+      "milliseconds": 53
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "data-induk-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 855894,
+      "milliseconds": 196
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "keputusan-atribut-dan-identitas",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 851015,
+      "milliseconds": 102
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "keputusan-keuangan-dan-hasil-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 846166,
+      "milliseconds": 67
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "keputusan-pembentukan-dan-penetapan-sanggar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 847427,
+      "milliseconds": 88
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "keputusan-pengelola-masa-bakti",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 841490,
+      "milliseconds": 55
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "keputusan-penugasan-pelatih",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 842375,
+      "milliseconds": 50
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "laporan-pertanggungjawaban-kegiatan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838426,
+      "milliseconds": 45
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "pedoman-dasar",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 850383,
+      "milliseconds": 115
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "pedoman-pelaksanaan",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 861385,
+      "milliseconds": 259
+    },
+    {
+      "group": "unit-nonbadan-hukum",
+      "document": "perjanjian-kerja-sama-kegiatan-seni",
+      "format": "word",
+      "status": "lulus",
+      "bytes": 838526,
+      "milliseconds": 53
+    }
+  ]
+}

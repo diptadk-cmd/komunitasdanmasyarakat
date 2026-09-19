@@ -10,6 +10,7 @@ Di Windows, jalankan `SIAPKAN-PENGUJIAN.bat` satu kali, kemudian `UJI-SEMUA-FITU
 - [Peta fitur dan rute yang diperiksa](docs/PETA-PENGUJIAN.md)
 - [Hasil audit dan status verifikasi aktual](docs/HASIL-AUDIT-20260919.md)
 - [Logo dan ikon](docs/brand/README.md)
+- [Perbaikan preview, unduhan, dan urutan dokumen](docs/PERBAIKAN-DOKUMEN-20260919.md)
 
 Nama launcher “UJI-SEMUA-FITUR” berarti menjalankan seluruh paket tes yang tersedia, bukan jaminan semua alur produksi telah teruji. Integrasi database, perangkat, dan layanan eksternal dijelaskan dalam panduan.
 

@@ -14,9 +14,15 @@ if exist ".env" (
     if not "%%A"=="" set "%%A=%%B"
   )
 )
+if not defined MARIADB_URL if defined DATABASE_URL set "MARIADB_URL=%DATABASE_URL%"
 if not defined MARIADB_URL set "MARIADB_URL=mysql://root@127.0.0.1:3306/jaksanggar"
 if defined LAUNCH_SEED_DEMO_USERS set "SEED_DEMO_USERS=%LAUNCH_SEED_DEMO_USERS%"
 if defined LAUNCH_SEED_DEMO_CONTENT set "SEED_DEMO_CONTENT=%LAUNCH_SEED_DEMO_CONTENT%"
+if not defined DOCUMENT_RENDERER_URL set "DOCUMENT_RENDERER_URL=http://127.0.0.1:3001/render"
+
+echo Memastikan generator Word/PDF lokal siap...
+node scripts/start-document-renderer.mjs --api
+if errorlevel 1 exit /b 1
 
 if /i "%SEED_DEMO_USERS%"=="true" (
   echo Memastikan akun demo tersedia di MariaDB...

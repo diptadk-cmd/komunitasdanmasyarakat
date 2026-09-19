@@ -12,6 +12,7 @@ const checks = [
   { id: "routes", label: "Cakupan rute dan menu", args: ["pnpm", "run", "test:navigation"] },
   { id: "types", label: "TypeScript seluruh workspace", args: ["pnpm", "run", "typecheck"] },
   { id: "build", label: "Build produksi kedua aplikasi dan API", args: ["pnpm", "run", "build:production"] },
+  { id: "documents", label: "Berkas nyata: seluruh template Word dan PDF per kelompok", args: ["pnpm", "run", "test:documents"], omit: quick },
   { id: "e2e", label: "Browser: 9 peran, navigasi, desktop & ponsel", args: ["pnpm", "run", "test:e2e"], omit: quick },
 ];
 const results = [];

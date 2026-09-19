@@ -142,6 +142,7 @@ function vendorChunk(id: string): string | undefined {
 
 export default defineConfig({
   base: basePath,
+  cacheDir: path.resolve(import.meta.dirname, `node_modules/.vite-port-${port}`),
   plugins: [
     react(),
     tailwindcss(),

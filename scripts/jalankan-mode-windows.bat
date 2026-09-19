@@ -46,6 +46,8 @@ goto selesai
 
 :mode_demo_lokal
 title JAK SANGGAR - Demo Lokal :5180
+node scripts/start-document-renderer.mjs
+if errorlevel 1 goto gagal
 set "APP_PORT=5180"
 set "KONSOL_PORT=5181"
 set "DEMO_SESSION_PER_TAB=true"
