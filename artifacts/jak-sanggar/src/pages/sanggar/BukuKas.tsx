@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth, useDb } from "@/lib/auth";
-import { save, uid, fmtRp, fmtDateTime, pushKas, logActivity } from "@/lib/store";
+import { save, uid, fmtRp, fmtDateTime } from "@/lib/store";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,9 @@ import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianG
 import { AnimatedCounter } from "@/components/system/AnimatedCounter";
 import { openPrintWindow, safeHtml, rawHtml } from "@/lib/print";
 import { kopHtml, ttdHtml } from "@/lib/dokumen";
+import { readPaymentReceipt, receiptExtension, paymentAmount, MAX_PAYMENT_AMOUNT } from "@/lib/payment-receipt";
+import { recordManualCash, recordDistributionCash, payHonorCash, validateIuranCash, jakartaInputDate } from "@/lib/cash-records";
+import { ReceiptDownload } from "@/components/documents/ReceiptDownload";
 
 const KAT_PEMASUKAN = ["Job Pementasan", "Donasi", "Tiket", "Hibah", "Lainnya"];
 const KAT_PENGELUARAN = ["PLN/Air", "Sewa", "Vendor", "Konsumsi", "Operasional", "Lainnya"];
@@ -34,27 +37,14 @@ export default function BukuKas() {
   const honor = db.pengajuanHonor.filter(h => h.sanggarId === sg.id);
 
   const validateIuran = (id: string, ok: boolean) => {
-    const it = db.iuran.find(x => x.id === id);
-    if (!it) return;
-    save(d => {
-      const i = d.iuran.find(x => x.id === id);
-      if (!i) return;
-      i.status = ok ? "lunas" : "ditolak";
-      i.validatedAt = Date.now();
-    });
-    if (ok) pushKas(sg.id, `Iuran: ${it.judul}`, it.nominal, 0, "iuran", id);
-    toast({ title: ok ? "Iuran divalidasi" : "Iuran ditolak" });
+    try {
+      save(d => validateIuranCash(d, sg.id, id, ok, uid));
+      toast({ title: ok ? "Iuran divalidasi" : "Iuran ditolak" });
+    } catch (error) { toast({ title: "Iuran belum diproses", description: error instanceof Error ? error.message : "Coba kembali.", variant: "destructive" }); }
   };
 
-  const payHonor = (id: string, fileName: string) => {
-    const it = db.pengajuanHonor.find(x => x.id === id);
-    if (!it) return;
-    save(d => {
-      const h = d.pengajuanHonor.find(x => x.id === id);
-      if (!h) return;
-      h.status = "disetujui"; h.paidAt = Date.now(); h.buktiTransferDataUrl = fileName;
-    });
-    pushKas(sg.id, `Honor Pelatih`, 0, it.total, "honor", id);
+  const payHonor = (id: string, receipt: string) => {
+    save(d => payHonorCash(d, sg.id, id, receipt, uid));
     toast({ title: "Honor dibayarkan", description: "E-slip terbit di akun Pelatih." });
   };
 
@@ -176,7 +166,7 @@ export default function BukuKas() {
                 {kas.map(k => (
                   <TableRow key={k.id}>
                     <TableCell className="text-sm">{fmtDateTime(k.tanggal)}</TableCell>
-                    <TableCell>{k.keterangan}</TableCell>
+                    <TableCell>{k.keterangan}{k.refType === "manual" && <div><ReceiptDownload value={db.transaksi.find(t => t.id === k.refId)?.buktiDataUrl} /></div>}</TableCell>
                     <TableCell className="text-right text-emerald-600">{k.debit ? fmtRp(k.debit) : ""}</TableCell>
                     <TableCell className="text-right text-destructive">{k.kredit ? fmtRp(k.kredit) : ""}</TableCell>
                     <TableCell className="text-right font-medium">{fmtRp(k.saldo)}</TableCell>
@@ -202,13 +192,13 @@ export default function BukuKas() {
                         <TableCell>{m?.nama ?? "-"}</TableCell>
                         <TableCell>{i.judul}</TableCell>
                         <TableCell className="text-right">{fmtRp(i.nominal)}</TableCell>
-                        <TableCell>{i.buktiDataUrl ? <Badge variant="secondary">Ada</Badge> : <Badge variant="outline">Belum</Badge>}</TableCell>
+                        <TableCell><ReceiptDownload value={i.buktiDataUrl} /></TableCell>
                         <TableCell><Badge variant={i.status === "lunas" ? "default" : i.status === "ditolak" ? "destructive" : "secondary"}>{i.status}</Badge></TableCell>
                         <TableCell className="text-right">
-                          {i.status === "pending" && i.buktiDataUrl ? (
+                          {i.status === "pending" && receiptExtension(i.buktiDataUrl) ? (
                             <div className="flex justify-end gap-1.5">
-                              <Button size="sm" variant="outline" onClick={() => validateIuran(i.id, false)}><X className="h-3.5 w-3.5" /></Button>
-                              <Button size="sm" onClick={() => validateIuran(i.id, true)}><Check className="h-3.5 w-3.5" /></Button>
+                              <Button size="sm" variant="outline" aria-label={`Tolak iuran ${m?.nama ?? "anggota"}`} onClick={() => validateIuran(i.id, false)}><X className="h-3.5 w-3.5" /></Button>
+                              <Button size="sm" aria-label={`Validasi iuran ${m?.nama ?? "anggota"}`} onClick={() => validateIuran(i.id, true)}><Check className="h-3.5 w-3.5" /></Button>
                             </div>
                           ) : <span className="text-xs text-muted-foreground">—</span>}
                         </TableCell>
@@ -292,9 +282,19 @@ function SmallStat({ label, value, icon, accent, tone }: { label: string; value:
   );
 }
 
-function PayHonorDialog({ onSubmit }: { onSubmit: (filename: string) => void }) {
+function PayHonorDialog({ onSubmit }: { onSubmit: (receipt: string) => void }) {
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+  const saving = useRef(false);
+  const { toast } = useToast();
+  async function submit() {
+    if (!file || saving.current) return;
+    saving.current = true; setBusy(true);
+    try { onSubmit(await readPaymentReceipt(file)); setFile(null); setOpen(false); }
+    catch (error) { toast({ title: "Bukti belum dapat disimpan", description: error instanceof Error ? error.message : "Coba pilih berkas kembali.", variant: "destructive" }); }
+    finally { saving.current = false; setBusy(false); }
+  }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild><Button size="sm" className="gap-1"><Upload className="h-3.5 w-3.5" />Bayar</Button></DialogTrigger>
@@ -302,11 +302,12 @@ function PayHonorDialog({ onSubmit }: { onSubmit: (filename: string) => void }) 
         <DialogHeader><DialogTitle>Pembayaran Honor</DialogTitle></DialogHeader>
         <div className="space-y-3">
           <div className="text-sm text-muted-foreground">Unggah bukti transfer bank untuk menyelesaikan pembayaran.</div>
-          <Input type="file" accept="image/*,.pdf" onChange={e => setFile(e.target.files?.[0] ?? null)} />
+          <Input aria-label="Bukti transfer honor" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" disabled={busy} onChange={e => setFile(e.target.files?.[0] ?? null)} />
+          <p className="text-xs text-muted-foreground">JPG, PNG, WebP, atau PDF; maksimal 2 MB.</p>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Batal</Button>
-          <Button disabled={!file} onClick={() => { if (file) { onSubmit(file.name); setOpen(false); } }}>Setujui & Bayar</Button>
+          <Button variant="outline" disabled={busy} onClick={() => setOpen(false)}>Batal</Button>
+          <Button disabled={!file || busy} onClick={submit}>{busy ? "Menyimpan…" : "Setujui & Bayar"}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -314,39 +315,47 @@ function PayHonorDialog({ onSubmit }: { onSubmit: (filename: string) => void }) 
 }
 
 function ManualForm({ sg, jenis }: { sg: SanggarUser; jenis: "pemasukan" | "pengeluaran" }) {
-  const [f, setF] = useState({ tanggal: new Date().toISOString().slice(0, 10), kategori: jenis === "pemasukan" ? KAT_PEMASUKAN[0] : KAT_PENGELUARAN[0], nominal: "", sumberAtauTujuan: "", keterangan: "" });
+  const [f, setF] = useState(() => ({ tanggal: jakartaInputDate(), kategori: jenis === "pemasukan" ? KAT_PEMASUKAN[0] : KAT_PENGELUARAN[0], nominal: "", sumberAtauTujuan: "", keterangan: "" }));
   const [bukti, setBukti] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+  const saving = useRef(false);
+  const fileInput = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const submit = () => {
-    const n = Number(f.nominal); if (!n || n <= 0) { toast({ title: "Nominal tidak valid", variant: "destructive" }); return; }
-    save(d => {
-      d.transaksi.push({ id: uid(), sanggarId: sg.id, jenis, tanggal: f.tanggal, kategori: f.kategori, nominal: n, sumberAtauTujuan: f.sumberAtauTujuan, keterangan: f.keterangan, buktiDataUrl: bukti?.name, createdAt: Date.now() });
-    });
-    pushKas(sg.id, `${jenis === "pemasukan" ? "Pemasukan" : "Pengeluaran"}: ${f.kategori}${f.keterangan ? " — " + f.keterangan : ""}`, jenis === "pemasukan" ? n : 0, jenis === "pengeluaran" ? n : 0, "manual", "");
-    logActivity(sg.id, "sanggar", `manual-${jenis}`);
+  const submit = async () => {
+    if (saving.current) return;
+    saving.current = true; setBusy(true);
+    try {
+    const n = paymentAmount(f.nominal);
+    if (!f.tanggal || !f.sumberAtauTujuan.trim()) throw new Error("Lengkapi tanggal dan sumber atau tujuan dana.");
+    const receipt = bukti ? await readPaymentReceipt(bukti) : undefined;
+    const transactionId = uid();
+    save(d => recordManualCash(d, { id: transactionId, sanggarId: sg.id, jenis, tanggal: f.tanggal, kategori: f.kategori, nominal: n, sumberAtauTujuan: f.sumberAtauTujuan.trim(), keterangan: f.keterangan, buktiDataUrl: receipt, createdAt: Date.now() }, uid));
     toast({ title: jenis === "pemasukan" ? "Pemasukan tercatat" : "Pengeluaran tercatat" });
     setF({ ...f, nominal: "", sumberAtauTujuan: "", keterangan: "" }); setBukti(null);
+    if (fileInput.current) fileInput.current.value = "";
+    } catch (error) { toast({ title: "Transaksi belum tercatat", description: error instanceof Error ? error.message : "Coba kembali.", variant: "destructive" }); }
+    finally { saving.current = false; setBusy(false); }
   };
   const opts = jenis === "pemasukan" ? KAT_PEMASUKAN : KAT_PENGELUARAN;
   return (
     <Card className="p-5">
       <h3 className="font-serif text-lg">{jenis === "pemasukan" ? "Pemasukan Eksternal" : "Pengeluaran Eksternal"}</h3>
-      <div className="mt-4 space-y-3">
+      <fieldset disabled={busy} aria-busy={busy} className="mt-4 space-y-3 min-w-0">
         <div className="grid sm:grid-cols-2 gap-3">
-          <div className="space-y-1.5"><Label>Tanggal</Label><Input type="date" value={f.tanggal} onChange={e => setF({ ...f, tanggal: e.target.value })} /></div>
+          <div className="space-y-1.5"><Label htmlFor={`tanggal-${jenis}`}>Tanggal</Label><Input id={`tanggal-${jenis}`} type="date" value={f.tanggal} onChange={e => setF({ ...f, tanggal: e.target.value })} /></div>
           <div className="space-y-1.5"><Label>Kategori</Label>
-            <Select value={f.kategori} onValueChange={v => setF({ ...f, kategori: v })}>
+            <Select disabled={busy} value={f.kategori} onValueChange={v => setF({ ...f, kategori: v })}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{opts.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)}</SelectContent>
             </Select>
           </div>
         </div>
-        <div className="space-y-1.5"><Label>Nominal (Rp)</Label><Input type="number" value={f.nominal} onChange={e => setF({ ...f, nominal: e.target.value })} /></div>
-        <div className="space-y-1.5"><Label>{jenis === "pemasukan" ? "Sumber Dana" : "Bayar Ke"}</Label><Input value={f.sumberAtauTujuan} onChange={e => setF({ ...f, sumberAtauTujuan: e.target.value })} /></div>
-        <div className="space-y-1.5"><Label>Keterangan</Label><Textarea rows={2} value={f.keterangan} onChange={e => setF({ ...f, keterangan: e.target.value })} /></div>
-        <div className="space-y-1.5"><Label>Bukti (Struk/Nota)</Label><Input type="file" onChange={e => setBukti(e.target.files?.[0] ?? null)} /></div>
-        <Button className="w-full" onClick={submit}>Simpan {jenis === "pemasukan" ? "Pemasukan" : "Pengeluaran"}</Button>
-      </div>
+        <div className="space-y-1.5"><Label htmlFor={`nominal-${jenis}`}>Nominal (Rp)</Label><Input id={`nominal-${jenis}`} type="number" min="1" max={MAX_PAYMENT_AMOUNT} step="1" value={f.nominal} onChange={e => setF({ ...f, nominal: e.target.value })} /></div>
+        <div className="space-y-1.5"><Label htmlFor={`sumber-${jenis}`}>{jenis === "pemasukan" ? "Sumber Dana" : "Bayar Ke"}</Label><Input id={`sumber-${jenis}`} value={f.sumberAtauTujuan} onChange={e => setF({ ...f, sumberAtauTujuan: e.target.value })} /></div>
+        <div className="space-y-1.5"><Label htmlFor={`keterangan-${jenis}`}>Keterangan</Label><Textarea id={`keterangan-${jenis}`} rows={2} value={f.keterangan} onChange={e => setF({ ...f, keterangan: e.target.value })} /></div>
+        <div className="space-y-1.5"><Label htmlFor={`bukti-${jenis}`}>Bukti (Struk/Nota)</Label><Input id={`bukti-${jenis}`} ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp,application/pdf" disabled={busy} onChange={e => setBukti(e.target.files?.[0] ?? null)} /><p className="text-xs text-muted-foreground">JPG, PNG, WebP, atau PDF; maksimal 2 MB.</p></div>
+        <Button className="w-full" disabled={busy} onClick={submit}>{busy ? "Menyimpan…" : `Simpan ${jenis === "pemasukan" ? "Pemasukan" : "Pengeluaran"}`}</Button>
+      </fieldset>
     </Card>
   );
 }
@@ -358,48 +367,52 @@ function DistribusiForm({ sg }: { sg: SanggarUser }) {
   const [judul, setJudul] = useState("Pentas HUT DKI 2026");
   const [rows, setRows] = useState<{ id: string; nominal: string }[]>([{ id: members[0]?.id ?? "", nominal: "" }]);
   const [bukti, setBukti] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+  const saving = useRef(false);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const addRow = () => setRows([...rows, { id: members[0]?.id ?? "", nominal: "" }]);
   const total = rows.reduce((s, r) => s + (Number(r.nominal) || 0), 0);
 
-  const submit = () => {
+  const submit = async () => {
+    if (saving.current) return;
     if (!bukti) { toast({ title: "Unggah bukti transfer dulu", variant: "destructive" }); return; }
-    save(d => {
-      rows.forEach(r => {
-        const n = Number(r.nominal); if (!n || !r.id) return;
-        const role = (members.find(m => m.id === r.id)?.role) as "pelatih" | "seniman";
-        d.distribusi.push({ id: uid(), sanggarId: sg.id, penerimaId: r.id, penerimaRole: role, judulJob: judul, nominal: n, buktiTransferDataUrl: bukti.name, konfirmasi: false, createdAt: Date.now() });
-      });
-    });
-    pushKas(sg.id, `Bagi Hasil: ${judul}`, 0, total, "distribusi", "");
-    toast({ title: "Honor terkirim", description: "Notifikasi dikirim ke akun penerima." });
+    if (!judul.trim()) { toast({ title: "Isi judul pementasan", variant: "destructive" }); return; }
+    saving.current = true; setBusy(true);
+    try {
+    const receipt = await readPaymentReceipt(bukti);
+    save(d => recordDistributionCash(d, { sanggarId: sg.id, title: judul, rows, receipt, now: Date.now() }, uid));
+    toast({ title: "Pembagian honor tercatat", description: "Bukti dan rincian tersedia di akun penerima." });
     setRows([{ id: members[0]?.id ?? "", nominal: "" }]); setBukti(null);
+    if (fileInput.current) fileInput.current.value = "";
+    } catch (error) { toast({ title: "Honor belum tercatat", description: error instanceof Error ? error.message : "Coba kembali.", variant: "destructive" }); }
+    finally { saving.current = false; setBusy(false); }
   };
 
   return (
     <Card className="p-5">
       <div className="flex items-center justify-between"><h3 className="font-serif text-lg">Distribusi Bagi Hasil Pementasan</h3><Share2 className="h-5 w-5 text-muted-foreground" /></div>
-      <div className="mt-4 space-y-3">
-        <div className="space-y-1.5"><Label>Judul Job/Pementasan</Label><Input value={judul} onChange={e => setJudul(e.target.value)} /></div>
+      <fieldset disabled={busy} aria-busy={busy} className="mt-4 space-y-3 min-w-0">
+        <div className="space-y-1.5"><Label htmlFor="judul-distribusi">Judul Job/Pementasan</Label><Input id="judul-distribusi" value={judul} onChange={e => setJudul(e.target.value)} /></div>
         <div className="space-y-2">
           {rows.map((r, idx) => (
             <div key={idx} className="grid grid-cols-[1fr_auto_auto] gap-2 items-end">
               <div className="space-y-1.5"><Label className="text-xs">Penerima</Label>
-                <Select value={r.id} onValueChange={v => setRows(rows.map((x, i) => i === idx ? { ...x, id: v } : x))}>
+                <Select disabled={busy} value={r.id} onValueChange={v => setRows(rows.map((x, i) => i === idx ? { ...x, id: v } : x))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>{members.map(m => <SelectItem key={m.id} value={m.id}>{m.nama} ({m.role})</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5"><Label className="text-xs">Nominal</Label><Input type="number" className="w-32" value={r.nominal} onChange={e => setRows(rows.map((x, i) => i === idx ? { ...x, nominal: e.target.value } : x))} /></div>
-              <Button size="icon" variant="outline" onClick={() => setRows(rows.filter((_, i) => i !== idx))}><X className="h-4 w-4" /></Button>
+              <div className="space-y-1.5"><Label className="text-xs">Nominal</Label><Input aria-label={`Nominal penerima ${idx + 1}`} type="number" min="1" max={MAX_PAYMENT_AMOUNT} step="1" className="w-32" value={r.nominal} onChange={e => setRows(rows.map((x, i) => i === idx ? { ...x, nominal: e.target.value } : x))} /></div>
+              <Button size="icon" variant="outline" aria-label={`Hapus penerima ${idx + 1}`} onClick={() => setRows(rows.filter((_, i) => i !== idx))}><X className="h-4 w-4" /></Button>
             </div>
           ))}
           <Button size="sm" variant="outline" onClick={addRow}>+ Tambah Penerima</Button>
         </div>
-        <div className="text-sm text-muted-foreground">Total: <b className="text-foreground">{fmtRp(total)}</b></div>
-        <div className="space-y-1.5"><Label>Bukti Transfer</Label><Input type="file" onChange={e => setBukti(e.target.files?.[0] ?? null)} /></div>
-        <Button className="w-full" onClick={submit}>Kirim Honor ke Anggota</Button>
-      </div>
+        <div className="text-sm text-muted-foreground">Total: <b className="text-foreground">{Number.isSafeInteger(total) && total >= 0 ? fmtRp(total) : "Periksa nominal penerima"}</b></div>
+        <div className="space-y-1.5"><Label htmlFor="bukti-distribusi">Bukti Transfer</Label><Input id="bukti-distribusi" ref={fileInput} type="file" accept="image/png,image/jpeg,image/webp,application/pdf" disabled={busy} onChange={e => setBukti(e.target.files?.[0] ?? null)} /><p className="text-xs text-muted-foreground">JPG, PNG, WebP, atau PDF; maksimal 2 MB.</p></div>
+        <Button className="w-full" disabled={busy} onClick={submit}>{busy ? "Menyimpan…" : "Kirim Honor ke Anggota"}</Button>
+      </fieldset>
     </Card>
   );
 }

@@ -9,6 +9,8 @@ import {
   logActivity,
 } from "@/lib/store";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardWelcome, DashboardMetrics, DashboardLinks } from "@/components/layout/RoleWorkspace";
+import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +31,8 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import type { PelatihUser, SanggarUser, Latihan } from "@/lib/types";
+import { ajukanHonorLatihan, catatKehadiran, sesiHonorTersedia } from "@/lib/latihan-anggota";
+import { ReceiptDownload } from "@/components/documents/ReceiptDownload";
 import {
   Wallet,
   CheckCircle2,
@@ -52,38 +56,37 @@ export function PelatihHome() {
   );
   const distrib = db.distribusi.filter((d) => d.penerimaId === p.id);
   return (
-    <div>
-      <PageHeader
+    <div className="role-workspace" data-testid="pelatih-home">
+      <DashboardWelcome
+        role="Ruang pelatih"
         title={`Halo, ${p.nama}`}
-        subtitle={
+        description={
           sg ? `Pelatih di ${sg.namaSanggar}` : "Belum tergabung di sanggar"
         }
-        back={false}
+        primary={{ href: "/pelatih/daftar-latih", label: "Lihat jadwal latihan" }}
+        secondary={{ href: "/pelatih/profil", label: "Profil saya" }}
       />
       {p.status === "pending" && (
-        <Card className="p-4 bg-accent/15 border-accent/40 mb-6 text-sm">
+        <div className="rw-notice" role="status">
           Permohonan gabung Anda menunggu validasi Sanggar.
-        </Card>
+        </div>
       )}
-      <div className="grid sm:grid-cols-3 gap-4">
-        <Card className="p-5">
-          <div className="text-xs uppercase text-muted-foreground tracking-wide">
-            Sesi Latihan
-          </div>
-          <div className="text-3xl font-serif mt-2">{latihan.length}</div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-xs uppercase text-muted-foreground tracking-wide">
-            Slip Diterima
-          </div>
-          <div className="text-3xl font-serif mt-2">{slips.length}</div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-xs uppercase text-muted-foreground tracking-wide">
-            Dana Proyek Diterima
-          </div>
-          <div className="text-3xl font-serif mt-2">{distrib.length}</div>
-        </Card>
+      <DashboardMetrics items={[
+        { label: "Sesi latihan", value: latihan.length, href: "/pelatih/daftar-latih" },
+        { label: "Slip diterima", value: slips.length, href: "/pelatih/slip" },
+        { label: "Dana proyek diterima", value: distrib.length, href: "/pelatih/honor-proyek" },
+      ]} />
+      <div className="rw-columns">
+        <DashboardLinks title="Kelola kegiatan Anda" items={[
+          { href: "/pelatih/honor", label: "Pengajuan honor", description: "Ajukan dan pantau honor latihan.", icon: Send },
+          { href: "/pelatih/slip", label: "Arsip e-slip", description: "Lihat bukti honor yang sudah disetujui.", icon: FileText },
+          { href: "/pelatih/honor-proyek", label: "Dana proyek", description: "Periksa pembagian hasil kegiatan seni.", icon: Wallet },
+        ]} />
+        <section className="rw-panel">
+          <h2>Sesi latihan tercatat</h2>
+          {latihan.length ? <ul className="rw-record-list">{[...latihan].sort((a,b) => b.tanggal.localeCompare(a.tanggal)).slice(0,3).map(l => <li key={l.id}><strong>{l.kurikulum || "Latihan sanggar"}</strong><span>{fmtDate(l.tanggal)} · {l.jam} WIB</span><span>{l.tempat || "Tempat belum ditentukan"}</span></li>)}</ul> : <div className="rw-empty"><Calendar aria-hidden="true" /><p className="rw-note">Belum ada sesi latihan. Jadwal yang ditugaskan sanggar akan tampil di sini.</p></div>}
+          <Link className="rw-text-link" href="/pelatih/daftar-latih">Buka daftar latihan</Link>
+        </section>
       </div>
     </div>
   );
@@ -100,12 +103,12 @@ export function PelatihDaftarLatih() {
     .sort((a, b) => b.tanggal.localeCompare(a.tanggal));
 
   const hadir = (lid: string) => {
-    save((d) => {
-      const l = d.latihan.find((x) => x.id === lid);
-      if (l) l.pelatihId = p.id;
-    });
-    logActivity(p.id, "pelatih", "hadir-latihan", { lid });
-    toast({ title: "Kehadiran tercatat" });
+    try {
+      save((d) => { catatKehadiran(d, { userId: p.id, latihanId: lid, id: uid(), now: Date.now() }); });
+      toast({ title: "Kehadiran tercatat" });
+    } catch (error) {
+      toast({ title: "Kehadiran belum tercatat", description: error instanceof Error ? error.message : "Silakan coba lagi.", variant: "destructive" });
+    }
   };
 
   return (
@@ -146,7 +149,7 @@ export function PelatihDaftarLatih() {
                 </TableCell>
                 <TableCell>{l.kurikulum}</TableCell>
                 <TableCell className="text-right">
-                  {l.pelatihId === p.id ? (
+                  {db.absensiLatihan.some((item) => item.latihanId === l.id && item.userId === p.id) ? (
                     <Badge>Hadir</Badge>
                   ) : (
                     <Button size="sm" onClick={() => hadir(l.id)}>
@@ -169,31 +172,16 @@ export function PelatihHonor() {
   const { toast } = useToast();
   if (!user || user.role !== "pelatih") return null;
   const p = user as PelatihUser;
-  const myLat = db.latihan.filter((l) => l.pelatihId === p.id);
-  const sesiBaru = myLat.filter((l) => l.laporan).length;
+  const sesiBaru = sesiHonorTersedia(db, p).length;
   const total = sesiBaru * p.honorPerSesi;
 
   const ajukan = () => {
-    if (sesiBaru === 0) {
-      toast({ title: "Belum ada sesi terlapor", variant: "destructive" });
-      return;
+    try {
+      save((d) => { ajukanHonorLatihan(d, { userId: p.id, id: uid(), now: Date.now() }); });
+      toast({ title: "Pengajuan honor tercatat", description: "Menunggu validasi Sanggar." });
+    } catch (error) {
+      toast({ title: "Pengajuan belum dibuat", description: error instanceof Error ? error.message : "Silakan coba lagi.", variant: "destructive" });
     }
-    save((d) => {
-      d.pengajuanHonor.push({
-        id: uid(),
-        sanggarId: p.sanggarId!,
-        pelatihId: p.id,
-        jumlahSesi: sesiBaru,
-        honorPerSesi: p.honorPerSesi,
-        total,
-        status: "pending",
-        createdAt: Date.now(),
-      });
-    });
-    toast({
-      title: "Pengajuan honor terkirim",
-      description: "Menunggu validasi Sanggar.",
-    });
   };
 
   const myReq = db.pengajuanHonor
@@ -204,12 +192,12 @@ export function PelatihHonor() {
     <div>
       <PageHeader
         title="Pengajuan Honor"
-        subtitle="Rekap otomatis berdasarkan absensi latihan Anda."
+        subtitle="Sesi yang sudah dihadiri dan dilaporkan, serta belum masuk pengajuan aktif."
       />
       <Card className="p-6 mb-6 bg-primary text-primary-foreground">
         <div className="grid sm:grid-cols-3 gap-4">
           <div>
-            <div className="text-xs uppercase opacity-75">Sesi Terlapor</div>
+            <div className="text-xs uppercase opacity-75">Sesi Belum Diajukan</div>
             <div className="text-3xl font-serif mt-1">{sesiBaru}</div>
           </div>
           <div>
@@ -223,7 +211,7 @@ export function PelatihHonor() {
             <div className="text-3xl font-serif mt-1">{fmtRp(total)}</div>
           </div>
         </div>
-        <Button variant="secondary" className="mt-5 gap-2" onClick={ajukan}>
+        <Button variant="secondary" className="mt-5 gap-2" onClick={ajukan} disabled={sesiBaru === 0}>
           <Send className="h-4 w-4" />
           Ajukan Honor
         </Button>
@@ -358,7 +346,7 @@ export function PelatihSlip() {
                   </div>
                 </div>
                 <div className="text-[10px] text-muted-foreground mt-4 text-center">
-                  Bukti transfer: {s.buktiTransferDataUrl ?? "-"}
+                  <ReceiptDownload value={s.buktiTransferDataUrl} name={`bukti-honor-${s.id}`} />
                 </div>
               </div>
             </DialogContent>
@@ -412,8 +400,8 @@ export function PelatihDistribusi() {
             <div>
               <div className="font-medium">{it.judulJob}</div>
               <div className="text-sm text-muted-foreground mt-0.5">
-                Bukti: {it.buktiTransferDataUrl ?? "-"} ·{" "}
                 {fmtDateTime(it.createdAt)}
+                <ReceiptDownload value={it.buktiTransferDataUrl} name={`bukti-distribusi-${it.id}`} />
               </div>
             </div>
             <div className="text-right">

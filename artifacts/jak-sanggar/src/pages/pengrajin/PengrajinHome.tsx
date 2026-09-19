@@ -31,7 +31,7 @@ import type {
   ProdukKerajinan,
   SatuanProdukKerajinan,
 } from "@/lib/types";
-import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardWelcome, DashboardMetrics, DashboardLinks } from "@/components/layout/RoleWorkspace";
 import { ShareLocation, mapsUrl } from "@/components/system/ShareLocation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,12 +90,13 @@ function fileAsDataUrl(file: File): Promise<string> {
   });
 }
 
-export type PengrajinSection = "profil" | "produk";
+export type PengrajinSection = "dashboard" | "profil" | "produk";
 
 const SECTION_TITLE: Record<
   PengrajinSection,
   { title: string; subtitle: string }
 > = {
+  dashboard: { title: "Beranda pengrajin", subtitle: "Kelola produk dan kebutuhan toko Anda." },
   profil: {
     title: "Profil Toko",
     subtitle:
@@ -109,7 +110,7 @@ const SECTION_TITLE: Record<
 };
 
 export default function PengrajinHome({
-  section = "profil",
+  section = "dashboard",
 }: {
   section?: PengrajinSection;
 }) {
@@ -690,11 +691,33 @@ export default function PengrajinHome({
   ).length;
   const storeId = pengrajin.apiId ?? pengrajin.id;
 
+  if (section === "dashboard") return <div className="role-workspace" data-testid="pengrajin-home">
+    <DashboardWelcome role="Ruang pengrajin" title={pengrajin.namaUsaha || "Toko pengrajin"} description="Rawat karya khas Jakarta dan kelola perjalanan usaha Anda."
+      primary={{ href: "/pengrajin/produk", label: "Kelola produk" }} secondary={{ href: "/pengrajin/profil", label: "Profil toko" }} />
+    <DashboardMetrics items={[
+      { label: "Produk tercatat", value: draft.produk.length, href: "/pengrajin/produk" },
+      { label: "Produk tayang", value: publishedCount, href: "/pengrajin/produk" },
+      { label: "Status toko", value: draft.tokoDipublikasikan ? "Tayang" : "Disembunyikan", href: "/pengrajin/profil" },
+    ]} />
+    <div className="rw-columns">
+      <DashboardLinks title="Kelola usaha" items={[
+        { href: "/pengrajin/produk", label: "Produk khas Jakarta", description: "Tambahkan produk, harga, dan foto karya Anda.", icon: ShoppingBag },
+        { href: "/pengrajin/pesanan-produk", label: "Pesanan produk", description: "Tindak lanjuti pesanan dan pengiriman ke mitra.", icon: PackagePlus },
+        { href: "/pengrajin/kanal", label: "Kanal kerja sama", description: "Kelola kesepakatan penjualan bersama mitra.", icon: Handshake },
+      ]} />
+      <section className="rw-panel"><h2>Etalase Anda</h2>
+        {draft.produk.length ? <ul className="rw-record-list">{draft.produk.slice(0,3).map(produk => <li key={produk.id}><strong>{produk.nama}</strong><span>{produk.khasJakarta && produk.statusPublish ? "Tayang di katalog" : "Belum ditayangkan"}</span></li>)}</ul> : <div className="rw-empty"><Store aria-hidden="true" /><p className="rw-note">Belum ada produk di etalase. Tambahkan karya pertama Anda untuk mulai mengisi katalog.</p></div>}
+        <Link className="rw-text-link" href="/pengrajin/produk">Buka daftar produk</Link>
+      </section>
+    </div>
+  </div>;
+
   return (
-    <div className="space-y-6">
-      <PageHeader
+    <div className="role-workspace" data-testid="pengrajin-editor">
+      <DashboardWelcome
+        role="Ruang pengrajin"
         title={SECTION_TITLE[section].title}
-        subtitle={SECTION_TITLE[section].subtitle}
+        description={SECTION_TITLE[section].subtitle}
         actions={
           <div className="flex flex-wrap gap-2">
             {section === "profil" && (
@@ -732,7 +755,7 @@ export default function PengrajinHome({
         }
       />
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="rw-status-strip" aria-label="Ringkasan toko">
         <StatusCard
           icon={<Store className="h-5 w-5" />}
           label="Toko & Peta"

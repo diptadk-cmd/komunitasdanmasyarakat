@@ -71,7 +71,7 @@ async function readRenderedDocument(response, format) {
   return blob.type === expectedMime ? blob : blob.slice(0, blob.size, expectedMime);
 }
 
-export function createTemplatePage(React, _Legacy, useAdapter) {
+export function createTemplatePage(React, LetterheadBuilder, useAdapter) {
   const h = React.createElement;
   function Help({ name, text, context }) {
     const close = event => { const details = event.currentTarget.closest('details'); details.removeAttribute('open'); details.querySelector('summary').focus(); };
@@ -83,6 +83,7 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
     const [search, setSearch] = React.useState(''), [fieldSearch, setFieldSearch] = React.useState(''), [onlyEmpty, setOnlyEmpty] = React.useState(false);
     const [drafts, setDrafts] = React.useState({}), [custom, setCustom] = React.useState({}), [busy, setBusy] = React.useState(''), [status, setStatus] = React.useState(''), [error, setError] = React.useState(''), [preview, setPreview] = React.useState('');
     const [imageDrafts, setImageDrafts] = React.useState({});
+    const [letterheadOpen, setLetterheadOpen] = React.useState(false);
     const [pickerOpen, setPickerOpen] = React.useState(false), [view, setView] = React.useState('edit');
     const [activeSection, setActiveSection] = React.useState(null), [imagesOpen, setImagesOpen] = React.useState(false);
     const [sectionPages, setSectionPages] = React.useState({}), [activeFieldKey, setActiveFieldKey] = React.useState(null);
@@ -143,7 +144,7 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
       try { const value = await readImageFile(file, slot.id); setImageDrafts(previous => ({ ...previous, [targetKey]: { ...previous[targetKey], [slot.id]: value } })); }
       catch (e) { setError(e.message); } finally { setBusy(''); }
     }
-    function resetEditor() { setView('edit'); setActiveSection(null); setSectionPages({}); setActiveFieldKey(null); setFieldSearch(''); setOnlyEmpty(false); setImagesOpen(false); }
+    function resetEditor() { setView('edit'); setActiveSection(null); setSectionPages({}); setActiveFieldKey(null); setFieldSearch(''); setOnlyEmpty(false); setImagesOpen(false); setLetterheadOpen(false); }
     function chooseDocument(id) { setDoc(id); resetEditor(); setPickerOpen(false); setPendingSectionFocus('nf-document-title'); }
     function chooseGroup(id) { const selected = catalog.groups.find(g => g.id === id); if (!selected) return; setGroup(id); setDoc(selected.documents[0]?.id || ''); resetEditor(); }
     function returnToEditor() { setView('edit'); setPendingSectionFocus(filtering ? 'nf-field-search' : sections.length ? `nf-section-${Math.max(0, sections.indexOf(currentSection))}-toggle` : 'nf-document-title'); }
@@ -235,6 +236,7 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
           images[slot.id] ? h('img', { src: images[slot.id], alt: 'Pratinjau ' + slot.label.toLowerCase() }) : h('p', { className: 'nf-count' }, 'Belum ada gambar'),
           h('input', { id: 'nf-upload-' + slot.id, type: 'file', accept: 'image/png,image/jpeg,image/webp,image/avif', hidden: true, onChange: event => { const file = event.target.files?.[0]; event.target.value = ''; void uploadImage(slot, file); } }),
           h('div', { className: 'nf-actions' }, h('button', { type: 'button', id: 'nf-upload-trigger-' + slot.id, disabled: !!busy, onClick: () => document.getElementById('nf-upload-' + slot.id).click() }, busy === 'image-' + slot.id ? 'Memproses gambar…' : (images[slot.id] ? 'Ganti ' : 'Unggah ') + slot.label.toLowerCase()), images[slot.id] && h('button', { type: 'button', disabled: !!busy, onClick: () => updateImage(slot.id, '') }, 'Lepas gambar')),
+          slot.id === 'letterhead' && LetterheadBuilder && h('button', { type: 'button', disabled: !!busy, onClick: () => setLetterheadOpen(true) }, 'Buat kop dari identitas'),
           imageFallbacks.images[slot.id] && images[slot.id] !== imageFallbacks.images[slot.id] && h('button', { type: 'button', disabled: !!busy, className: 'nf-choice', onClick: () => updateImage(slot.id, imageFallbacks.images[slot.id]) }, 'Gunakan gambar tersimpan'),
           h('p', { className: 'nf-count' }, Object.hasOwn(imageEdits, slot.id) ? 'Perubahan gambar pada formulir ini' : imageDefaults.sources[slot.id] || 'PNG, JPG, WebP, atau AVIF; maksimal 8 MB.')))));
     }
@@ -243,7 +245,18 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
       h('style', null, css + documentWorkspaceCss),
       h('header', { className: 'nf-workspace-header' },
         h('div', { className: 'nf-document-copy' }, h('p', { className: 'nf-document-meta' }, group?.label || 'Dokumen sanggar'), h('h1', { id: 'nf-document-title', tabIndex: -1 }, item?.title || 'Dokumen sanggar')),
-        h('button', { type: 'button', className: 'nf-picker-toggle', disabled: !catalog, 'aria-expanded': pickerOpen, 'aria-controls': 'nf-document-picker', onClick: () => setPickerOpen(previous => !previous) }, pickerOpen ? 'Tutup pilihan dokumen' : 'Ganti dokumen')),
+        h('div', { style: { display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' } },
+          LetterheadBuilder && h('button', { type: 'button', id: 'nf-letterhead-builder-open', className: 'nf-picker-toggle', disabled: !item || !!busy, onClick: () => setLetterheadOpen(true) }, 'Buat kop surat'),
+          h('button', { type: 'button', className: 'nf-picker-toggle', disabled: !catalog, 'aria-expanded': pickerOpen, 'aria-controls': 'nf-document-picker', onClick: () => setPickerOpen(previous => !previous) }, pickerOpen ? 'Tutup pilihan dokumen' : 'Ganti dokumen'))),
+      LetterheadBuilder && item && h(React.Suspense, { fallback: letterheadOpen ? h('p', { role: 'status' }, 'Memuat pembuat kop surat…') : null }, h(LetterheadBuilder, {
+        key: saveKey, open: letterheadOpen, profile: adapter.profile, initialLogo: images.logo,
+        onClose: () => setLetterheadOpen(false),
+        onApply: dataUrl => {
+          if (!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(dataUrl) || dataUrl.length > 550000) { setError('Kop surat belum valid. Buat ulang kop sebelum digunakan.'); return; }
+          updateImage('letterhead', dataUrl); setLetterheadOpen(false); setView('edit'); setImagesOpen(true);
+          setPendingImageFocus('letterhead');
+        },
+      })),
       pickerOpen && catalog && h('section', { id: 'nf-document-picker', className: 'nf-picker', 'aria-label': 'Pilihan dokumen' },
         h('div', { className: 'nf-picker-filters' },
           h('div', null, h('label', { htmlFor: 'nf-category' }, 'Kedudukan sanggar'), h('select', { id: 'nf-category', value: category, onChange: event => chooseCategory(event.target.value) }, categories.map(value => h('option', { key: value, value }, value)))),

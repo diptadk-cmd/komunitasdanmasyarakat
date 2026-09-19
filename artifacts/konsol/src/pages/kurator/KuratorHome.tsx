@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { useDb } from "@/lib/auth";
 import { fmtRp } from "@/lib/store";
 import { cashOverview } from "@/lib/cash-overview";
+import { DashboardWelcome } from "@/components/layout/RoleWorkspace";
 import { Users, GraduationCap, Palette, Wallet, ArrowUpRight, ShieldCheck, FileText, Sliders, Trophy, Images, FileSpreadsheet, CheckCircle2, Activity, CalendarDays } from "lucide-react";
 import { ComposedChart, Bar, Line, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from "recharts";
 import "./kurator-home.css";
@@ -38,10 +39,8 @@ export default function KuratorHome() {
 
   return (
     <div className="kurator-home" data-testid="kurator-home">
-      <header className="kh-heading">
-        <div><p className="kh-context">Konsol kurator</p><h1>Ruang kerja kebudayaan.</h1><p>Pantau ekosistem, tindak lanjuti kebutuhan, dan beri ruang bagi karya.</p></div>
-        <div className="kh-date"><CalendarDays aria-hidden="true" /><span>{new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</span></div>
-      </header>
+      <DashboardWelcome role="Konsol kurator" title="Ruang kerja kebudayaan" description="Pantau ekosistem, tindak lanjuti kebutuhan, dan beri ruang bagi karya."
+        primary={{ href: "/akun", label: "Kelola akun komunitas" }} secondary={{ href: "/dokumen", label: "Studio dokumen" }} />
 
       <section className="kh-stats" aria-label="Ringkasan ekosistem">
         {stats.map(({ label, value, icon: Icon, href }) => <Link href={href} key={label} className="kh-stat"><div><Icon aria-hidden="true" /><ArrowUpRight aria-hidden="true" /></div><span>{label}</span><strong>{value}</strong></Link>)}

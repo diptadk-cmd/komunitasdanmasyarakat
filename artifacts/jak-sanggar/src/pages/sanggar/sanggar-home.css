@@ -721,3 +721,20 @@
     font-size: 11px;
   }
 }
+
+/* Refined community workspace: connected data and a calm service directory. */
+.sg-stats{gap:0;border:1px solid var(--sg-border);border-radius:12px;overflow:hidden;background:var(--sg-surface)}
+.sg-stats .sg-stat{border:0;border-right:1px solid var(--sg-border);border-radius:0;background:transparent;padding:20px}
+.sg-stats .sg-stat:last-child{border-right:0}
+.sg-service-grid{gap:0;border:1px solid var(--sg-border);border-radius:12px;overflow:hidden;background:var(--sg-surface)}
+.sg-service-grid>a{border-right:1px solid var(--sg-border);border-bottom:1px solid var(--sg-border)}
+.sg-service-grid>a:nth-child(4n){border-right:0}
+.sg-service-grid>a:nth-last-child(-n+4){border-bottom:0}
+.sg-services [data-testid^="tile-"]{border:0;border-radius:0;background:transparent;padding:18px}
+.sg-services [data-testid^="tile-"] .font-medium{font-size:13px}
+.sg-services [data-testid^="tile-"] .text-xs{font-size:12px}
+.sanggar-home .sanggar-cover:has(.sanggar-cover__badge){background:#fff}
+.sanggar-home .sanggar-cover:has(.sanggar-cover__badge) .sanggar-cover__image{object-fit:contain;height:calc(100% - 54px);padding:20px 10px 0}
+.sanggar-home .sg-identity h1{font-size:clamp(24px,2.2vw,31px)}
+.sg-hero{border-radius:14px}.sg-identity{padding:24px 28px}.sanggar-home .sanggar-cover{min-height:225px}
+@media(max-width:767px){.sg-stats .sg-stat{padding:16px;border-bottom:1px solid var(--sg-border)}.sg-stats .sg-stat:nth-child(2n){border-right:0}.sg-stats .sg-stat:nth-last-child(-n+2){border-bottom:0}.sg-service-grid>a:nth-child(2n){border-right:0}.sg-service-grid>a:nth-last-child(-n+4){border-bottom:1px solid var(--sg-border)}.sg-service-grid>a:nth-last-child(-n+2){border-bottom:0}.sg-services [data-testid^="tile-"]{padding:16px}.sg-identity{padding:22px}.sanggar-home .sanggar-cover{min-height:150px;height:150px}.sanggar-home .sanggar-cover:has(.sanggar-cover__badge) .sanggar-cover__image{height:calc(100% - 45px);padding:6px 8px 0}.sanggar-home .sanggar-cover__badge{font-size:9px;top:8px;right:8px}.sanggar-home .sanggar-cover__action{bottom:9px;right:12px;min-height:36px;font-size:11px}}

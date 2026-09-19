@@ -89,6 +89,37 @@ function nativePayload(input: unknown) {
   };
 }
 
+function htmlPayload(input: unknown) {
+  if (!isRecord(input) || (input.format !== "word" && input.format !== "pdf") || input.nativeTemplate !== undefined) return null;
+  if (typeof input.html !== "string" || !input.html.trim()) return null;
+  if (input.title !== undefined && (typeof input.title !== "string" || input.title.length > 1000)) return null;
+  let pageMarginsMm: Record<string, number> | undefined;
+  if (input.pageMarginsMm !== undefined) {
+    if (!isRecord(input.pageMarginsMm)) return null;
+    pageMarginsMm = {};
+    for (const edge of ["atas", "kanan", "bawah", "kiri"]) {
+      const value = input.pageMarginsMm[edge];
+      if (value === undefined) continue;
+      if (typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 100) return null;
+      pageMarginsMm[edge] = value;
+    }
+  }
+  let footer: { text: string } | undefined;
+  if (input.footer !== undefined) {
+    if (!isRecord(input.footer) || typeof input.footer.text !== "string" || input.footer.text.length > 2000) return null;
+    footer = { text: input.footer.text };
+  }
+  // Only renderer-supported fields pass through. The renderer disables scripts
+  // and network requests; this proxy remains restricted to same-origin loopback.
+  return {
+    format: input.format,
+    html: input.html,
+    ...(input.title !== undefined ? { title: input.title } : {}),
+    ...(pageMarginsMm ? { pageMarginsMm } : {}),
+    ...(footer ? { footer } : {}),
+  };
+}
+
 /** Only installed by the local demo Vite server. Production keeps API auth. */
 export function createLocalDocumentRenderMiddleware(options: { rendererUrl?: string; fetcher?: typeof fetch } = {}) {
   const rendererUrl = localRendererURL(options.rendererUrl);
@@ -104,11 +135,12 @@ export function createLocalDocumentRenderMiddleware(options: { rendererUrl?: str
     }
     let payload;
     try {
-      payload = nativePayload(JSON.parse((await readBody(req)).toString("utf8")));
+      const input = JSON.parse((await readBody(req)).toString("utf8"));
+      payload = nativePayload(input) ?? htmlPayload(input);
     } catch (error) {
       reply(res, error instanceof RangeError ? 413 : 400, error instanceof RangeError ? error.message : "Isian dokumen tidak valid."); return;
     }
-    if (!payload) { reply(res, 400, "Demo lokal hanya mendukung template Word/PDF yang tersedia."); return; }
+    if (!payload) { reply(res, 400, "Format atau isian dokumen Word/PDF tidak valid."); return; }
     try {
       const result = await requestRenderer(rendererUrl, {
         method: "POST",

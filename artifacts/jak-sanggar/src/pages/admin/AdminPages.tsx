@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth, useDb } from "@/lib/auth";
 import { save, uid, fmtDate, logActivity } from "@/lib/store";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardWelcome, DashboardMetrics, DashboardLinks } from "@/components/layout/RoleWorkspace";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,8 +34,6 @@ import {
   Lock,
   Shield,
 } from "lucide-react";
-import { PremiumHero } from "@/components/system/PremiumHero";
-import { AnimatedCounter } from "@/components/system/AnimatedCounter";
 import { NewsSlider } from "@/components/system/NewsSlider";
 
 export function AdminHome() {
@@ -44,114 +43,34 @@ export function AdminHome() {
   const a = user as AdminUser;
   const activePerms = Object.values(a.permissions).filter(Boolean).length;
   const totalPerms = Object.keys(a.permissions).length;
+  const permissionLabels: Record<string, string> = {
+    kelolaBerita: "Kelola berita", kelolaBanner: "Kelola pengumuman", kelolaSlider: "Kelola slider",
+    kelolaJamPembinaan: "Kelola jam pembinaan", kelolaInfoBudaya: "Kelola info budaya",
+  };
+  const actions = [
+    { allowed: a.permissions.kelolaBerita, href: "/admin/berita", label: "Berita komunitas", description: "Tulis, perbarui, dan kelola berita yang ditayangkan.", icon: Newspaper },
+    { allowed: a.permissions.kelolaBanner, href: "/admin/banner", label: "Pengumuman", description: "Atur pesan penting untuk pengguna portal.", icon: MessageSquare },
+    { allowed: a.permissions.kelolaSlider, href: "/admin/slider", label: "Slider portal", description: "Kelola gambar utama dan tautan di halaman depan.", icon: ImageIcon },
+    { allowed: a.permissions.kelolaInfoBudaya, href: "/admin/info-budaya", label: "Info budaya", description: "Kelola publikasi karya dan kegiatan budaya.", icon: ImageIcon },
+  ].filter(action => action.allowed);
   return (
-    <div>
-      <PremiumHero
-        eyebrow="Panel Operasional"
-        icon={<Shield className="h-4 w-4" />}
-        title={`Selamat datang, ${a.nama}`}
-        subtitle="Kelola berita, banner pengumuman, dan slider carousel untuk seluruh ekosistem Jak Sanggar."
-        right={
-          <div className="text-right">
-            <div
-              className="text-[11px] font-medium uppercase tracking-[0.2em]"
-              style={{ color: "hsl(42 70% 70%)" }}
-            >
-              Hak Akses Aktif
-            </div>
-            <div
-              className="font-serif text-4xl mt-1"
-              style={{
-                background:
-                  "linear-gradient(135deg, hsl(45 90% 80%), hsl(42 75% 55%))",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              <AnimatedCounter value={activePerms} />{" "}
-              <span className="text-2xl opacity-70">/ {totalPerms}</span>
-            </div>
-          </div>
-        }
-      />
-
-      <div className="grid sm:grid-cols-3 gap-4">
-        <Card className="p-5 premium-card">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                Berita
-              </div>
-              <div className="text-3xl font-serif mt-2">
-                <AnimatedCounter value={db.news.length} />
-              </div>
-            </div>
-            <div className="h-10 w-10 rounded-lg grid place-items-center bg-accent/15 border border-accent/30">
-              <Newspaper className="h-5 w-5 text-accent-foreground" />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5 premium-card">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                Banner Aktif
-              </div>
-              <div className="text-3xl font-serif mt-2">
-                <AnimatedCounter
-                  value={db.banners.filter((b) => b.active).length}
-                />
-              </div>
-            </div>
-            <div className="h-10 w-10 rounded-lg grid place-items-center bg-accent/15 border border-accent/30">
-              <MessageSquare className="h-5 w-5 text-accent-foreground" />
-            </div>
-          </div>
-        </Card>
-        <Card className="p-5 premium-card">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                Slider
-              </div>
-              <div className="text-3xl font-serif mt-2">
-                <AnimatedCounter value={db.slider.length} />
-              </div>
-            </div>
-            <div className="h-10 w-10 rounded-lg grid place-items-center bg-accent/15 border border-accent/30">
-              <ImageIcon className="h-5 w-5 text-accent-foreground" />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      <div className="mt-6">
-        <NewsSlider news={db.news} title="Berita Aktif Saat Ini" />
-      </div>
-
-      <div className="mt-6">
-        <h3 className="font-serif text-lg mb-3">Hak Akses Anda</h3>
-        <Card className="p-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {(
-            Object.entries(a.permissions) as [
-              keyof typeof a.permissions,
-              boolean,
-            ][]
-          ).map(([k, v]) => (
-            <div key={k} className="flex items-center gap-2 text-sm">
-              {v ? (
-                <Badge variant="success">Aktif</Badge>
-              ) : (
-                <Badge variant="outline" className="gap-1">
-                  <Lock className="h-3 w-3" />
-                  Nonaktif
-                </Badge>
-              )}
-              <span className="text-muted-foreground">{k}</span>
-            </div>
-          ))}
-        </Card>
-      </div>
+    <div className="role-workspace" data-testid="admin-home">
+      <DashboardWelcome role="Ruang administrator" title={`Selamat datang, ${a.nama}`} description="Kelola publikasi dan informasi untuk komunitas JakSanggar."
+        primary={actions[0] ? { href: actions[0].href, label: actions[0].label } : undefined} />
+      <DashboardMetrics label="Ringkasan publikasi" items={[
+        { label: "Berita", value: db.news.length, href: a.permissions.kelolaBerita ? "/admin/berita" : undefined },
+        { label: "Pengumuman aktif", value: db.banners.filter(b => b.active).length, href: a.permissions.kelolaBanner ? "/admin/banner" : undefined },
+        { label: "Slide portal", value: db.slider.length, href: a.permissions.kelolaSlider ? "/admin/slider" : undefined },
+      ]} />
+      {actions.length > 0 ? <DashboardLinks title="Kelola publikasi" items={actions} /> : <div className="rw-notice">Belum ada akses pengelolaan publikasi yang aktif. Hubungi kurator untuk pengaturan akses.</div>}
+      <section className="rw-panel" aria-label="Hak akses Anda">
+        <div className="rw-permission-summary"><h2>Hak akses Anda</h2><span>{activePerms} dari {totalPerms} aktif</span></div>
+        <div className="rw-access">{Object.entries(a.permissions).map(([key, enabled]) => <div key={key}>
+          <Badge variant={enabled ? "success" : "outline"}>{enabled ? "Aktif" : "Nonaktif"}</Badge>
+          <span>{permissionLabels[key] || key.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, letter => letter.toUpperCase())}</span>
+        </div>)}</div>
+      </section>
+      <NewsSlider news={db.news} title="Berita untuk komunitas" />
     </div>
   );
 }
@@ -205,12 +124,12 @@ export function AdminBerita() {
         <Card className="p-5 lg:col-span-1 space-y-3 h-fit">
           <h3 className="font-serif text-lg">Berita Baru</h3>
           <div className="space-y-1.5">
-            <Label>Kategori</Label>
+            <Label htmlFor="admin-news-category">Kategori</Label>
             <Select
               value={kategori}
               onValueChange={(value) => setKategori(value as NewsKategori)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="admin-news-category">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -225,20 +144,22 @@ export function AdminBerita() {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label>Judul</Label>
-            <Input value={judul} onChange={(e) => setJudul(e.target.value)} />
+            <Label htmlFor="admin-news-title">Judul</Label>
+            <Input id="admin-news-title" value={judul} onChange={(e) => setJudul(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label>Isi</Label>
+            <Label htmlFor="admin-news-body">Isi</Label>
             <Textarea
+              id="admin-news-body"
               rows={4}
               value={isi}
               onChange={(e) => setIsi(e.target.value)}
             />
           </div>
           <div className="space-y-1.5">
-            <Label>URL Gambar (opsional)</Label>
+            <Label htmlFor="admin-news-image">URL Gambar (opsional)</Label>
             <Input
+              id="admin-news-image"
               value={img}
               onChange={(e) => setImg(e.target.value)}
               placeholder="https://..."
@@ -299,8 +220,9 @@ export function AdminBanner() {
       />
       <Card className="p-5 max-w-xl space-y-3">
         <div className="space-y-1.5">
-          <Label>Teks Banner</Label>
+          <Label htmlFor="admin-banner-text">Teks Banner</Label>
           <Textarea
+            id="admin-banner-text"
             rows={2}
             value={teks}
             onChange={(e) => setTeks(e.target.value)}
@@ -340,6 +262,7 @@ export function AdminBanner() {
             </div>
             <div className="flex items-center gap-2">
               <Switch
+                aria-label={`Tampilkan pengumuman ${b.teks}`}
                 checked={b.active}
                 onCheckedChange={(c) =>
                   save((d) => {
@@ -380,16 +303,17 @@ export function AdminSlider() {
       <PageHeader title="Kelola Slider Carousel" />
       <Card className="p-5 max-w-xl grid sm:grid-cols-2 gap-3 mb-6">
         <div className="space-y-1.5 sm:col-span-2">
-          <Label>URL Gambar</Label>
+          <Label htmlFor="admin-slide-image">URL Gambar</Label>
           <Input
+            id="admin-slide-image"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://..."
           />
         </div>
         <div className="space-y-1.5 sm:col-span-2">
-          <Label>Caption</Label>
-          <Input value={cap} onChange={(e) => setCap(e.target.value)} />
+          <Label htmlFor="admin-slide-caption">Caption</Label>
+          <Input id="admin-slide-caption" value={cap} onChange={(e) => setCap(e.target.value)} />
         </div>
         <Button
           className="sm:col-span-2"

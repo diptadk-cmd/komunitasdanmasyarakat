@@ -53,11 +53,55 @@ test("target renderer hanya HTTP loopback /render dan tidak menerima redirect re
   }
 });
 
-test("request harus JSON template native Word/PDF tanpa HTML arbitrer", async () => {
+test("request harus JSON Word/PDF dengan tepat satu sumber dokumen yang valid", async () => {
   const nonJson = await request({ headers: { "content-type": "text/plain" } });
   assert.equal(nonJson.res.statusCode, 415);
-  for (const body of ["broken JSON", "[]", JSON.stringify({ format: "pdf", html: "<h1>HTML</h1>" }), JSON.stringify({ ...native, html: "<p>HTML</p>" }), JSON.stringify({ ...native, format: "xlsx" }), JSON.stringify({ ...native, format: ["pdf"] }), JSON.stringify({ ...native, nativeTemplate: { ...native.nativeTemplate, groupId: "../outside" } }), JSON.stringify({ ...native, nativeTemplate: { ...native.nativeTemplate, values: { NAMA: 123 } } })]) {
+  for (const body of ["broken JSON", "[]", JSON.stringify({ format: "pdf", html: "  " }), JSON.stringify({ format: "word", html: 123 }), JSON.stringify({ ...native, html: "<p>HTML</p>" }), JSON.stringify({ ...native, format: "xlsx" }), JSON.stringify({ ...native, format: ["pdf"] }), JSON.stringify({ ...native, nativeTemplate: { ...native.nativeTemplate, groupId: "../outside" } }), JSON.stringify({ ...native, nativeTemplate: { ...native.nativeTemplate, values: { NAMA: 123 } } })]) {
     const result = await request({ body });
+    assert.equal(result.res.statusCode, 400);
+    assert.equal(result.calls.length, 0);
+  }
+});
+
+test("profil HTML Word/PDF diteruskan dengan isian, margin dan footer serta byte respons utuh", async () => {
+  for (const format of ["word", "pdf"]) {
+    const bytes = Uint8Array.from([80, 75, 3, 4, 0, 255, 200, 0]);
+    const expected = {
+      format, html: "<!DOCTYPE html><article data-dokumen-template-root>Profil Juri — Bio tersimpan</article>",
+      title: "Profil Juri Uji", pageMarginsMm: { atas: 8, kanan: 12.5, bawah: 16, kiri: 12.5 },
+      footer: { text: "Halaman {page} dari {pages}" },
+    };
+    let forwarded;
+    const result = await request({
+      body: JSON.stringify({ ...expected, targetUrl: "https://example.invalid", footer: { ...expected.footer, arbitrary: true } }),
+      headers: { cookie: "session=fixture", authorization: "Bearer fixture" },
+      fetcher: async (url, init) => {
+        forwarded = { url, init };
+        return new Response(bytes, { headers: { "content-type": format === "pdf" ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document" } });
+      },
+    });
+    assert.equal(result.res.statusCode, 200);
+    assert.equal(forwarded.url, "http://127.0.0.1:3001/render");
+    assert.deepEqual(JSON.parse(forwarded.init.body), expected);
+    assert.deepEqual(forwarded.init.headers, { "Content-Type": "application/json" });
+    assert.equal(forwarded.init.redirect, "error");
+    assert.deepEqual(result.res.body, Buffer.from(bytes));
+    assert.equal(result.res.headers["cache-control"], "no-store");
+  }
+});
+
+test("profil HTML tetap menolak origin asing dan opsi renderer di luar batas", async () => {
+  const profile = { format: "pdf", html: "<article>Profil</article>" };
+  const foreign = await request({ body: JSON.stringify(profile), headers: { origin: "https://example.invalid" } });
+  assert.equal(foreign.res.statusCode, 403);
+  assert.equal(foreign.calls.length, 0);
+  for (const invalid of [
+    { title: "x".repeat(1001) }, { title: [] },
+    { pageMarginsMm: [] }, { pageMarginsMm: { atas: -1 } },
+    { pageMarginsMm: { kiri: 101 } }, { pageMarginsMm: { kanan: "12.5" } },
+    { footer: [] }, { footer: { text: 12 } }, { footer: { text: "x".repeat(2001) } },
+  ]) {
+    const result = await request({ body: JSON.stringify({ ...profile, ...invalid }) });
     assert.equal(result.res.statusCode, 400);
     assert.equal(result.calls.length, 0);
   }

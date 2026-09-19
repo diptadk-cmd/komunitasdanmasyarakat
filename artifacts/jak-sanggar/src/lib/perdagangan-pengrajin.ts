@@ -182,17 +182,19 @@ export function buatPesananProduk(input: {
   dpPersen?: number;
   jatuhTempoHari?: number;
 }): PesananProdukPengrajin {
+  const pengrajin = load().users.find((user): user is PengrajinUser => user.role === "pengrajin" && user.id === input.pengrajin.id);
+  if (!pengrajin || pengrajin.tokoDipublikasikan === false) throw new Error("Toko Pengrajin sudah tidak tersedia.");
   const requested =
     input.items ??
     (input.produk ? [{ produk: input.produk, jumlah: input.jumlah ?? 0 }] : []);
-  const selected = requested.filter((item) => item.jumlah > 0);
+  const selected = requested.filter((item) => item.jumlah > 0).map((item) => ({ ...item, produk: currentProduk(pengrajin, item.produk.id) }));
   if (selected.length === 0) throw new Error("Pilih minimal satu barang.");
   if (
     selected.some(
       (item) =>
         !Number.isInteger(item.jumlah) ||
         item.jumlah < 1 ||
-        !input.pengrajin.produk.some((produk) => produk.id === item.produk.id),
+        !pengrajin.produk.some((produk) => produk.id === item.produk.id),
     )
   ) {
     throw new Error(
@@ -214,7 +216,7 @@ export function buatPesananProduk(input: {
     nomor: "",
     mitraId: input.mitra.id,
     tujuanTransaksi: "dijual_kembali",
-    pengrajinId: input.pengrajin.id,
+    pengrajinId: pengrajin.id,
     paketId: input.paketId,
     items: selected.map(({ produk, jumlah }) => ({
       produkId: produk.id,
@@ -240,14 +242,14 @@ export function buatPesananProduk(input: {
       dpPersen: input.dpPersen,
       jatuhTempoHari: input.jatuhTempoHari,
     }),
-    rekeningTujuan: structuredClone(input.pengrajin.rekening),
+    rekeningTujuan: structuredClone(pengrajin.rekening),
     riwayatPembayaran: [],
     status: pengiriman.ongkirTermasukHarga ? "diajukan" : "menunggu_ongkir",
     ttd: [],
     createdAt: now,
     updatedAt: now,
   };
-  terapkanRingkasan(pesanan, input.pengrajin);
+  terapkanRingkasan(pesanan, pengrajin);
   save((db) => {
     pesanan.nomor = nomor("ORDER", db);
     db.pesananProdukPengrajin.push(pesanan);
@@ -257,6 +259,14 @@ export function buatPesananProduk(input: {
     pengrajinId: input.pengrajin.id,
   });
   return pesanan;
+}
+
+function currentProduk(pengrajin: PengrajinUser, id: string): ProdukKerajinan {
+  const produk = pengrajin.produk.find((item) => item.id === id);
+  if (!produk) throw new Error("Semua barang harus berasal dari satu Pengrajin dan masih tersedia.");
+  if (pengrajin.tokoDipublikasikan === false || !produk.statusPublish || !produk.khasJakarta || !produk.terbukaKerjasama) throw new Error("Produk sudah tidak tersedia di katalog. Muat ulang sebelum memesan.");
+  if (!Number.isFinite(produk.harga) || produk.harga < 0) throw new Error("Harga produk tidak valid.");
+  return produk;
 }
 
 export function buatPesananDariPaket(
@@ -273,6 +283,7 @@ export function buatPesananDariPaket(
   },
 ): PesananProdukPengrajin[] {
   const db = load();
+  if (!alamatPengiriman.trim() || !targetSelesai) throw new Error("Alamat pengiriman dan target selesai wajib diisi.");
   const groups = new Map<string, Array<PaketProdukMitra["items"][number]>>();
   for (const item of paket.items) {
     const list = groups.get(item.pengrajinId) ?? [];
@@ -288,11 +299,10 @@ export function buatPesananDariPaket(
           user.apiId === pengrajinId ||
           user.username === pengrajinId),
     );
-    if (!pengrajin) continue;
+    if (!pengrajin) throw new Error("Pengrajin untuk paket ini tidak ditemukan. Perbarui paket sebelum memesan.");
     const now = Date.now();
-    const produkPesanan = items
-      .map((item) => pengrajin.produk.find((p) => p.id === item.produkId))
-      .filter((item): item is ProdukKerajinan => Boolean(item));
+    if (items.some((item) => !Number.isInteger(item.jumlah) || item.jumlah < 1) || new Set(items.map((item) => item.produkId)).size !== items.length) throw new Error("Jumlah barang paket tidak valid atau berulang.");
+    const produkPesanan = items.map((item) => currentProduk(pengrajin, item.produkId));
     const pengiriman = buatPengirimanAwal(
       produkPesanan,
       kesepakatan?.metodePengiriman,
@@ -304,22 +314,22 @@ export function buatPesananDariPaket(
       tujuanTransaksi: "dijual_kembali",
       pengrajinId: pengrajin.id,
       paketId: paket.id,
-      items: items.map((item) => ({
-        produkId: item.produkId,
-        nama: item.namaProduk,
+      items: items.map((item, index) => ({
+        produkId: produkPesanan[index].id,
+        nama: produkPesanan[index].nama,
         jumlah: item.jumlah,
-        harga: item.hargaDasar,
-        satuan: item.satuan,
+        harga: produkPesanan[index].harga,
+        satuan: produkPesanan[index].satuan,
       })),
       alamatPengiriman: alamatPengiriman.trim(),
       targetSelesai,
       catatan: catatan.trim(),
       subtotalProduk: items.reduce(
-        (total, item) => total + item.hargaDasar * item.jumlah,
+        (total, item, index) => total + produkPesanan[index].harga * item.jumlah,
         0,
       ),
       nilaiTotal: items.reduce(
-        (total, item) => total + item.hargaDasar * item.jumlah,
+        (total, item, index) => total + produkPesanan[index].harga * item.jumlah,
         0,
       ),
       pengiriman,

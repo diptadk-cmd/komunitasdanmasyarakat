@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { save, logActivity } from "@/lib/store";
 import { Card } from "@/components/ui/card";
@@ -25,6 +25,7 @@ export default function JuriProfile() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [editMode, setEdit] = useState(false);
+  const profileId = useId();
   if (!user || user.role !== "juri") return null;
   const j = user as JuriUser;
   const galeri: FotoGaleriItem[] = j.fotoGaleri ?? [];
@@ -180,12 +181,12 @@ export default function JuriProfile() {
               <FieldEdit label="No. HP" v={draft.noHp} on={v => setDraft({ ...draft, noHp: v })} />
               <FieldEdit label="NPWP" v={draft.npwp} on={v => setDraft({ ...draft, npwp: v.replace(/[^\d.\-]/g, "").slice(0, 25) })} />
               <div className="sm:col-span-2 space-y-1.5">
-                <Label className="text-xs uppercase tracking-wider text-muted-foreground">Alamat</Label>
-                <Textarea rows={2} value={draft.alamat} onChange={e => setDraft({ ...draft, alamat: e.target.value })} />
+                <Label htmlFor={`${profileId}-alamat`} className="text-xs uppercase tracking-wider text-muted-foreground">Alamat</Label>
+                <Textarea id={`${profileId}-alamat`} rows={2} value={draft.alamat} onChange={e => setDraft({ ...draft, alamat: e.target.value })} />
               </div>
               <div className="sm:col-span-2 space-y-1.5">
-                <Label className="text-xs uppercase tracking-wider text-muted-foreground">Bio / Profil Singkat</Label>
-                <Textarea rows={3} value={draft.bio} onChange={e => setDraft({ ...draft, bio: e.target.value })} placeholder="Riwayat juri, sertifikasi, dan kontribusi pada kesenian..." />
+                <Label htmlFor={`${profileId}-bio`} className="text-xs uppercase tracking-wider text-muted-foreground">Bio / Profil Singkat</Label>
+                <Textarea id={`${profileId}-bio`} rows={3} value={draft.bio} onChange={e => setDraft({ ...draft, bio: e.target.value })} placeholder="Riwayat juri, sertifikasi, dan kontribusi pada kesenian..." />
               </div>
             </>
           ) : (
@@ -230,10 +231,11 @@ function Field({ label, value, long }: { label: string; value: string; long?: bo
   );
 }
 function FieldEdit({ label, v, on }: { label: string; v: string; on: (s: string) => void }) {
+  const id = useId();
   return (
     <div className="space-y-1.5">
-      <Label className="text-xs uppercase tracking-wider text-muted-foreground">{label}</Label>
-      <Input value={v} onChange={e => on(e.target.value)} />
+      <Label htmlFor={id} className="text-xs uppercase tracking-wider text-muted-foreground">{label}</Label>
+      <Input id={id} value={v} onChange={e => on(e.target.value)} />
     </div>
   );
 }

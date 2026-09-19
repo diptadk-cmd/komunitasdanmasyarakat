@@ -52,6 +52,7 @@ import {
 import { downloadDokumenPesananProduk } from "@/lib/dokumen-perdagangan";
 import { ekspedisiUntukMetode } from "@/lib/pengiriman";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardWelcome, DashboardMetrics, DashboardLinks } from "@/components/layout/RoleWorkspace";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -381,41 +382,32 @@ export default function MitraPengrajinHome({
       (item) => !["selesai", "ditolak", "batal"].includes(item.status),
     ).length;
     return (
-      <div className="space-y-6">
-        <PageHeader
-          title={`Mitra — ${current.namaUsaha}`}
-          subtitle="Kelola pengadaan produk Pengrajin dan arahkan penjualan ke marketplace mitra."
+      <div className="role-workspace" data-testid="mitra-home">
+        <DashboardWelcome
+          role="Ruang mitra"
+          title={current.namaUsaha}
+          description="Temukan produk khas Jakarta dan kelola pengadaan bersama pengrajin."
+          primary={{ href: verified ? "/mitra/katalog" : "/mitra/profil", label: verified ? "Jelajahi katalog pengrajin" : "Periksa profil dan verifikasi" }}
+          secondary={{ href: "/mitra/pesanan", label: "Pesanan produk" }}
         />
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Stat
-            icon={<Store />}
-            label="Marketplace Aktif"
-            value={current.marketplace.filter((item) => item.aktif).length}
-          />
-          <Stat
-            icon={<Building2 />}
-            label="Pengrajin Tersedia"
-            value={new Set(katalog.map((item) => item.pengrajin.id)).size}
-          />
-          <Stat
-            icon={<ShoppingCart />}
-            label="Pesanan Berjalan"
-            value={aktif}
-          />
-          <Stat
-            icon={<PackageCheck />}
-            label="Produk Tersedia"
-            value={katalog.length}
-          />
-        </div>
-        <Card className="border-amber-200 bg-amber-50/70">
-          <CardContent className="pt-6 text-sm leading-6 text-amber-950">
-            <strong>Model penjualan:</strong> Jak Sanggar menyimpan katalog,
+        <DashboardMetrics items={[
+          { label: "Marketplace aktif", value: current.marketplace.filter(item => item.aktif).length, href: "/mitra/profil" },
+          { label: "Pengrajin tersedia", value: new Set(katalog.map(item => item.pengrajin.id)).size, href: "/mitra/katalog" },
+          { label: "Pesanan berjalan", value: aktif, href: "/mitra/pesanan" },
+          { label: "Produk tersedia", value: katalog.length, href: "/mitra/katalog" },
+        ]} />
+        {!verified && <div className="rw-notice" role="status">Katalog pengadaan tersedia setelah toko Anda terverifikasi. Periksa kelengkapan dan statusnya di Profil Mitra.</div>}
+        <DashboardLinks title="Kelola kemitraan" items={[
+          { href: "/mitra/katalog", label: "Katalog pengrajin", description: "Temukan produk untuk pengadaan toko Anda.", icon: Store },
+          { href: "/mitra/pesanan", label: "Pesanan produk", description: "Pantau kontrak, pembayaran, dan penerimaan produk.", icon: ShoppingCart },
+          { href: "/mitra/kerjasama", label: "Kerja sama", description: "Kelola hubungan dan kesepakatan dengan pengrajin.", icon: FileSignature },
+        ]} />
+        <div className="rw-notice">
+            <strong>Penjualan melalui marketplace.</strong> JakSanggar menyimpan katalog,
             kerja sama, kontrak, dan BAST. Transaksi pembeli akhir tidak
-            dilakukan di Jak Sanggar; tombol publik diarahkan ke toko
+            dilakukan di JakSanggar; tombol publik diarahkan ke toko
             marketplace milik Mitra.
-          </CardContent>
-        </Card>
+        </div>
       </div>
     );
   }

@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuth, useDb } from "@/lib/auth";
 import { save, fmtRp, fmtDate, fmtDateTime } from "@/lib/store";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardWelcome, DashboardMetrics, DashboardLinks } from "@/components/layout/RoleWorkspace";
+import { Link } from "wouter";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +27,9 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import type { SenimanUser, SanggarUser } from "@/lib/types";
-import { Upload, Wallet } from "lucide-react";
+import { readPaymentReceipt } from "@/lib/payment-receipt";
+import { ReceiptDownload } from "@/components/documents/ReceiptDownload";
+import { Upload, Wallet, Calendar, Receipt, UserRound } from "lucide-react";
 
 export function SenimanHome() {
   const { user } = useAuth();
@@ -38,44 +42,37 @@ export function SenimanHome() {
   const tagihan = db.iuran.filter((i) => i.senimanId === s.id);
   const honor = db.distribusi.filter((d) => d.penerimaId === s.id);
   return (
-    <div>
-      <PageHeader
+    <div className="role-workspace" data-testid="seniman-home">
+      <DashboardWelcome
+        role="Ruang seniman"
         title={`Halo, ${s.nama}`}
-        subtitle={
+        description={
           sg ? `Anggota di ${sg.namaSanggar}` : "Belum tergabung di sanggar"
         }
-        back={false}
+        primary={{ href: "/seniman/absen", label: "Absen latihan" }}
+        secondary={{ href: "/seniman/profil", label: "Profil saya" }}
       />
       {s.status === "pending" && (
-        <Card className="p-4 bg-accent/15 border-accent/40 mb-6 text-sm">
+        <div className="rw-notice" role="status">
           Permohonan gabung Anda menunggu validasi Sanggar.
-        </Card>
+        </div>
       )}
-      <div className="grid sm:grid-cols-3 gap-4">
-        <Card className="p-5">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Tagihan Aktif
-          </div>
-          <div className="text-3xl font-serif mt-2">
-            {tagihan.filter((t) => t.status !== "lunas").length}
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Total Lunas
-          </div>
-          <div className="text-3xl font-serif mt-2">
-            {tagihan.filter((t) => t.status === "lunas").length}
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground">
-            Honor Diterima
-          </div>
-          <div className="text-3xl font-serif mt-2">
-            {honor.filter((h) => h.konfirmasi).length}
-          </div>
-        </Card>
+      <DashboardMetrics items={[
+        { label: "Tagihan aktif", value: tagihan.filter(t => t.status !== "lunas").length, href: "/seniman/tagihan", attention: tagihan.some(t => t.status !== "lunas") },
+        { label: "Tagihan lunas", value: tagihan.filter(t => t.status === "lunas").length, href: "/seniman/tagihan" },
+        { label: "Honor diterima", value: honor.filter(h => h.konfirmasi).length, href: "/seniman/honor-komersial" },
+      ]} />
+      <div className="rw-columns">
+        <DashboardLinks title="Kegiatan dan keuangan" items={[
+          { href: "/seniman/absen", label: "Kehadiran latihan", description: "Catat kehadiran pada sesi latihan sanggar.", icon: Calendar },
+          { href: "/seniman/tagihan", label: "Tagihan saya", description: "Periksa iuran dan unggah bukti pembayaran.", icon: Receipt },
+          { href: "/seniman/honor-komersial", label: "Dana proyek seni", description: "Periksa dan konfirmasi honor kegiatan Anda.", icon: Wallet },
+        ]} />
+        <section className="rw-panel">
+          <h2>Ruang untuk karya Anda</h2>
+          <div className="rw-empty"><UserRound aria-hidden="true" /><p className="rw-note">Lengkapi profil dan keahlian agar informasi Anda siap digunakan untuk kegiatan bersama sanggar.</p></div>
+          <Link className="rw-text-link" href="/seniman/profil">Lengkapi profil seniman</Link>
+        </section>
       </div>
     </div>
   );
@@ -151,7 +148,7 @@ export function SenimanTagihan() {
                 </TableCell>
                 <TableCell>
                   {it.buktiDataUrl ? (
-                    <Badge variant="outline">Terkirim</Badge>
+                    <ReceiptDownload value={it.buktiDataUrl} name={`bukti-iuran-${it.id}`} />
                   ) : (
                     <Badge variant="outline">Belum</Badge>
                   )}
@@ -169,28 +166,19 @@ export function SenimanTagihan() {
 }
 
 function BayarDialog({ id }: { id: string }) {
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
   const submit = async () => {
     if (!file) return;
     try {
-      const buktiDataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () =>
-          typeof reader.result === "string"
-            ? resolve(reader.result)
-            : reject(new Error("Berkas tidak dapat dibaca."));
-        reader.onerror = () =>
-          reject(reader.error ?? new Error("Berkas tidak dapat dibaca."));
-        reader.readAsDataURL(file);
-      });
+      const buktiDataUrl = await readPaymentReceipt(file);
       save((d) => {
         const it = d.iuran.find((x) => x.id === id);
-        if (it) {
-          it.buktiDataUrl = buktiDataUrl;
-          it.status = "pending";
-        }
+        if (!it || user?.role !== "seniman" || it.senimanId !== user.id || it.status === "lunas") throw new Error("Tagihan sudah lunas atau bukan milik Anda.");
+        it.buktiDataUrl = buktiDataUrl;
+        it.status = "pending";
       });
       toast({
         title: "Bukti terkirim",
@@ -227,7 +215,7 @@ function BayarDialog({ id }: { id: string }) {
             <Label>Bukti Pembayaran</Label>
             <Input
               type="file"
-              accept="image/*,.pdf"
+              accept="image/png,image/jpeg,image/webp,application/pdf"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
           </div>

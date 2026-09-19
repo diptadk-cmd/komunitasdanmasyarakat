@@ -529,8 +529,13 @@ const konsumenNav = [
 ];
 const pengrajinNav = [
   {
-    label: "Profil Toko",
+    label: "Beranda",
     href: "/pengrajin",
+    icon: <LayoutDashboard className="h-4 w-4" />,
+  },
+  {
+    label: "Profil Toko",
+    href: "/pengrajin/profil",
     icon: <Store className="h-4 w-4" />,
   },
   {
@@ -858,7 +863,7 @@ function Router() {
       </Route>
 
       <Route path="/pengrajin/toko-peta">
-        <Redirect to="/pengrajin" />
+        <Redirect to="/pengrajin/profil" />
       </Route>
       <Route path="/pengrajin/produk">
         {() => (
@@ -879,14 +884,24 @@ function Router() {
         )}
       </Route>
       <Route path="/pengrajin/dokumen">
-        <Redirect to="/pengrajin" />
+        <Redirect to="/pengrajin/profil" />
+      </Route>
+
+      <Route path="/pengrajin/profil">
+        {() => (
+          <Guard role="pengrajin">
+            <AppShell nav={pengrajinNav}>
+              <PengrajinHome section="profil" />
+            </AppShell>
+          </Guard>
+        )}
       </Route>
 
       <Route path="/pengrajin">
         {() => (
           <Guard role="pengrajin">
             <AppShell nav={pengrajinNav}>
-              <PengrajinHome section="profil" />
+              <PengrajinHome section="dashboard" />
             </AppShell>
           </Guard>
         )}

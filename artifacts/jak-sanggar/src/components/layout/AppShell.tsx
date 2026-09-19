@@ -480,7 +480,7 @@ export function AppShell({
         : user.role === "juri"
           ? "/juri/profil"
           : user.role === "pengrajin"
-            ? "/pengrajin"
+            ? "/pengrajin/profil"
             : user.role === "mitra_pengrajin"
               ? "/mitra/profil"
               : user.role === "sewa"

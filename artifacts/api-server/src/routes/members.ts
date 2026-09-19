@@ -6,6 +6,7 @@ import { CreateMemberBody, UpdateMemberBody } from "@workspace/api-zod";
 import { hashPassword, toAuthUser } from "../lib/auth";
 import { paramId, requireAuth, requireRole } from "../middlewares/auth";
 import { normalizeUniqueProfileEmail, UserEmailError } from "../lib/user-email";
+import { memberProfileEditAccess, selfMemberProfilePatch } from "../lib/member-profile-policy";
 
 const router: IRouter = Router();
 
@@ -117,7 +118,8 @@ router.post(
 // PATCH /members/:id — ubah status keanggotaan pada profil
 // (terima/tolak/berhentikan),
 // mutasi (profile.sanggarUsername), promosi (role seniman<->pelatih).
-// Boleh: sanggar pemilik anggota, atau kurator.
+// Pengelolaan: sanggar pemilik anggota atau kurator. Anggota boleh menyunting
+// profil biasa miliknya; status/afiliasi/tarif/rapor tetap milik pengelola.
 router.patch("/members/:id", async (req: Request, res: Response) => {
   const id = paramId(req);
   const me = req.user!;
@@ -136,21 +138,20 @@ router.patch("/members/:id", async (req: Request, res: Response) => {
     res.status(404).json({ error: "Tidak ditemukan" });
     return;
   }
-  const isKurator = me.role === "kurator";
-  const isOwnerSanggar =
-    me.role === "sanggar" && sanggarUsernameOf(member) === me.username;
   // Anggota tanpa sanggar (mis. seed lama / pendaftar yang memilih sanggar ini
   // secara lokal) boleh "diklaim" sanggar HANYA jika patch menetapkan
   // sanggarUsername = sanggar pemanggil (mis. saat menerima permohonan).
-  const patchProfile = (parsed.data.profile ?? {}) as Record<string, unknown>;
-  const claimsSelf =
-    me.role === "sanggar" &&
-    sanggarUsernameOf(member) === null &&
-    patchProfile["sanggarUsername"] === me.username;
-  if (!isKurator && !isOwnerSanggar && !claimsSelf) {
+  const requestedProfile = (parsed.data.profile ?? {}) as Record<string, unknown>;
+  const access = memberProfileEditAccess(me, member, requestedProfile);
+  if (!access) {
     res.status(403).json({ error: "Tidak punya akses" });
     return;
   }
+  if (access === "self" && parsed.data.role && parsed.data.role !== member.role) {
+    res.status(403).json({ error: "Perubahan peran anggota hanya dapat dilakukan pengelola." });
+    return;
+  }
+  const patchProfile = access === "self" ? selfMemberProfilePatch(member.role, requestedProfile) : requestedProfile;
   const currentSanggar = sanggarUsernameOf(member);
   if (
     me.role === "sanggar" &&

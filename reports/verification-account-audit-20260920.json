@@ -1,0 +1,160 @@
+{
+  "generatedAt": "2026-09-19T19:43:52.470Z",
+  "mode": "quick",
+  "results": [
+    {
+      "id": "unit",
+      "label": "Logika, dokumen, API & regresi",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 13,
+      "counts": {
+        "tests": 371,
+        "pass": 370,
+        "fail": 0,
+        "skipped": 1
+      }
+    },
+    {
+      "id": "routes",
+      "label": "Cakupan rute dan menu",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 2,
+      "counts": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "types",
+      "label": "TypeScript seluruh workspace",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 16,
+      "counts": {}
+    },
+    {
+      "id": "build",
+      "label": "Build produksi kedua aplikasi dan API",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 26,
+      "counts": {}
+    },
+    {
+      "id": "documents",
+      "label": "Berkas nyata: seluruh template Word dan PDF per kelompok",
+      "args": [
+        "pnpm",
+        "run",
+        "test:documents"
+      ],
+      "omit": true,
+      "status": "belum dijalankan",
+      "seconds": 0
+    },
+    {
+      "id": "e2e",
+      "label": "Browser: 9 peran, navigasi, desktop & ponsel",
+      "args": [
+        "pnpm",
+        "run",
+        "test:e2e"
+      ],
+      "omit": true,
+      "status": "belum dijalankan",
+      "seconds": 0
+    }
+  ],
+  "scope": "Local synthetic demo, no production changes",
+  "browser": {
+    "method": "CUA manual UI",
+    "menuChecksByRole": {
+      "admin": 7,
+      "kurator": 14,
+      "sanggar": 19,
+      "pelatih": 12,
+      "seniman": 12,
+      "juri": 4,
+      "pengrajin": 7,
+      "mitra": 9,
+      "konsumen": 10
+    },
+    "menuChecks": 94,
+    "desktopMissingPages": 0,
+    "desktopHorizontalOverflow": 0,
+    "mobileHomeChecks": 9,
+    "mobileViewport": {
+      "width": 390,
+      "height": 844
+    },
+    "mobileHorizontalOverflow": 0
+  },
+  "coverage": {
+    "routePatterns": 108,
+    "navigationItems": 94,
+    "missingRoutes": 0,
+    "unresolvedRoutes": 0,
+    "playwrightScenariosListedNotExecuted": 60
+  },
+  "downloadedOutputEvidence": [
+    {
+      "file": "Kop surat - Sanggar Uji Kop Jakarta.png",
+      "bytes": 56005,
+      "sha256": "3542235bfcd8835b06fba4e43716b09b874b475c90934bfdfbead0fbbb5c84c9"
+    },
+    {
+      "file": "Kop surat - Sanggar Uji Kop Jakarta.pdf",
+      "bytes": 42289,
+      "sha256": "59547c0756346d809dba1eca84c6b2a8b4c02e4a90c67174892697f2775d9614"
+    },
+    {
+      "file": "BERITA ACARA PEMBENTUKAN SANGGAR - Draf - Sanggar Demo Data Lengkap (1).docx",
+      "bytes": 899729,
+      "sha256": "6766509e0e7ad058ea5186dcd4f97ffa4f553eec7b393af28f5e644a98fd4deb"
+    },
+    {
+      "file": "BERITA ACARA PEMBENTUKAN SANGGAR - Draf - Sanggar Demo Data Lengkap (1).pdf",
+      "bytes": 170926,
+      "sha256": "849691627dde6773ef6ddad7faf84ec94cbbf41b02244c13ea51cfb0ca3ce92e"
+    },
+    {
+      "file": "Profil_Juri_Juri_Demo_Data_Lengkap.docx",
+      "bytes": 8069,
+      "sha256": "7ae825b95675356a1eef0859a0ce7463c2007f00318892e7cd1eeaf692825506"
+    },
+    {
+      "file": "Profil_Juri_Juri_Demo_Data_Lengkap.pdf",
+      "bytes": 50922,
+      "sha256": "9e629ab1f4b224c1974a2c39d193e7e3766dc98768bec9e9edc19bbf261562da"
+    },
+    {
+      "file": "buku-kas-Sanggar Demo Data Lengkap.csv",
+      "bytes": 151,
+      "sha256": "0a56180e35dba18145f1f731b04cf08635003f2e6477def71e69715cf35f05a3"
+    }
+  ],
+  "letterheadPngMatchesDocxEmbeddedImage": true,
+  "inputOutputChecks": [
+    "admin news visible to sanggar",
+    "cash input 125000 persisted and exported to CSV",
+    "Juri bio persisted and appears in DOCX and PDF",
+    "Pengrajin product 175000 visible to Mitra; quantity 2 subtotal350000; checkout not submitted",
+    "consumer search empty and matching results",
+    "letterhead validation, PNG/PDF downloads, persisted application, native Word/PDF output"
+  ],
+  "limitations": [
+    "Positive browser upload blocked by extension local-file permission",
+    "Database end-to-end and concurrency not verified",
+    "Email, GPS/camera, multi-device calls not verified",
+    "Full Playwright suite and all216 native conversions not rerun in this audit",
+    "Synthetic records remain in demo browser data"
+  ],
+  "localApiRestart": {
+    "health": "ok",
+    "demoSeeding": false
+  }
+}

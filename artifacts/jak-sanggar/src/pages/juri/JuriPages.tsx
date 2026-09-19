@@ -1,9 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
-import { useRoute, useLocation } from "wouter";
+import { Link, useRoute } from "wouter";
 import { useAuth, useDb } from "@/lib/auth";
-import { save, uid, fmtDateTime } from "@/lib/store";
+import { load, save, uid, fmtDateTime } from "@/lib/store";
+import { juriScoringAccessError } from "@/lib/kurasi-access";
 import { persistKurasiScore } from "@/lib/kurasi-sync";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardWelcome, DashboardMetrics } from "@/components/layout/RoleWorkspace";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -108,20 +110,24 @@ export function JuriHome() {
   if (!user || user.role !== "juri") return null;
   const j = user as JuriUser;
   const tugas = db.penugasanJuri.filter((p) => p.juriId === j.id);
-  const [, navigate] = useLocation();
+  const completed = tugas.filter(t => db.kurasiSubmissions.find(s => s.sanggarId === t.sanggarId)?.finalized[j.username]).length;
 
   return (
-    <div>
-      <PageHeader
+    <div className="role-workspace" data-testid="juri-home">
+      <DashboardWelcome
+        role="Ruang juri"
         title="Tugas Penilaian"
-        subtitle={`${j.nama} · ${j.keahlian}`}
-        back={false}
+        description={`${j.nama}. Keahlian: ${j.keahlian}.`}
+        primary={{ href: "/juri/profil", label: "Profil dan keahlian" }}
       />
-      <div className="grid lg:grid-cols-2 gap-4">
+      <DashboardMetrics label="Ringkasan penilaian" items={[
+        { label: "Sanggar ditugaskan", value: tugas.length },
+        { label: "Belum final", value: tugas.length - completed, attention: tugas.length > completed },
+        { label: "Penilaian terkunci", value: completed },
+      ]} />
+      <section aria-label="Daftar penugasan" className="rw-assignment-grid">
         {tugas.length === 0 && (
-          <Card className="lg:col-span-2 p-12 text-center text-muted-foreground">
-            Belum ada penugasan dari Kurator.
-          </Card>
+          <div className="rw-panel"><div className="rw-empty"><ClipboardList aria-hidden="true" /><h2>Belum ada penugasan</h2><p className="rw-note">Penugasan sanggar akan muncul di sini setelah diberikan kurator. Profil dan keahlian Anda tetap dapat diperbarui.</p></div></div>
         )}
         {tugas.map((t) => {
           const sg = db.users.find((u) => u.id === t.sanggarId) as
@@ -132,39 +138,29 @@ export function JuriHome() {
           );
           const final = sub?.finalized[j.username];
           return (
-            <Card
+            <Link
               key={t.id}
-              className="p-5 cursor-pointer premium-card"
-              onClick={() => navigate(`/juri/${t.sanggarId}`)}
+              className="rw-assignment"
+              href={`/juri/${t.sanggarId}`}
             >
-              <div className="flex items-start justify-between">
-                <div>
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                    {t.periode}
-                  </div>
-                  <div className="font-serif text-xl mt-1">
-                    {sg?.namaSanggar}
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {sg?.jenisKesenian.join(", ")}
-                  </div>
-                </div>
+              <div className="rw-assignment-copy">
+                <span>Periode {t.periode}</span>
+                <h2>{sg?.namaSanggar || "Sanggar ditugaskan"}</h2>
+                <p>{sg?.jenisKesenian.join(", ")}</p>
+              </div>
                 {final ? (
                   <Badge variant="default" className="gap-1">
                     <Lock className="h-3 w-3" />
                     Terkunci
                   </Badge>
                 ) : (
-                  <Badge variant="gold">Belum Final</Badge>
+                  <Badge variant="gold">Belum final</Badge>
                 )}
-              </div>
-              <div className="mt-4 flex items-center justify-end text-sm text-accent-foreground">
-                Buka <ChevronRight className="h-4 w-4" />
-              </div>
-            </Card>
+              <ChevronRight aria-hidden="true" />
+            </Link>
           );
         })}
-      </div>
+      </section>
     </div>
   );
 }
@@ -335,6 +331,9 @@ export function JuriScoring() {
   const progress =
     totalTargets === 0 ? 0 : Math.round((filledCount / totalTargets) * 100);
 
+  const accessError = juriScoringAccessError(db, j.id, sanggarId);
+  if (accessError) return <div><PageHeader title="Penilaian Sanggar" backTo="/juri" /><Card className="p-6">{accessError}</Card></div>;
+
   const persistDraft = () => {
     save((d) => {
       const s = d.kurasiSubmissions.find((x) => x.sanggarId === sanggarId);
@@ -358,6 +357,8 @@ export function JuriScoring() {
     setBusy("draft");
     try {
       if (!sg) throw new Error("Sanggar tidak ditemukan");
+      const error = juriScoringAccessError(load(), j.id, sanggarId, true);
+      if (error) throw new Error(error);
       await persistKurasiScore(
         sg.username,
         scoresSiapSimpan,
@@ -390,6 +391,8 @@ export function JuriScoring() {
     setBusy("final");
     try {
       if (!sg) throw new Error("Sanggar tidak ditemukan");
+      const error = juriScoringAccessError(load(), j.id, sanggarId, true);
+      if (error) throw new Error(error);
       await persistKurasiScore(
         sg.username,
         scoresSiapSimpan,
@@ -806,7 +809,7 @@ export function JuriScoring() {
 
             <div className="mt-5 grid grid-cols-3 gap-2 text-center">
               {matrix.indikator.map((ind) => {
-                const contrib = indikatorKontribusi(ind, scores);
+                const contrib = indikatorKontribusi(ind, scoresSiapSimpan);
                 return (
                   <div
                     key={ind.id}

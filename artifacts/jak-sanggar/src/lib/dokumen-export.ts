@@ -699,7 +699,12 @@ export async function unduhDokumen(
 ): Promise<void> {
   // Pertahankan renderer Word/PDF yang sudah dipakai di produksi. Modul ini
   // disajikan sebagai aset publik bersama layanan /api/documents/render.
-  const alamatLayanan = "/assets/document-service-v1.js";
+  // Vite menyisipkan ?import pada URL relatif meskipun @vite-ignore dipakai,
+  // lalu menolak modul JS di public/. URL absolut tetap disajikan apa adanya.
+  const alamatLayanan = new URL(
+    `${import.meta.env.BASE_URL}assets/document-service-v1.js`,
+    window.location.origin,
+  ).href;
   const { renderDocument } = await import(/* @vite-ignore */ alamatLayanan);
   await renderDocument(format, bangunHtmlUnduhanDokumen(opts), opts);
 }

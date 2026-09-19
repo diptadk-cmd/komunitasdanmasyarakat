@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { CalendarCheck, CheckCircle2, MapPin } from "lucide-react";
 import { useAuth, useDb } from "@/lib/auth";
 import { save, uid } from "@/lib/store";
@@ -9,10 +9,11 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import type { PelatihUser, SenimanUser } from "@/lib/types";
+import { catatKehadiran } from "@/lib/latihan-anggota";
 
 /**
  * Halaman bersama untuk Seniman dan Pelatih.
- * Kehadiran disimpan lokal terlebih dahulu lalu dikirim ke API/MariaDB.
+ * Kehadiran mengikuti antrean sinkronisasi store yang sama dengan jadwal.
  */
 export default function AbsensiLatihan() {
   const { user } = useAuth();
@@ -26,10 +27,7 @@ export default function AbsensiLatihan() {
     .filter((item) => item.sanggarId === anggota.sanggarId)
     .sort((a, b) => `${b.tanggal} ${b.jam}`.localeCompare(`${a.tanggal} ${a.jam}`));
   const localAttendance = db.absensiLatihan.filter((item) => item.userId === anggota.id);
-  const attendedIds = useMemo(
-    () => new Set(localAttendance.map((item) => item.latihanId)),
-    [localAttendance],
-  );
+  const attendedIds = new Set(localAttendance.map((item) => item.latihanId));
 
   const markAttendance = async (latihanId: string) => {
     if (attendedIds.has(latihanId) || submittingId || !anggota.sanggarId) return;
@@ -52,57 +50,16 @@ export default function AbsensiLatihan() {
       }
     }
 
-    const hadirAt = Date.now();
-    const metode = lat != null && lng != null ? "gps" as const : "manual" as const;
-    save((draft) => {
-      draft.absensiLatihan.push({
-        id: uid(),
-        latihanId,
-        sanggarId: anggota.sanggarId!,
-        userId: anggota.id,
-        role: anggota.role,
-        hadirAt,
-        metode,
-        lat,
-        lng,
-      });
-      draft.activity.push({
-        id: uid(),
-        ts: hadirAt,
-        actorId: anggota.id,
-        actorRole: anggota.role,
-        action: "absen-latihan",
-        meta: { latihanId, metode },
-      });
-    });
-
     try {
-      const response = await fetch("/api/absensi-latihan", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          latihanId,
-          sanggarId: anggota.sanggarId,
-          metode,
-          lat,
-          lng,
-        }),
+      save((draft) => {
+        catatKehadiran(draft, { userId: anggota.id, latihanId, id: uid(), now: Date.now(), lat, lng });
       });
-      if (response.status === 409) {
-        toast({ title: "Kehadiran sudah tercatat di server" });
-      } else if (!response.ok) {
-        throw new Error("Gagal menyimpan absensi ke server");
-      } else {
-        toast({
-          title: "Kehadiran tercatat",
-          description: "Absensi berhasil disinkronkan ke database.",
-        });
-      }
-    } catch {
+      toast({ title: "Kehadiran tercatat" });
+    } catch (error) {
       toast({
-        title: "Kehadiran tersimpan di perangkat",
-        description: "Server belum dapat dihubungi. Data tetap ada di perangkat ini.",
+        title: "Kehadiran belum tercatat",
+        description: error instanceof Error ? error.message : "Silakan coba lagi.",
+        variant: "destructive",
       });
     } finally {
       setSubmittingId(null);

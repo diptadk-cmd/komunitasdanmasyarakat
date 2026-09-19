@@ -38,6 +38,7 @@ import { normalizeUniqueProfileEmail, UserEmailError } from "../lib/user-email";
 import { validateImpersonationTarget } from "../lib/impersonation-policy";
 import { isBlockedAccountStatus } from "../lib/account-status";
 import { documentRendererUrl } from "../lib/document-renderer";
+import { publicMemberProfile } from "../lib/member-profile-policy";
 
 const router: IRouter = Router();
 
@@ -246,6 +247,7 @@ router.post(
         memberProfile["sanggarUsername"] = selectedSanggar.username;
         delete memberProfile["sanggarId"];
       }
+      memberProfile = publicMemberProfile(role, memberProfile);
     }
     // Hanya calon anggota sanggar yang menunggu validasi. Sanggar, juri, dan
     // penyewa dapat langsung memakai akun setelah pendaftaran berhasil.

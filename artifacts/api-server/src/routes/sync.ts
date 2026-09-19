@@ -28,6 +28,7 @@ import {
   syncRecordAuditEvent,
 } from "../lib/activity-audit";
 import { sameJsonWithResolvedUserReferences } from "../lib/sync-reference-compare";
+import { memberRecordWriteError } from "../lib/member-sync-policy";
 
 const router = Router();
 
@@ -921,6 +922,7 @@ function canRead(record: SyncRecord, actor: User): boolean {
 function canMutateExisting(record: SyncRecord, actor: User): boolean {
   if (isOverseer(actor)) return true;
   if (record.collection === "activity") return false;
+  if ((actor.role === "seniman" || actor.role === "pelatih") && ["iuran", "distribusi"].includes(record.collection)) return participantsOf(record).includes(actor.id);
   // Karya budaya tetap global supaya bisa ditayangkan ke publik, tetapi
   // sanggar hanya boleh mengubah atau menarik kiriman miliknya sendiri.
   if (record.collection === "infoBudaya") {
@@ -980,6 +982,7 @@ function canCreate(
     return false;
   }
   if (SANGGAR_COLLECTIONS.has(collection)) {
+    if (collection === "pengajuanHonor" && actor.role === "pelatih") return userIdForField(data, "pelatihId", refs) === actor.id && data["status"] === "pending";
     return actor.role === "sanggar" && actor.id === scope.ownerId;
   }
   if (PERSONAL_COLLECTIONS.has(collection)) return actor.id === scope.ownerId;
@@ -1703,6 +1706,32 @@ function memberSanggarUsername(user: User): string | null {
     : null;
 }
 
+async function assertMemberFinanceRecord(collection: string, data: JsonObject, actor: User, before?: JsonObject) {
+  if (!["pelatih", "seniman"].includes(actor.role) || !["iuran", "pengajuanHonor", "distribusi"].includes(collection)) return;
+  const refs = await resolveUserReferences({ before, next: data });
+  const sanggarId = userIdForField(data, "sanggarId", refs);
+  const owners = sanggarId ? await db.select({ username: usersTable.username }).from(usersTable).where(eq(usersTable.id, sanggarId)).limit(1) : [];
+  const normalize = (value: JsonObject) => Object.fromEntries(Object.entries(value).map(([key, item]) => [key, USER_REFERENCE_KEYS.has(key) && typeof item === "string" ? refs.byRawValue.get(item) ?? item : item]));
+  const eligible = new Set<string>();
+  const claimed = new Set<string>();
+  if (collection === "pengajuanHonor" && sanggarId) {
+    const records = await db.select().from(syncRecordsTable).where(and(inArray(syncRecordsTable.collection, ["latihan", "absensiLatihan", "pengajuanHonor"]), or(eq(syncRecordsTable.ownerId, sanggarId), eq(syncRecordsTable.ownerId, actor.id))));
+    const active = records.filter((record) => !record.deletedAt);
+    const recordRefs = await resolveUserReferences({ records: active.map((record) => record.data) });
+    const owned = (record: SyncRecord, key: string) => userIdForField(record.data, key, recordRefs) === actor.id;
+    const attended = new Set(active.filter((record) => record.collection === "absensiLatihan" && owned(record, "userId")).map((record) => record.data["latihanId"]));
+    const requests = active.filter((record) => record.collection === "pengajuanHonor" && owned(record, "pelatihId") && record.data["status"] !== "ditolak");
+    const legacyCutoff = Math.max(0, ...requests.filter((record) => !Array.isArray(record.data["latihanIds"])).map((record) => Number(record.data["createdAt"]) || 0));
+    for (const record of requests) if (Array.isArray(record.data["latihanIds"])) for (const id of record.data["latihanIds"]) if (typeof id === "string") claimed.add(id);
+    for (const record of active) {
+      const report = record.data["laporan"];
+      if (record.collection === "latihan" && record.ownerId === sanggarId && owned(record, "pelatihId") && attended.has(record.recordId) && isObject(report) && Number(report["timestamp"]) > legacyCutoff) eligible.add(record.recordId);
+    }
+  }
+  const error = memberRecordWriteError({ collection, actor, ownerUsername: owners[0]?.username ?? "", next: normalize(data), before: before ? normalize(before) : undefined, eligibleSessionIds: eligible, claimedSessionIds: claimed });
+  if (error) throw new InputError(error);
+}
+
 function canReadAsSanggarMember(
   record: SyncRecord,
   actor: User,
@@ -1735,6 +1764,12 @@ async function processMutation(
   }
 
   return db.transaction(async (tx) => {
+    if (mutation.collection === "pengajuanHonor" && actor.role === "pelatih") {
+      // Serialisasi pengajuan satu pelatih agar dua request bersamaan tidak
+      // sama-sama melihat sesi yang belum diklaim lalu membuat honor ganda.
+      await tx.select({ id: usersTable.id }).from(usersTable)
+        .where(eq(usersTable.id, actor.id)).for("update");
+    }
     const priorRows = await tx
       .select()
       .from(syncMutationsTable)
@@ -1853,6 +1888,7 @@ async function processMutation(
       }
 
       if (mutation.op === "delete") {
+        if ((actor.role === "seniman" || actor.role === "pelatih") && ["iuran", "distribusi"].includes(existing.collection)) return finish(rejected(mutation.mutationId, "Anggota tidak dapat menghapus catatan keuangan."));
         if (
           !isOverseer(actor) &&
           PROTECTED_TRANSACTION_COLLECTIONS.has(existing.collection) &&
@@ -1901,6 +1937,7 @@ async function processMutation(
           actor,
           existing.data,
         );
+        await assertMemberFinanceRecord(mutation.collection, data, actor, existing.data);
         let refs = await resolveUserReferences(data);
         let scope: ScopeInfo;
         if (existing.collection === "infoBudaya") {
@@ -2030,6 +2067,7 @@ async function processMutation(
         actor,
       );
       assertOperationalRecord(mutation.collection, data, actor);
+      await assertMemberFinanceRecord(mutation.collection, data, actor);
       const refs = await resolveUserReferences(data);
       const scope = await deriveScope(mutation.collection, data, refs, actor);
       if (!canCreate(mutation.collection, scope, actor, data, refs)) {

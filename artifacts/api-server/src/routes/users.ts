@@ -12,6 +12,7 @@ import {
 import { paramId, requireAuth, requireRole } from "../middlewares/auth";
 import { normalizeUniqueProfileEmail, UserEmailError } from "../lib/user-email";
 import { normalizeAccountStatus } from "../lib/account-status";
+import { selfMemberProfilePatch } from "../lib/member-profile-policy";
 
 const router: IRouter = Router();
 // `ADMINS` boleh melihat daftar user (admin perlu untuk moderasi konten).
@@ -137,7 +138,9 @@ router.patch("/users/:id", async (req: Request, res: Response) => {
         res.status(404).json({ error: "Tidak ditemukan" });
         return;
       }
-      const safeProfile = { ...profile } as Record<string, unknown>;
+      const safeProfile = isSelf && !isKurator
+        ? selfMemberProfilePatch(currentRows[0].role, profile as Record<string, unknown>)
+        : { ...profile } as Record<string, unknown>;
       if (isSelf) {
         for (const key of [
           "statusModerasiAkun",

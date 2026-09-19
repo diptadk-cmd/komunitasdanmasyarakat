@@ -4,8 +4,9 @@ import test from "node:test";
 import vm from "node:vm";
 import ts from "typescript";
 
-async function muatModul(relativePath, context = {}, modules = {}) {
-  const source = await readFile(new URL(relativePath, import.meta.url), "utf8");
+async function muatModul(relativePath, context = {}, modules = {}, baseUrl = "/") {
+  const source = (await readFile(new URL(relativePath, import.meta.url), "utf8"))
+    .replaceAll("import.meta.env.BASE_URL", JSON.stringify(baseUrl));
   const { outputText } = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
@@ -23,6 +24,50 @@ async function muatModul(relativePath, context = {}, modules = {}) {
 }
 
 const { bagianKanvasKosong } = await muatModul("../src/lib/dokumen-export.ts");
+
+test("unduhan Word/PDF memakai URL layanan publik absolut pada root dan subpath", async () => {
+  for (const baseUrl of ["/", "/jaksanggar/"]) {
+    const calls = [];
+    const serviceUrl = `http://localhost:5180${baseUrl}assets/document-service-v1.js`;
+    const { unduhDokumen } = await muatModul(
+      "../src/lib/dokumen-export.ts",
+      { URL, window: { location: { origin: "http://localhost:5180" } } },
+      {
+        [serviceUrl]: { renderDocument: async (...args) => calls.push(args) },
+        "./dokumen-heading": { normalisasiJudulDokumen: (html) => html },
+        "./dokumen-dki": { bungkusCetak: ({ bodyHtml }) => `<!DOCTYPE html>${bodyHtml}` },
+      },
+      baseUrl,
+    );
+    const opts = {
+      title: "Profil Juri Uji", fileName: "Profil_Juri_Uji",
+      bodyHtml: "<article>Bio tersimpan</article>",
+      pageMarginsMm: { atas: 8, kanan: 12.5, bawah: 16, kiri: 12.5 },
+      footer: { text: "Halaman {page} dari {pages}" },
+    };
+    for (const format of ["word", "pdf"]) await unduhDokumen(format, opts);
+    assert.equal(calls.length, 2);
+    assert.deepEqual(calls.map(([format]) => format), ["word", "pdf"]);
+    for (const [, html, options] of calls) {
+      assert.equal(html, "<!DOCTYPE html><article>Bio tersimpan</article>");
+      assert.equal(options, opts);
+    }
+  }
+});
+
+test("kegagalan layanan unduhan diteruskan agar halaman menampilkan pesan gagal", async () => {
+  const failure = new Error("Generator dokumen lokal belum tersedia.");
+  const { unduhDokumen } = await muatModul(
+    "../src/lib/dokumen-export.ts",
+    { URL, window: { location: { origin: "http://localhost:5180" } } },
+    {
+      "http://localhost:5180/assets/document-service-v1.js": { renderDocument: async () => { throw failure; } },
+      "./dokumen-heading": { normalisasiJudulDokumen: (html) => html },
+      "./dokumen-dki": { bungkusCetak: ({ bodyHtml }) => bodyHtml },
+    },
+  );
+  await assert.rejects(unduhDokumen("word", { title: "Profil", bodyHtml: "<p>Bio</p>" }), error => error === failure);
+});
 
 function kanvasDenganPiksel(pixels) {
   return {

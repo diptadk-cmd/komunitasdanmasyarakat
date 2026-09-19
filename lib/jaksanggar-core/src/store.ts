@@ -3237,10 +3237,11 @@ export async function persistMember(
     | undefined;
   if (!member || !member.apiId) return { server: false };
   try {
-    await membersApi.update(member.apiId, {
+    const persisted = await membersApi.update(member.apiId, {
       role: member.role,
       profile: memberServerProfile(member, db),
     });
+    save((draft) => applyMemberFromServer(draft, persisted));
     return { server: true };
   } catch (err) {
     if (snapshot) {

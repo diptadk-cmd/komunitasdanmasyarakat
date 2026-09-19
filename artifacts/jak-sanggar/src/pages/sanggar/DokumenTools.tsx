@@ -1547,8 +1547,9 @@ function useNativeDokumenAdapter() {
 // Public modules are served verbatim in dev and production. Vite adds an
 // `?import` query to relative dynamic imports even with @vite-ignore, which
 // makes its dev server reject JS in public/. An absolute URL stays untouched.
+const LetterheadBuilder = lazy(() => import("@/components/documents/LetterheadBuilder"));
 const nativeDokumenModule = new URL(
-  `${import.meta.env.BASE_URL}assets/native-ui-20260915.mjs?v=workspace-20260920`,
+  `${import.meta.env.BASE_URL}assets/native-ui-20260915.mjs?v=letterhead-20260920`,
   window.location.origin,
 ).href;
 const NativeTemplatePage = lazy(async () => {
@@ -1556,7 +1557,7 @@ const NativeTemplatePage = lazy(async () => {
     /* @vite-ignore */ nativeDokumenModule
   );
   return {
-    default: createTemplatePage(React, null, useNativeDokumenAdapter),
+    default: createTemplatePage(React, LetterheadBuilder, useNativeDokumenAdapter),
   };
 });
 

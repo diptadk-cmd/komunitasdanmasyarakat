@@ -24,7 +24,7 @@ const validDocx = await docx.generateAsync({ type: 'uint8array' });
 const wordMime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 const documentResponse = (format = 'pdf', mime = format === 'word' ? wordMime : 'application/pdf') => new Response(format === 'word' ? validDocx : validPdf, { headers: { 'Content-Type': mime } });
 
-async function fixture({ extraFields = [], profile = {}, savedValues = {}, catalogGroups } = {}) {
+async function fixture({ extraFields = [], profile = {}, savedValues = {}, catalogGroups, imageRenderer, onSave } = {}) {
   const source = await readFile(new URL("../public/assets/native-ui-20260915.mjs", import.meta.url), "utf8");
   const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   const catalog = { groups: catalogGroups ?? [{ id: "uji", category: "Mandiri", label: "Sanggar uji", documents: [{ id: "surat", title: "Surat Uji", path: "surat.docx", fields: [{ key: "NAM_SA2" }, { key: "NOM_SUR" }] }] }] };
@@ -52,7 +52,7 @@ async function fixture({ extraFields = [], profile = {}, savedValues = {}, catal
   };
   vm.runInNewContext(compiled, {
     exports,
-    require: name => name.includes('document-workspace') ? workspaceStyles : name.includes('document-order') ? documentOrder : name.includes('autofill') ? autofill : name.includes('fields') ? fields : name.includes('images') ? images : previous,
+    require: name => name.includes('document-workspace') ? workspaceStyles : name.includes('document-order') ? documentOrder : name.includes('autofill') ? autofill : name.includes('fields') ? fields : name.includes('images') ? { ...images, renderImages: imageRenderer ?? images.renderImages } : previous,
     window: {addEventListener() {}, removeEventListener() {}},
     fetch: async (url, options) => url.startsWith("/dokumen-fix/catalog") ? { ok: true, json: async () => catalog } : request ? request(url, options) : documentResponse(JSON.parse(options.body).format),
     AbortSignal,
@@ -61,7 +61,7 @@ async function fixture({ extraFields = [], profile = {}, savedValues = {}, catal
     document: { createElement: () => ({ click() { downloads.push(this.download); } }), getElementById: id => ({ focus() { focused.push(id); }, scrollIntoView() {} }) },
     setTimeout() {},
   });
-  const Page = exports.createTemplatePage(React, () => null, () => ({ profile: { id: "uji", namaSanggar: "Sanggar Uji", ...profile }, savedValues }));
+  const Page = exports.createTemplatePage(React, () => null, () => ({ profile: { id: "uji", namaSanggar: "Sanggar Uji", ...profile }, savedValues, save: onSave }));
   async function flush() {
     for (let step = 0; step < 15; step++) {
       if (dirty) { dirty = false; cursor = 0; tree = Page(); while (effects.length) effects.shift()(); }
@@ -419,4 +419,45 @@ test('dokumen tanpa isian tetap bisa diperiksa tanpa progres nol atau pencarian 
   assert.equal(app.all().filter(node => node.type === 'iframe').length, 1);
   assert.ok(app.button('Unduh Word dengan isian'));
   assert.ok(app.button('Unduh PDF'));
+});
+
+test('kop builder diterapkan ke slot letterhead tanpa menghapus isian, lalu dikirim dan disimpan', async () => {
+  const png = 'data:image/png;base64,' + (await readFile(new URL('../../../services/document-renderer/test-assets/letterhead.png', import.meta.url))).toString('base64');
+  let saved, request;
+  const app = await fixture({ imageRenderer: async imageMap => imageMap, onSave: async (key, values) => { saved = { key, values }; } });
+  await app.change('NOM_SUR', '025/KOP/2026');
+  await app.review();
+  assert.equal(app.all().filter(node => node.type === 'iframe').length, 1);
+  app.button('Buat kop surat').props.onClick(); await app.flush();
+  let builder = app.all().find(node => typeof node.props.onApply === 'function');
+  assert.equal(builder.props.open, true);
+  assert.equal(builder.props.profile.id, 'uji');
+  builder.props.onApply(png); await app.flush();
+  assert.equal(app.all()[0].props['data-view'], 'edit');
+  assert.equal(app.all().filter(node => node.type === 'iframe').length, 0);
+  assert.equal(app.all().find(node => typeof node.props.onApply === 'function').props.open, false);
+  assert.equal((await app.showField('NOM_SUR')).props.value, '025/KOP/2026');
+  assert.ok(app.all().some(node => node.type === 'img' && node.props.src === png));
+  await app.button('Simpan isian').props.onClick(); await app.flush();
+  assert.equal(saved.key, 'uji:native-fix-uji');
+  assert.equal(saved.values.__image_letterhead, png);
+  assert.equal(saved.values.NOM_SUR, '025/KOP/2026');
+  app.setRequest(async (_url, options) => { request = JSON.parse(options.body); return documentResponse(); });
+  await app.review();
+  assert.equal(request.nativeTemplate.images.letterhead, png);
+  assert.equal(request.nativeTemplate.values.NOM_SUR, '025/KOP/2026');
+});
+
+test('tutup kop builder tidak mengubah isian dan data gambar yang tidak valid ditolak', async () => {
+  const app = await fixture();
+  await app.change('NOM_SUR', '026/KOP/2026');
+  app.button('Buat kop surat').props.onClick(); await app.flush();
+  let builder = app.all().find(node => typeof node.props.onApply === 'function');
+  builder.props.onApply('https://example.com/kop.png'); await app.flush();
+  assert.ok(textPresent(app, 'Kop surat belum valid. Buat ulang kop sebelum digunakan.'));
+  builder = app.all().find(node => typeof node.props.onApply === 'function');
+  assert.equal(builder.props.open, true);
+  builder.props.onClose(); await app.flush();
+  assert.equal((await app.showField('NOM_SUR')).props.value, '026/KOP/2026');
+  assert.equal(app.all().some(node => node.type === 'img' && node.props.src === 'https://example.com/kop.png'), false);
 });

@@ -13,6 +13,7 @@ import { AKOMODASI_LABEL } from "@/lib/sewa-flow";
 import { layananBasePath, pemesanLabel } from "@/lib/role-paths";
 import { mapsUrl, hasKoordinat } from "@/components/system/ShareLocation";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { DashboardWelcome } from "@/components/layout/RoleWorkspace";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,7 +46,6 @@ import type {
   SewaUser,
 } from "@/lib/types";
 
-import heroBetawiImg from "@/assets/photos/hero-betawi.webp";
 import katSanggarImg from "@/assets/photos/kategori-sanggar.webp";
 import katSdmImg from "@/assets/photos/kategori-sdm.webp";
 import katAlatImg from "@/assets/photos/kategori-alat-musik.webp";
@@ -153,93 +153,20 @@ export function SewaHome() {
   };
 
   return (
-    <div>
-      <div className="relative overflow-hidden rounded-2xl mb-8 group">
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
-          style={{ backgroundImage: `url(${heroBetawiImg})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-transparent" />
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="relative p-8 lg:p-12 text-white max-w-3xl">
-          <Badge className="bg-accent text-accent-foreground hover:bg-accent/90 border-none mb-4">
-            Katalog Sanggar, Jasa & Aset
-          </Badge>
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl mb-4 leading-tight">
-            Selamat datang, {namaPemesan(user)}
-          </h1>
-          <p className="text-white/80 text-lg sm:text-xl leading-relaxed">
-            Telusuri katalog jasa kesenian dari sanggar-sanggar Jakarta. Klik
-            kategori untuk membuka katalog lengkap dengan filter dan pencarian.
-          </p>
-        </div>
-      </div>
-
-      <Card className="p-4 mb-8 bg-gradient-to-br from-primary/10 via-amber-500/10 to-transparent border-primary/20">
-        <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-full bg-primary/20 text-primary grid place-items-center shrink-0">
-            <Sparkles className="h-5 w-5" />
-          </div>
-          <div className="text-sm">
-            <div className="font-medium">Mode {pemesanLabel(user.role)}</div>
-            <p className="text-muted-foreground mt-0.5">
-              Telusuri katalog, klik item yang Anda butuhkan, lalu kirim
-              permintaan langsung ke sanggar. Pantau alur (TTD → invoice → bayar
-              → BAST) di menu{" "}
-              <Link href={`${basePath}/pesanan`} className="underline font-medium">
-                Pesanan Saya
-              </Link>
-              .
-            </p>
-          </div>
-        </div>
-      </Card>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {KATEGORI_LIST.map((k) => {
+    <div className="role-workspace" data-testid="konsumen-home">
+      <DashboardWelcome role={`Katalog untuk ${pemesanLabel(user.role).toLowerCase()}`} title={`Selamat datang, ${namaPemesan(user)}`}
+        description="Temukan sanggar, pelaku seni, dan perlengkapan untuk kegiatan Anda."
+        primary={{ href: `${basePath}/pesanan`, label: "Pantau pesanan saya" }} />
+      <div className="rw-notice"><strong>Mulai dari kategori yang Anda butuhkan.</strong> Pilih layanan, kirim permintaan, lalu pantau kontrak, pembayaran, dan serah terima di Pesanan Saya.</div>
+      <section aria-label="Kategori katalog" className="rw-gallery">
+        {KATEGORI_LIST.map(k => {
           const meta = KATEGORI_META[k];
-          return (
-            <Link
-              key={k}
-              href={`${basePath}/${basePath === "/konsumen" ? "katalog/" : ""}${k}`}
-            >
-              <Card
-                className="overflow-hidden cursor-pointer group premium-card flex flex-col h-full"
-                data-testid={`card-kategori-${k}`}
-              >
-                <div className="relative h-48 w-full overflow-hidden">
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors z-10" />
-                  <img
-                    src={meta.image}
-                    alt={meta.label}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute top-3 right-3 z-20">
-                    <Badge className="bg-black/50 text-white backdrop-blur-md border-none">
-                      {counts[k]} item
-                    </Badge>
-                  </div>
-                </div>
-                <div className="p-5 flex-1 flex flex-col">
-                  <div className="flex items-center gap-3 mb-2 text-primary">
-                    {meta.icon}
-                    <div className="font-serif text-2xl font-semibold">
-                      {meta.label}
-                    </div>
-                  </div>
-                  <p className="mt-1 text-sm text-muted-foreground flex-1 leading-relaxed">
-                    {meta.desc}
-                  </p>
-                  <div className="mt-4 flex items-center text-sm font-medium text-accent transition-colors group-hover:text-primary">
-                    Buka katalog{" "}
-                    <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                  </div>
-                </div>
-              </Card>
-            </Link>
-          );
+          return <Link key={k} href={`${basePath}/${basePath === "/konsumen" ? "katalog/" : ""}${k}`} className="rw-category" data-testid={`card-kategori-${k}`}>
+            <div className="rw-category-image"><img src={meta.image} alt="" loading="lazy" decoding="async" /><span>{counts[k]} item</span></div>
+            <div className="rw-category-copy"><h2>{meta.icon}{meta.label}</h2><p>{meta.desc}</p></div>
+          </Link>;
         })}
-      </div>
+      </section>
     </div>
   );
 }

@@ -41,6 +41,8 @@ const COLLECTIONS: ApiSyncCollection[] = [
   "banners",
   "slider",
   "latihan",
+  // Kehadiran harus sampai sebelum pengajuan honor yang merujuk sesi itu.
+  "absensiLatihan",
   "iuran",
   "pengajuanHonor",
   "distribusi",
@@ -50,7 +52,6 @@ const COLLECTIONS: ApiSyncCollection[] = [
   "activity",
   "absensiPembinaan",
   "pendaftaranPembinaan",
-  "absensiLatihan",
   "aset",
   "sarpras",
   "kerjasama",
@@ -357,6 +358,14 @@ function canQueueRecord(db: DBShape, record: LocalRecord): boolean {
   if (GLOBAL_COLLECTIONS.has(record.collection)) return false;
 
   const isCurrent = (value: unknown) => value === current.id;
+
+  // Anggota boleh mengirim aksi pribadinya; server membatasi perubahan field
+  // (bukti iuran, pengajuan honor baru, konfirmasi penerimaan honor).
+  if ((current.role === "pelatih" || current.role === "seniman") && current.status === "aktif" && localData.sanggarId === current.sanggarId) {
+    if (record.collection === "pengajuanHonor") return current.role === "pelatih" && isCurrent(localData.pelatihId);
+    if (record.collection === "iuran") return current.role === "seniman" && isCurrent(localData.senimanId);
+    if (record.collection === "distribusi") return isCurrent(localData.penerimaId);
+  }
 
   if (SANGGAR_COLLECTIONS.has(record.collection))
     return isCurrent(localData.sanggarId);

@@ -646,6 +646,8 @@ export interface PengajuanHonor {
   id: string;
   sanggarId: string;
   pelatihId: string;
+  /** Sesi yang dicakup; data lama belum mempunyai ID sesi. */
+  latihanIds?: string[];
   jumlahSesi: number;
   honorPerSesi: number;
   total: number;

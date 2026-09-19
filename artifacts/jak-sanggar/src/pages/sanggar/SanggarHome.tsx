@@ -31,7 +31,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { SanggarCover } from "@/components/profile/SanggarCover";
-import sanggarIllustration from "@/assets/photos/sanggar-illustration-20260915.webp";
+import { NewsSlider } from "@/components/system/NewsSlider";
+const sanggarIllustration = `${import.meta.env.BASE_URL}brand/jaksanggar-community-banner-20260920-v1.webp`;
 import { ImagePlus, MessageSquare, ChevronRight } from "lucide-react";
 import "./sanggar-home.css";
 
@@ -305,6 +306,8 @@ export default function SanggarHome() {
           </div>
         )}
       </section>
+
+      <NewsSlider news={db.news} title="Berita komunitas" />
 
       <section className="sg-services">
         <div className="sg-section-heading">
