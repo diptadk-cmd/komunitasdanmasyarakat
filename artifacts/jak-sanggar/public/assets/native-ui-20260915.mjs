@@ -3,6 +3,7 @@ import { buildAutofill } from './native-autofill-20260915.mjs';
 import { fieldMeta, normalizeFieldValue, toDateInput, fromDateInput } from './native-fields-20260915.mjs?v=help-2';
 import { IMAGE_SLOTS, imageKindForField, imageAutofill, readImageFile, renderImages } from './native-images-20260915.mjs';
 import { orderNativeCatalog } from './native-document-order-20260919.mjs';
+import { documentWorkspaceCss } from './native-document-workspace-20260920.mjs';
 export { defaults, pilihGrupProfil };
 
 const css = `
@@ -82,6 +83,22 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
     const [search, setSearch] = React.useState(''), [fieldSearch, setFieldSearch] = React.useState(''), [onlyEmpty, setOnlyEmpty] = React.useState(false);
     const [drafts, setDrafts] = React.useState({}), [custom, setCustom] = React.useState({}), [busy, setBusy] = React.useState(''), [status, setStatus] = React.useState(''), [error, setError] = React.useState(''), [preview, setPreview] = React.useState('');
     const [imageDrafts, setImageDrafts] = React.useState({});
+    const [pickerOpen, setPickerOpen] = React.useState(false), [view, setView] = React.useState('edit');
+    const [activeSection, setActiveSection] = React.useState(null), [imagesOpen, setImagesOpen] = React.useState(false);
+    const [sectionPages, setSectionPages] = React.useState({}), [activeFieldKey, setActiveFieldKey] = React.useState(null);
+    const [pendingImageFocus, setPendingImageFocus] = React.useState(null), [pendingSectionFocus, setPendingSectionFocus] = React.useState(null);
+    const reviewHeadingRef = React.useRef(null), pickerSearchRef = React.useRef(null);
+    React.useEffect(() => { if (view === 'review') reviewHeadingRef.current?.focus(); }, [view]);
+    React.useEffect(() => { if (pickerOpen) pickerSearchRef.current?.focus(); }, [pickerOpen]);
+    React.useEffect(() => {
+      if (imagesOpen && pendingImageFocus) {
+        const target = document.getElementById('nf-upload-trigger-' + pendingImageFocus);
+        target?.focus(); target?.scrollIntoView({ block: 'nearest' }); setPendingImageFocus(null);
+      }
+    }, [imagesOpen, pendingImageFocus]);
+    React.useEffect(() => {
+      if (pendingSectionFocus) { document.getElementById(pendingSectionFocus)?.focus(); setPendingSectionFocus(null); }
+    }, [pendingSectionFocus, activeSection]);
     React.useEffect(() => {
       let cancelled = false;
       fetch('/dokumen-fix/catalog.json?v=20260915', { cache: 'no-store' }).then(r => { if (!r.ok) throw new Error('Daftar dokumen belum tersedia. Muat ulang halaman.'); return r.json(); }).then(c => {
@@ -126,7 +143,11 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
       try { const value = await readImageFile(file, slot.id); setImageDrafts(previous => ({ ...previous, [targetKey]: { ...previous[targetKey], [slot.id]: value } })); }
       catch (e) { setError(e.message); } finally { setBusy(''); }
     }
-    function chooseGroup(id) { const selected = catalog.groups.find(g => g.id === id); setGroup(id); setDoc(selected.documents[0]?.id || ''); setFieldSearch(''); setOnlyEmpty(false); }
+    function resetEditor() { setView('edit'); setActiveSection(null); setSectionPages({}); setActiveFieldKey(null); setFieldSearch(''); setOnlyEmpty(false); setImagesOpen(false); }
+    function chooseDocument(id) { setDoc(id); resetEditor(); setPickerOpen(false); setPendingSectionFocus('nf-document-title'); }
+    function chooseGroup(id) { const selected = catalog.groups.find(g => g.id === id); if (!selected) return; setGroup(id); setDoc(selected.documents[0]?.id || ''); resetEditor(); }
+    function returnToEditor() { setView('edit'); setPendingSectionFocus(filtering ? 'nf-field-search' : sections.length ? `nf-section-${Math.max(0, sections.indexOf(currentSection))}-toggle` : 'nf-document-title'); }
+    function openReview() { setActiveFieldKey(null); setView('review'); setPickerOpen(false); return produce('pdf', true); }
     function chooseCategory(value) { setCategory(value); chooseGroup(catalog.groups.find(g => g.category === value).id); setSearch(''); }
     function fillEmpty() {
       const otherSaved = Object.fromEntries(Object.entries(adapter.savedValues || {}).filter(([key]) => key !== saveKey));
@@ -157,8 +178,9 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
     }
     function renderField(field) {
       const meta = fieldMeta(field), value = values[field.key] ?? '', id = 'nf-field-' + field.key;
+      const focusProps = { onFocus: () => setActiveFieldKey(field.key), onBlur: event => { if (!event.currentTarget.contains(event.relatedTarget)) setActiveFieldKey(null); } };
       const imageKind = imageKindForField(field.key);
-      if (imageKind) return h('div', { className: 'nf-field', key: field.key }, h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: id }, 'Keterangan ' + (imageKind === 'logo' ? 'logo' : 'stempel') + ' (opsional)'), h(Help, { name: meta.label, text: meta.help, context: field.context })), h('input', { id, value, onChange: event => update(field, event.target.value), placeholder: 'Contoh: desain yang disetujui pada rapat' }), h('p', { className: 'nf-count' }, images[imageKind] ? 'Gambar sudah terhubung dari bagian unggah di atas.' : 'Unggah gambar pada bagian Logo, stempel, dan kop surat di atas.'), h('a', { href: '#nf-image-' + imageKind }, 'Buka unggah ' + (imageKind === 'logo' ? 'logo' : 'stempel')));
+      if (imageKind) return h('div', { className: 'nf-field', key: field.key, ...focusProps }, h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: id }, 'Keterangan ' + (imageKind === 'logo' ? 'logo' : 'stempel') + ' (opsional)'), h(Help, { name: meta.label, text: meta.help, context: field.context })), h('input', { id, value, onChange: event => update(field, event.target.value), placeholder: 'Contoh: desain yang disetujui pada rapat' }), h('p', { className: 'nf-count' }, images[imageKind] ? 'Gambar sudah terhubung dari bagian unggah.' : 'Unggah gambar pada bagian Logo, stempel, dan kop surat.'), h('a', { href: '#nf-image-' + imageKind, onClick: event => { event.preventDefault(); setImagesOpen(true); setPendingImageFocus(imageKind); } }, 'Buka unggah ' + (imageKind === 'logo' ? 'logo' : 'stempel')));
       const options = meta.options || [];
       const customKey = saveKey + ':' + field.key;
       const isCustom = custom[customKey] || (!empty(value) && !options.some(option => option.value === value));
@@ -191,40 +213,83 @@ export function createTemplatePage(React, _Legacy, useAdapter) {
         control = h(React.Fragment, null, h('input', { ...props, type: manual ? 'text' : 'time', value: manual || known ? value : '', placeholder: manual ? 'Contoh: 09.00 WIB' : undefined }), h('button', { type: 'button', className: 'nf-choice', onClick: () => setCustom(previous => ({ ...previous, [customKey]: !manual })) }, manual ? 'Gunakan pemilih waktu' : 'Ketik waktu sendiri'));
       } else if (meta.type === 'textarea') control = h('textarea', { ...props, rows: 3 });
       else control = h('input', { ...props, type: meta.type === 'number' ? 'text' : meta.type || 'text', inputMode: meta.type === 'number' ? 'decimal' : undefined, style: meta.uppercase ? { textTransform: 'uppercase' } : undefined });
-      return h('div', { className: 'nf-field' + (meta.type === 'textarea' ? ' nf-field-wide' : ''), key: field.key }, h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: id }, meta.label), h(Help, { name: meta.label, text: meta.help, context: field.context })), control, source && !empty(value) && h('div', { className: source === 'Diubah di formulir ini' ? 'nf-manual' : 'nf-source', id: id + '-source' }, source));
+      return h('div', { className: 'nf-field' + (meta.type === 'textarea' ? ' nf-field-wide' : ''), key: field.key, ...focusProps }, h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: id }, meta.label), h(Help, { name: meta.label, text: meta.help, context: field.context })), control, source && !empty(value) && h('div', { className: source === 'Diubah di formulir ini' ? 'nf-manual' : 'nf-source', id: id + '-source' }, source));
     }
-    const shown = fields.filter(field => (!onlyEmpty || isFieldEmpty(field)) && (!fieldSearch || (fieldMeta(field).label + ' ' + field.key).toLocaleLowerCase('id-ID').includes(fieldSearch.toLocaleLowerCase('id-ID'))));
-    const sections = [...new Set(shown.map(field => fieldMeta(field).group))];
+    const filterTerm = fieldSearch.trim().toLocaleLowerCase('id-ID');
+    const shown = fields.filter(field => (!onlyEmpty || isFieldEmpty(field) || activeFieldKey === field.key) && (!filterTerm || (fieldMeta(field).label + ' ' + field.key).toLocaleLowerCase('id-ID').includes(filterTerm)));
+    const sections = [...new Set(fields.map(field => fieldMeta(field).group))];
+    const shownSections = [...new Set(shown.map(field => fieldMeta(field).group))];
+    const currentSection = activeSection ?? sections[0];
+    const filtering = !!filterTerm || onlyEmpty;
     const documents = group?.documents.filter(doc => doc.title.toLocaleLowerCase('id-ID').includes(search.toLocaleLowerCase('id-ID'))) || [];
     const filledCount = fields.length - emptyFields.length;
     const sourcedCount = fields.filter(field => !empty(values[field.key]) && autofill.sources[field.key] && !Object.hasOwn(edits, field.key)).length;
-    return h('section', { className: 'nf', 'data-testid': 'native-template-page', 'data-version': '20260915' }, h('style', null, css),
-      h('header', { className: 'nf-head' }, h('div', null, h('h1', null, 'DOKUMEN SANGGAR'), h('p', null, 'Gunakan data sanggar yang sudah terdaftar untuk melengkapi dokumen.'))),
-      h('ol', { className: 'nf-steps', 'aria-label': 'Cara membuat dokumen' }, ['Pilih dokumen', 'Lengkapi isian', 'Periksa dan unduh'].map((step, index) => h('li', { key: step }, h('span', { className: 'nf-step', 'aria-hidden': true }, index + 1), step))),
-      error && h('div', { role: 'alert', className: 'nf-status nf-error' }, error), status && h('div', { role: 'status', className: 'nf-status' }, status),
-      !catalog ? h('p', { role: 'status' }, 'Memuat dokumen…') : h('div', { className: 'nf-grid' },
-        h('aside', { className: 'nf-sidebar' }, h('div', { className: 'nf-sidebar-top' }, h('h2', null, 'Pilih dokumen'), h('div', { className: 'nf-labelrow' }, h('label', { htmlFor: 'nf-category' }, 'Kedudukan sanggar'), h(Help, { name: 'kedudukan sanggar', text: 'Pilihan awal mengikuti data pendaftaran sanggar. Sesuaikan jika kedudukan sanggar telah berubah. Setiap kedudukan memiliki dokumen yang berbeda.' })),
-          h('select', { id: 'nf-category', value: category, onChange: event => chooseCategory(event.target.value) }, categories.map(value => h('option', { key: value, value }, value))),
-          groups.length > 1 && h(React.Fragment, null, h('label', { htmlFor: 'nf-group' }, 'Bentuk badan'), h('select', { id: 'nf-group', value: group.id, onChange: event => chooseGroup(event.target.value) }, groups.map(value => h('option', { key: value.id, value: value.id }, value.label.split(' / ').pop())))),
-          h('label', { htmlFor: 'nf-search' }, 'Cari dokumen'), h('input', { id: 'nf-search', type: 'search', value: search, onChange: event => setSearch(event.target.value), placeholder: 'Contoh: anggaran dasar' }), h('p', { className: 'nf-count' }, `${documents.length} dokumen tersedia`)),
-          h('nav', { className: 'nf-list', 'aria-label': 'Daftar dokumen' }, documents.map(doc => h('button', { key: doc.id, type: 'button', 'aria-pressed': item?.id === doc.id, onClick: () => { setDoc(doc.id); setFieldSearch(''); setOnlyEmpty(false); } }, doc.title)), !documents.length && h('p', { className: 'nf-empty' }, 'Dokumen tidak ditemukan. Coba kata lain.'))),
-        item && h('main', { className: 'nf-main' }, h('p', { className: 'nf-document-label' }, group.label), h('h2', null, item.title.toLocaleUpperCase('id-ID')),
-          h('div', { className: 'nf-progress' }, h('progress', { max: fields.length || 1, value: filledCount, 'aria-label': 'Kelengkapan isian dokumen' }), h('span', null, `${filledCount} dari ${fields.length} isian terisi`), h('span', null, 'Lampiran sudah tergabung')),
-          h('div', { className: 'nf-autofill' }, h('div', null, h('strong', null, sourcedCount ? `${sourcedCount} isian terisi dari data sanggar` : 'Isi sekali, gunakan pada formulir lain'), h('p', null, 'Data pendaftaran, profil, dan formulir tersimpan dipakai otomatis. Periksa dan ubah bila diperlukan.')), h('button', { type: 'button', onClick: fillEmpty }, 'Isi otomatis yang kosong')),
-          h('section', { 'aria-label': 'Logo, stempel, dan kop surat', style: { borderTop: '1px solid var(--nf-line)', paddingTop: 18, marginBottom: 24 } }, h('h3', null, 'Logo, stempel, dan kop surat'), h('p', { className: 'nf-count' }, 'Gambar dari profil atau formulir sebelumnya terisi otomatis. Simpan isian untuk memakai unggahan pada formulir lain.'),
-            h('div', { className: 'nf-fields', style: { marginTop: 18 } }, IMAGE_SLOTS.map(slot => h('div', { key: slot.id, id: 'nf-image-' + slot.id, style: { minWidth: 0, scrollMarginTop: 24 } },
-              h('div', { className: 'nf-labelrow' }, h('strong', null, slot.label), h(Help, { name: slot.label, text: slot.help })),
-              images[slot.id] ? h('img', { src: images[slot.id], alt: 'Pratinjau ' + slot.label.toLowerCase(), style: { width: '100%', height: 110, objectFit: 'contain', background: '#fff', border: '1px solid var(--nf-line)', borderRadius: 6, marginBottom: 8 } }) : h('p', { className: 'nf-count', style: { padding: '10px 0' } }, 'Belum ada gambar'),
-              h('input', { id: 'nf-upload-' + slot.id, type: 'file', accept: 'image/png,image/jpeg,image/webp,image/avif', hidden: true, onChange: event => { const file = event.target.files?.[0]; event.target.value = ''; void uploadImage(slot, file); } }),
-              h('div', { className: 'nf-actions', style: { marginTop: 0 } }, h('button', { type: 'button', disabled: !!busy, onClick: () => document.getElementById('nf-upload-' + slot.id).click() }, busy === 'image-' + slot.id ? 'Memproses gambar…' : (images[slot.id] ? 'Ganti ' : 'Unggah ') + slot.label.toLowerCase()), images[slot.id] && h('button', { type: 'button', disabled: !!busy, onClick: () => updateImage(slot.id, '') }, 'Lepas gambar')),
-              imageFallbacks.images[slot.id] && images[slot.id] !== imageFallbacks.images[slot.id] && h('button', { type: 'button', disabled: !!busy, className: 'nf-choice', onClick: () => updateImage(slot.id, imageFallbacks.images[slot.id]) }, 'Gunakan gambar tersimpan'),
-              h('p', { className: 'nf-count' }, Object.hasOwn(imageEdits, slot.id) ? 'Perubahan gambar pada formulir ini' : imageDefaults.sources[slot.id] || 'PNG, JPG, WebP, atau AVIF; maksimal 8 MB.'))))),
-          h('div', { className: 'nf-toolbar' }, h('div', { className: 'nf-searchfields' }, h('label', { htmlFor: 'nf-field-search' }, 'Cari isian'), h('input', { id: 'nf-field-search', type: 'search', value: fieldSearch, onChange: event => setFieldSearch(event.target.value), placeholder: 'Cari nama, nomor, tanggal…' })), h('label', { className: 'nf-filter' }, h('input', { type: 'checkbox', checked: onlyEmpty, onChange: event => setOnlyEmpty(event.target.checked) }), 'Hanya yang kosong')),
-          sections.map(section => h('fieldset', { className: 'nf-section', key: section }, h('legend', null, section), h('div', { className: 'nf-fields' }, shown.filter(field => fieldMeta(field).group === section).map(renderField)))),
-          !shown.length && h('p', { className: 'nf-empty' }, onlyEmpty && !emptyFields.length ? 'Semua isian sudah terisi. Periksa pratinjau di bawah.' : 'Tidak ada isian yang cocok. Ubah pencarian atau matikan filter.'),
-          h('footer', { className: 'nf-footer' }, h('h3', null, 'Periksa dan unduh'), h('p', null, emptyFields.length ? `Masih ada ${emptyFields.length} isian kosong. Hasil unduhan berupa draf dengan penanda pada bagian yang belum diisi.` : 'Isian sudah terisi. Buka pratinjau untuk memeriksa dokumen sebelum digunakan.'),
-            h('div', { className: 'nf-actions' }, h('button', { disabled: !!busy, onClick: () => produce('pdf', true) }, busy === 'preview' ? 'Menyiapkan pratinjau…' : 'Pratinjau'), h('button', { disabled: !!busy, className: 'nf-primary', onClick: () => produce('word') }, busy === 'word' ? 'Membuat Word…' : 'Unduh Word dengan isian'), h('button', { disabled: !!busy, onClick: () => produce('pdf') }, busy === 'pdf' ? 'Membuat PDF…' : 'Unduh PDF')),
-            h('div', { className: 'nf-secondary-actions' }, h('div', null, adapter.save && h('button', { disabled: !!busy, onClick: save }, busy === 'save' ? 'Menyimpan…' : 'Simpan isian'), h('p', { className: 'nf-count', role: 'status' }, dirty ? 'Ada perubahan yang belum disimpan.' : 'Isian tetap bisa diubah sebelum diunduh.')), h('button', { disabled: !!busy, onClick: () => produce('word', false, true) }, busy === 'blank' ? 'Menyiapkan template…' : 'Unduh template kosong'))),
-          preview && h('section', { className: 'nf-preview', 'aria-label': 'Pratinjau dokumen' }, h('h3', null, 'Pratinjau dokumen'), h('iframe', { title: 'Pratinjau dokumen beserta lampiran', src: preview })))));
+    const draftNote = !fields.length ? 'Dokumen ini tidak memerlukan isian. Buka pratinjau untuk memeriksa isinya.' : emptyFields.length ? `Masih ada ${emptyFields.length} isian kosong. Unduhan akan ditandai sebagai draf.` : 'Semua isian terisi. Periksa dokumen sebelum digunakan.';
+    const saveButton = adapter.save && h('button', { type: 'button', disabled: !!busy, onClick: save }, busy === 'save' ? 'Menyimpan…' : 'Simpan isian');
+    const blankButton = h('button', { type: 'button', disabled: !!busy, onClick: () => produce('word', false, true) }, busy === 'blank' ? 'Menyiapkan template…' : 'Unduh template kosong');
+
+    function imageFields() {
+      return h('div', { className: 'nf-images-content' }, h('p', { className: 'nf-count' }, 'Opsional. Gunakan gambar profil atau unggah gambar untuk dokumen ini.'),
+        h('div', { className: 'nf-fields' }, IMAGE_SLOTS.map(slot => h('div', { key: slot.id, id: 'nf-image-' + slot.id, className: 'nf-image-card' },
+          h('div', { className: 'nf-labelrow' }, h('strong', null, slot.label), h(Help, { name: slot.label, text: slot.help })),
+          images[slot.id] ? h('img', { src: images[slot.id], alt: 'Pratinjau ' + slot.label.toLowerCase() }) : h('p', { className: 'nf-count' }, 'Belum ada gambar'),
+          h('input', { id: 'nf-upload-' + slot.id, type: 'file', accept: 'image/png,image/jpeg,image/webp,image/avif', hidden: true, onChange: event => { const file = event.target.files?.[0]; event.target.value = ''; void uploadImage(slot, file); } }),
+          h('div', { className: 'nf-actions' }, h('button', { type: 'button', id: 'nf-upload-trigger-' + slot.id, disabled: !!busy, onClick: () => document.getElementById('nf-upload-' + slot.id).click() }, busy === 'image-' + slot.id ? 'Memproses gambar…' : (images[slot.id] ? 'Ganti ' : 'Unggah ') + slot.label.toLowerCase()), images[slot.id] && h('button', { type: 'button', disabled: !!busy, onClick: () => updateImage(slot.id, '') }, 'Lepas gambar')),
+          imageFallbacks.images[slot.id] && images[slot.id] !== imageFallbacks.images[slot.id] && h('button', { type: 'button', disabled: !!busy, className: 'nf-choice', onClick: () => updateImage(slot.id, imageFallbacks.images[slot.id]) }, 'Gunakan gambar tersimpan'),
+          h('p', { className: 'nf-count' }, Object.hasOwn(imageEdits, slot.id) ? 'Perubahan gambar pada formulir ini' : imageDefaults.sources[slot.id] || 'PNG, JPG, WebP, atau AVIF; maksimal 8 MB.')))));
+    }
+
+    return h('section', { className: 'nf nf-workspace', 'data-testid': 'native-template-page', 'data-version': '20260920', 'data-view': view },
+      h('style', null, css + documentWorkspaceCss),
+      h('header', { className: 'nf-workspace-header' },
+        h('div', { className: 'nf-document-copy' }, h('p', { className: 'nf-document-meta' }, group?.label || 'Dokumen sanggar'), h('h1', { id: 'nf-document-title', tabIndex: -1 }, item?.title || 'Dokumen sanggar')),
+        h('button', { type: 'button', className: 'nf-picker-toggle', disabled: !catalog, 'aria-expanded': pickerOpen, 'aria-controls': 'nf-document-picker', onClick: () => setPickerOpen(previous => !previous) }, pickerOpen ? 'Tutup pilihan dokumen' : 'Ganti dokumen')),
+      pickerOpen && catalog && h('section', { id: 'nf-document-picker', className: 'nf-picker', 'aria-label': 'Pilihan dokumen' },
+        h('div', { className: 'nf-picker-filters' },
+          h('div', null, h('label', { htmlFor: 'nf-category' }, 'Kedudukan sanggar'), h('select', { id: 'nf-category', value: category, onChange: event => chooseCategory(event.target.value) }, categories.map(value => h('option', { key: value, value }, value)))),
+          groups.length > 1 && h('div', null, h('label', { htmlFor: 'nf-group' }, 'Bentuk badan'), h('select', { id: 'nf-group', value: group.id, onChange: event => chooseGroup(event.target.value) }, groups.map(value => h('option', { key: value.id, value: value.id }, value.label.split(' / ').pop())))),
+          h('div', null, h('label', { htmlFor: 'nf-search' }, 'Cari dokumen'), h('input', { ref: pickerSearchRef, id: 'nf-search', type: 'search', value: search, onChange: event => setSearch(event.target.value), placeholder: 'Contoh: berita acara' }))),
+        h('p', { className: 'nf-count' }, `${documents.length} dokumen tersedia`),
+        h('nav', { className: 'nf-list', 'aria-label': 'Daftar dokumen' }, documents.map(doc => h('button', { key: doc.id, type: 'button', 'aria-pressed': item?.id === doc.id, onClick: () => chooseDocument(doc.id) }, doc.title)), !documents.length && h('p', { className: 'nf-empty' }, 'Dokumen tidak ditemukan. Coba kata lain.')),
+        h('div', { className: 'nf-picker-footer' }, blankButton)),
+      error && h('div', { role: 'alert', className: 'nf-status nf-error' }, error),
+      status && h('div', { role: 'status', className: 'nf-status' }, status),
+      !catalog ? h('p', { role: 'status' }, 'Memuat dokumen…') : item && h(React.Fragment, null,
+        h('nav', { className: 'nf-mode-bar', 'aria-label': 'Tahap dokumen' },
+          h('button', { type: 'button', 'aria-current': view === 'edit' ? 'step' : undefined, onClick: returnToEditor }, '1. Lengkapi isian'),
+          h('span', { 'aria-current': view === 'review' ? 'step' : undefined }, '2. Periksa & unduh')),
+        view === 'edit' ? h('div', { className: 'nf-editor' },
+          h('div', { className: 'nf-editor-overview' }, h('h2', null, 'Lengkapi isian'), fields.length > 0 ? h('div', { className: 'nf-progress-compact' }, h('progress', { max: fields.length || 1, value: filledCount, 'aria-label': 'Kelengkapan isian dokumen' }), h('span', null, `${filledCount} dari ${fields.length} terisi`)) : h('p', { className: 'nf-count' }, 'Dokumen ini tidak memerlukan isian.')),
+          fields.length > 0 && h('div', { className: 'nf-autofill-inline' }, h('p', null, sourcedCount ? `${sourcedCount} isian sudah terisi dari data sanggar. Periksa satu bagian setiap kali.` : 'Lengkapi satu bagian setiap kali. Isian tetap ada saat berpindah bagian.'), h('button', { type: 'button', onClick: fillEmpty }, 'Isi otomatis yang kosong')),
+          fields.length > 0 && h('div', { className: 'nf-toolbar' }, h('div', { className: 'nf-searchfields' }, h('label', { htmlFor: 'nf-field-search' }, 'Cari isian'), h('input', { id: 'nf-field-search', type: 'search', value: fieldSearch, onChange: event => setFieldSearch(event.target.value), placeholder: 'Cari nama, nomor, tanggal…' })), h('label', { className: 'nf-filter' }, h('input', { type: 'checkbox', checked: onlyEmpty, onChange: event => setOnlyEmpty(event.target.checked) }), 'Hanya yang kosong')),
+          filtering ? h('div', { className: 'nf-search-results' },
+            h('div', { className: 'nf-search-result-caption' }, h('p', null, `${shown.length} isian sesuai pencarian`), h('button', { type: 'button', onClick: () => { setFieldSearch(''); setOnlyEmpty(false); setPendingSectionFocus('nf-field-search'); } }, 'Tampilkan semua bagian')),
+            shownSections.map(section => h('fieldset', { className: 'nf-section', key: section }, h('legend', null, section), h('div', { className: 'nf-fields' }, shown.filter(field => fieldMeta(field).group === section).map(renderField)))),
+            !shown.length && h('p', { className: 'nf-empty' }, onlyEmpty && !emptyFields.length ? 'Semua isian sudah terisi. Dokumen siap diperiksa.' : 'Tidak ada isian yang cocok. Ubah pencarian atau matikan filter.')) :
+            h('div', { className: 'nf-sections' }, sections.map((section, index) => {
+              const sectionFields = fields.filter(field => fieldMeta(field).group === section), open = currentSection === section;
+              const complete = sectionFields.filter(field => !isFieldEmpty(field)).length, sectionId = `nf-section-${index}`;
+              const totalPages = Math.ceil(sectionFields.length / 6), page = Math.min(sectionPages[section] ?? 0, totalPages - 1);
+              const pageFields = sectionFields.slice(page * 6, page * 6 + 6);
+              return h('section', { key: section, className: 'nf-section-card' + (open ? ' is-open' : '') },
+                h('h3', null, h('button', { type: 'button', id: sectionId + '-toggle', className: 'nf-section-toggle', 'aria-expanded': open, 'aria-controls': sectionId, onClick: () => setActiveSection(open ? '' : section) }, h('span', { className: 'nf-section-title' }, section), h('span', { className: 'nf-section-count' }, `${complete}/${sectionFields.length} terisi`), h('span', { className: 'nf-chevron', 'aria-hidden': true }, open ? '−' : '+'))),
+                open && h('div', { id: sectionId, className: 'nf-section-body', role: 'region', 'aria-labelledby': sectionId + '-toggle' }, h('div', { className: 'nf-fields' }, pageFields.map(renderField)),
+                  totalPages > 1 && h('div', { className: 'nf-section-pagination', 'aria-label': 'Halaman isian ' + section },
+                    h('button', { type: 'button', disabled: page === 0, onClick: () => { setSectionPages(previous => ({ ...previous, [section]: page - 1 })); setPendingSectionFocus(sectionId + '-toggle'); } }, 'Isian sebelumnya'),
+                    h('span', { role: 'status' }, `Bagian ${page + 1} dari ${totalPages}`),
+                    h('button', { type: 'button', disabled: page === totalPages - 1, onClick: () => { setSectionPages(previous => ({ ...previous, [section]: page + 1 })); setPendingSectionFocus(sectionId + '-toggle'); } }, 'Isian berikutnya')),
+                  page === totalPages - 1 && index < sections.length - 1 && h('button', { type: 'button', className: 'nf-section-next', onClick: () => { setActiveSection(sections[index + 1]); setPendingSectionFocus(`nf-section-${index + 1}-toggle`); } }, 'Lanjut ke bagian berikutnya')));
+            })),
+          h('details', { className: 'nf-images-disclosure', open: imagesOpen, onToggle: event => setImagesOpen(event.currentTarget.open) }, h('summary', null, 'Logo, stempel, dan kop surat', h('span', null, 'Opsional')), imageFields()),
+          h('footer', { className: 'nf-edit-actions' }, h('div', { className: 'nf-draft-note' }, h('p', null, draftNote), h('p', { className: 'nf-count', role: 'status' }, dirty ? 'Ada perubahan yang belum disimpan.' : 'Isian siap diperiksa.')), h('div', { className: 'nf-action-buttons' }, saveButton, h('button', { type: 'button', disabled: !!busy, className: 'nf-primary', onClick: openReview }, busy === 'preview' ? 'Menyiapkan pratinjau…' : 'Pratinjau')))) :
+          h('div', { className: 'nf-review' },
+            h('div', { className: 'nf-review-topbar' }, h('div', null, h('h2', { ref: reviewHeadingRef, tabIndex: -1 }, 'Periksa dokumen'), h('p', null, 'Periksa isi dan lampiran sebelum mengunduh.')), h('button', { type: 'button', onClick: returnToEditor }, 'Kembali ke isian')),
+            h('div', { className: 'nf-review-layout' },
+              h('section', { className: 'nf-preview-stage', 'aria-label': 'Pratinjau dokumen', 'aria-busy': busy === 'preview' }, preview ? h('iframe', { title: 'Pratinjau dokumen beserta lampiran', src: preview }) : h('div', { className: 'nf-preview-placeholder', role: 'status' }, h('strong', null, busy === 'preview' ? 'Menyiapkan pratinjau…' : 'Pratinjau belum tersedia'), h('p', null, busy === 'preview' ? 'Dokumen dan lampiran sedang disusun.' : 'Buat pratinjau kembali setelah memeriksa isian.'), h('button', { type: 'button', disabled: !!busy, onClick: () => produce('pdf', true) }, busy === 'preview' ? 'Menyiapkan pratinjau…' : 'Pratinjau'))),
+              h('aside', { className: 'nf-review-summary', 'aria-label': 'Ringkasan dokumen' },
+                h('h3', null, 'Siap diunduh'), h('p', { className: 'nf-document-meta' }, group.label), h('strong', null, item.title),
+                h('p', { className: 'nf-draft-note' }, draftNote), h('p', { className: 'nf-count' }, fields.length ? `${filledCount} dari ${fields.length} isian terisi. Lampiran sudah tergabung.` : 'Dokumen tanpa isian. Lampiran sudah tergabung.'), preview && h('a', { className: 'nf-open-pdf', href: preview, target: '_blank', rel: 'noopener noreferrer' }, 'Buka PDF penuh'),
+                h('div', { className: 'nf-review-downloads' }, h('button', { type: 'button', disabled: !!busy, className: 'nf-primary', onClick: () => produce('word') }, busy === 'word' ? 'Membuat Word…' : 'Unduh Word dengan isian'), h('button', { type: 'button', disabled: !!busy, onClick: () => produce('pdf') }, busy === 'pdf' ? 'Membuat PDF…' : 'Unduh PDF')),
+                h('div', { className: 'nf-review-save' }, saveButton, h('p', { className: 'nf-count', role: 'status' }, dirty ? 'Ada perubahan yang belum disimpan.' : 'Isian tetap bisa diubah sebelum diunduh.'), blankButton))))));
   };
 }

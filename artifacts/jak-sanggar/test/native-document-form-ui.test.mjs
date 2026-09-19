@@ -11,6 +11,7 @@ import * as autofill from '../public/assets/native-autofill-20260915.mjs';
 import * as fields from '../public/assets/native-fields-20260915.mjs';
 import * as images from '../public/assets/native-images-20260915.mjs';
 import * as documentOrder from '../public/assets/native-document-order-20260919.mjs';
+import * as workspaceStyles from '../public/assets/native-document-workspace-20260920.mjs';
 
 const pdf = await PDFDocument.create();
 pdf.addPage().drawText("Dokumen uji");
@@ -28,7 +29,7 @@ async function fixture({ extraFields = [], profile = {}, savedValues = {}, catal
   const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   const catalog = { groups: catalogGroups ?? [{ id: "uji", category: "Mandiri", label: "Sanggar uji", documents: [{ id: "surat", title: "Surat Uji", path: "surat.docx", fields: [{ key: "NAM_SA2" }, { key: "NOM_SUR" }] }] }] };
   catalog.groups[0].documents[0].fields.push(...extraFields);
-  const slots = [], effects = [], downloads = [], blobs = [], exports = {};
+  const slots = [], effects = [], downloads = [], blobs = [], focused = [], exports = {};
   let cursor = 0, dirty = true, tree, request;
   const React = {
     Fragment: "fragment",
@@ -51,13 +52,13 @@ async function fixture({ extraFields = [], profile = {}, savedValues = {}, catal
   };
   vm.runInNewContext(compiled, {
     exports,
-    require: name => name.includes('document-order') ? documentOrder : name.includes('autofill') ? autofill : name.includes('fields') ? fields : name.includes('images') ? images : previous,
+    require: name => name.includes('document-workspace') ? workspaceStyles : name.includes('document-order') ? documentOrder : name.includes('autofill') ? autofill : name.includes('fields') ? fields : name.includes('images') ? images : previous,
     window: {addEventListener() {}, removeEventListener() {}},
     fetch: async (url, options) => url.startsWith("/dokumen-fix/catalog") ? { ok: true, json: async () => catalog } : request ? request(url, options) : documentResponse(JSON.parse(options.body).format),
     AbortSignal,
     TextDecoder,
     URL: { createObjectURL: (blob) => { blobs.push(blob); return "blob:preview-uji"; }, revokeObjectURL() {} },
-    document: { createElement: () => ({ click() { downloads.push(this.download); } }) },
+    document: { createElement: () => ({ click() { downloads.push(this.download); } }), getElementById: id => ({ focus() { focused.push(id); }, scrollIntoView() {} }) },
     setTimeout() {},
   });
   const Page = exports.createTemplatePage(React, () => null, () => ({ profile: { id: "uji", namaSanggar: "Sanggar Uji", ...profile }, savedValues }));
@@ -75,14 +76,27 @@ async function fixture({ extraFields = [], profile = {}, savedValues = {}, catal
   }
   function button(text) { return all().find((node) => node.type === "button" && node.children.includes(text)); }
   await flush();
-  return { flush, all, button, downloads, blobs, setRequest: (handler) => { request = handler; }, change: (key, value) => all().find((node) => node.props.id === "nf-field-" + key).props.onChange({ target: { value } }) };
+  async function edit() {
+    if (button('Kembali ke isian')) { button('Kembali ke isian').props.onClick(); await flush(); }
+  }
+  async function showField(key) {
+    await edit();
+    if (!all().find(node => node.props.id === 'nf-field-' + key)) {
+      all().find(node => node.props.id === 'nf-field-search').props.onChange({ target: { value: key } });
+      await flush();
+    }
+    return all().find(node => node.props.id === 'nf-field-' + key);
+  }
+  async function change(key, value) { const control = await showField(key); control.props.onChange({ target: { value } }); await flush(); }
+  async function review() { if (tree.props['data-view'] === 'edit') { await button('Pratinjau').props.onClick(); await flush(); } }
+  return { flush, all, button, downloads, blobs, focused, showField, change, edit, review, setRequest: (handler) => { request = handler; } };
 }
 
 test("pratinjau native hilang setelah isian berubah", async () => {
   const app = await fixture();
   await app.button("Pratinjau").props.onClick(); await app.flush();
   assert.equal(app.all().filter((node) => node.type === "iframe").length, 1);
-  app.change("NOM_SUR", "001/UJI/2026"); await app.flush();
+  await app.change("NOM_SUR", "001/UJI/2026"); await app.flush();
   assert.equal(app.all().filter((node) => node.type === "iframe").length, 0);
 });
 
@@ -90,7 +104,7 @@ test("hasil render yang selesai setelah isian berubah tidak ditampilkan", async 
   const app = await fixture(); let finish;
   app.setRequest(() => new Promise((resolve) => { finish = resolve; }));
   const rendering = app.button("Pratinjau").props.onClick(); await app.flush();
-  app.change("NOM_SUR", "002/UJI/2026"); await app.flush();
+  await app.change("NOM_SUR", "002/UJI/2026"); await app.flush();
   finish(documentResponse()); await rendering; await app.flush();
   assert.equal(app.all().filter((node) => node.type === "iframe").length, 0);
   assert.ok(app.all().some((node) => node.children.some((text) => typeof text === "string" && text.includes("Isian telah berubah"))));
@@ -99,11 +113,13 @@ test("hasil render yang selesai setelah isian berubah tidak ditampilkan", async 
 test("isian kosong ditandai sebagai draf pada peringatan dan nama unduhan", async () => {
   const app = await fixture();
   assert.ok(app.all().some((node) => node.children.some((text) => typeof text === "string" && text.includes("Masih ada 1 isian kosong"))));
+  await app.review();
   await app.button("Unduh Word dengan isian").props.onClick(); await app.flush();
   assert.match(app.downloads[0], / - Draf - Sanggar Uji\.docx$/);
-  app.change("NOM_SUR", " - "); await app.flush();
+  await app.change("NOM_SUR", " - "); await app.flush();
   assert.ok(app.all().some((node) => node.children.some((text) => typeof text === "string" && text.includes("Masih ada 1 isian kosong"))));
-  app.change("NOM_SUR", "001/UJI/2026"); await app.flush();
+  await app.change("NOM_SUR", "001/UJI/2026"); await app.flush();
+  await app.review();
   await app.button("Unduh Word dengan isian").props.onClick(); await app.flush();
   assert.equal(app.downloads[1], "SURAT UJI - Sanggar Uji.docx");
 });
@@ -111,6 +127,7 @@ test("isian kosong ditandai sebagai draf pada peringatan dan nama unduhan", asyn
 test("template kosong melewati renderer agar tata letak dan judul juga dikoreksi", async () => {
   const app = await fixture(); let captured;
   app.setRequest(async (url, options) => { captured = {url, options}; return documentResponse('word'); });
+  await app.review();
   await app.button("Unduh template kosong").props.onClick(); await app.flush();
   assert.equal(captured.url, '/api/documents/render');
   assert.equal(captured.options.credentials, 'include');
@@ -119,17 +136,17 @@ test("template kosong melewati renderer agar tata letak dan judul juga dikoreksi
 });
 
 
-test("alat arsip tidak muncul dan judul otomatis kapital", async () => {
+test("alat arsip tidak muncul dan judul dokumen mudah dibaca", async () => {
   const app = await fixture();
   assert.equal(app.button("Arsip dan alat sebelumnya"), undefined);
-  assert.ok(app.all().some(node => node.type === 'h2' && node.children.includes('SURAT UJI')));
+  assert.ok(app.all().some(node => node.type === 'h1' && node.children.includes('Surat Uji')));
 });
 
 test("isian manual tidak hilang ketika isian lain berubah", async () => {
   const app = await fixture();
-  app.change('NOM_SUR', '123/UJI/2026'); await app.flush();
-  app.change('NAM_SA2', 'Sanggar Isi Sendiri'); await app.flush();
-  assert.equal(app.all().find(node => node.props.id === 'nf-field-NOM_SUR').props.value, '123/UJI/2026');
+  await app.change('NOM_SUR', '123/UJI/2026'); await app.flush();
+  await app.change('NAM_SA2', 'Sanggar Isi Sendiri'); await app.flush();
+  assert.equal((await app.showField('NOM_SUR')).props.value, '123/UJI/2026');
 });
 
 test('autofill atas permintaan mengisi kosong tersimpan tanpa menimpa isian manual', async () => {
@@ -137,11 +154,12 @@ test('autofill atas permintaan mengisi kosong tersimpan tanpa menimpa isian manu
   assert.equal(app.all().find(node => node.props.id === 'nf-field-NAM_SA2').props.value, '');
   app.button('Isi otomatis yang kosong').props.onClick(); await app.flush();
   assert.equal(app.all().find(node => node.props.id === 'nf-field-NAM_SA2').props.value, 'Sanggar Uji');
-  assert.equal(app.all().find(node => node.props.id === 'nf-field-NOM_SUR').props.value, '007/ABC');
+  assert.equal((await app.showField('NOM_SUR')).props.value, '007/ABC');
 });
 
 test('pilihan jamak mempertahankan pilihan profil dan teks tambahan sampai render', async () => {
   const app = await fixture({ extraFields: [{ key: 'BID_SEN' }], profile: { jenisKesenian: ['Tari', 'Musik'] } });
+  await app.showField('BID_SEN');
   const input = suffix => app.all().find(node => node.props.id === 'nf-field-BID_SEN' + suffix);
   assert.equal(input('').props.checked, true);
   assert.equal(input('-1').props.checked, true);
@@ -151,6 +169,7 @@ test('pilihan jamak mempertahankan pilihan profil dan teks tambahan sampai rende
   input('').props.onChange({ target: { checked: false } }); await app.flush();
   let captured;
   app.setRequest(async (_url, options) => { captured = JSON.parse(options.body); return documentResponse('word'); });
+  await app.review();
   await app.button('Unduh Word dengan isian').props.onClick();
   assert.deepEqual(captured.nativeTemplate.values.BID_SEN.split('\n'), ['Musik', 'Teater', 'Wayang']);
 });
@@ -180,6 +199,7 @@ for (const [action, expectedFormat] of [['Pratinjau', 'PDF'], ['Unduh PDF', 'PDF
   test(`${action}: HTML SPA berstatus 200 tidak menjadi dokumen`, async () => {
     const app = await fixture();
     app.setRequest(() => new Response('<!doctype html><html><body><div id="root"></div></body></html>', { headers: { 'Content-Type': 'text/html' } }));
+    if (action !== 'Pratinjau') await app.review();
     await app.button(action).props.onClick(); await app.flush();
     assert.match(alertText(app), new RegExp(`file ${expectedFormat} yang valid`));
     assert.equal(app.downloads.length, 0);
@@ -204,7 +224,8 @@ test('ZIP biasa dan DOCX terpotong tidak diunduh sebagai Word', async () => {
   for (const data of [otherZip, validDocx.slice(0, -24), '<html>Gagal</html>']) {
     const app = await fixture();
     app.setRequest(() => new Response(data, { headers: { 'Content-Type': wordMime } }));
-    await app.button('Unduh Word dengan isian').props.onClick(); await app.flush();
+    await app.review();
+  await app.button('Unduh Word dengan isian').props.onClick(); await app.flush();
     assert.match(alertText(app), /file Word yang valid/);
     assert.equal(app.downloads.length, 0);
     assert.equal(app.blobs.length, 0);
@@ -216,6 +237,7 @@ test('file biner valid tetap bisa dipakai ketika renderer mengirim octet-stream'
   app.setRequest((_url, options) => documentResponse(JSON.parse(options.body).format, 'application/octet-stream'));
   await app.button('Pratinjau').props.onClick(); await app.flush();
   assert.equal(app.blobs[0].type, 'application/pdf');
+  await app.review();
   await app.button('Unduh Word dengan isian').props.onClick(); await app.flush();
   assert.equal(app.blobs[1].type, wordMime);
   assert.equal(app.downloads.length, 1);
@@ -249,6 +271,7 @@ test('pilihan awal dan perpindahan kategori atau bentuk memakai berita acara per
     { id: 'uji-usaha', category: 'Mandiri', label: 'Mandiri / Usaha', documents: [document('pedoman-dasar', 'Pedoman Dasar'), document('berita-acara-forum-penetapan', 'Berita Acara Forum Penetapan')] },
     { id: 'unit-nonbadan-hukum', category: 'Unit', label: 'Unit Nonbadan Hukum', documents: makeDocuments('organisasi-induk') },
   ] });
+  app.button('Ganti dokumen').props.onClick(); await app.flush();
   const selected = () => app.all().find(node => node.type === 'button' && node.props['aria-pressed'] === true)?.children[0];
   assert.equal(selected(), 'Berita Acara Pembentukan sanggar');
   app.all().find(node => node.props.id === 'nf-group').props.onChange({ target: { value: 'uji-usaha' } });
@@ -261,4 +284,139 @@ test('pilihan awal dan perpindahan kategori atau bentuk memakai berita acara per
   await app.flush();
   const documentButtons = app.all().find(node => node.props['aria-label'] === 'Daftar dokumen').children.filter(node => node?.type === 'button');
   assert.equal(documentButtons[0].children[0], 'Berita Acara Pembentukan organisasi-induk');
+});
+
+const actualCatalog = JSON.parse(await readFile(new URL('../public/dokumen-fix/catalog.json', import.meta.url), 'utf8'));
+async function largeForm() {
+  const group = actualCatalog.groups.find(group => group.id === 'mandiri-badan-usaha-firma');
+  const document = group.documents.find(document => document.id === 'data-induk-sanggar');
+  return fixture({ catalogGroups: [{ ...structuredClone(group), documents: [structuredClone(document)] }] });
+}
+const hasClass = (node, name) => node.props.className?.split(' ').includes(name);
+const controls = app => app.all().filter(node => hasClass(node, 'nf-field'));
+const sectionToggles = app => app.all().filter(node => hasClass(node, 'nf-section-toggle'));
+const searchField = app => app.all().find(node => node.props.id === 'nf-field-search');
+const textPresent = (app, text) => app.all().some(node => node.children.includes(text));
+
+test('formulir besar dimulai ringkas: picker dan gambar tertutup, satu bagian dengan enam isian', async () => {
+  const app = await largeForm();
+  assert.equal(app.button('Ganti dokumen').props['aria-expanded'], false);
+  assert.equal(app.all().some(node => node.props.id === 'nf-document-picker'), false);
+  assert.equal(app.all().find(node => hasClass(node, 'nf-images-disclosure')).props.open, false);
+  assert.equal(app.button('Unduh Word dengan isian'), undefined);
+  assert.equal(app.button('Unduh PDF'), undefined);
+  assert.equal(sectionToggles(app).length, 5);
+  assert.equal(sectionToggles(app).filter(node => node.props['aria-expanded']).length, 1);
+  assert.equal(controls(app).length, 6);
+  assert.ok(textPresent(app, 'Bagian 1 dari 4'));
+  assert.equal(app.button('Isian sebelumnya').props.disabled, true);
+});
+
+test('halaman bagian diingat saat berpindah bagian dan kembali dari review tanpa kehilangan isian', async () => {
+  const app = await largeForm();
+  sectionToggles(app)[3].props.onClick(); await app.flush();
+  assert.ok(textPresent(app, 'Bagian 1 dari 6'));
+  app.button('Isian berikutnya').props.onClick(); await app.flush();
+  assert.ok(textPresent(app, 'Bagian 2 dari 6'));
+  assert.equal(app.focused.at(-1), 'nf-section-3-toggle');
+  assert.equal(controls(app).length, 6);
+  await app.change('BEN', 'Bendahara Uji');
+  sectionToggles(app)[0].props.onClick(); await app.flush();
+  sectionToggles(app)[3].props.onClick(); await app.flush();
+  assert.ok(textPresent(app, 'Bagian 2 dari 6'));
+  assert.equal((await app.showField('BEN')).props.value, 'Bendahara Uji');
+  await app.review();
+  assert.equal(app.all()[0].props['data-view'], 'review');
+  assert.ok(app.button('Unduh Word dengan isian'));
+  const fullPdf = app.all().find(node => node.type === 'a' && node.children.includes('Buka PDF penuh'));
+  assert.equal(fullPdf.props.href, 'blob:preview-uji');
+  assert.equal(fullPdf.props.target, '_blank');
+  assert.equal(fullPdf.props.rel, 'noopener noreferrer');
+  await app.edit();
+  assert.ok(textPresent(app, 'Bagian 2 dari 6'));
+  assert.equal((await app.showField('BEN')).props.value, 'Bendahara Uji');
+  assert.equal(app.focused.at(-1), 'nf-section-3-toggle');
+  assert.equal(app.button('Unduh Word dengan isian'), undefined);
+});
+
+test('pencarian menjangkau isian dari bagian tertutup dan mengembalikan bagian semula', async () => {
+  const app = await largeForm();
+  app.button('Isian berikutnya').props.onClick(); await app.flush();
+  searchField(app).props.onChange({ target: { value: 'NOTULIS' } }); await app.flush();
+  assert.ok(app.all().find(node => node.props.id === 'nf-field-NOTULIS'));
+  assert.equal(controls(app).length, 1);
+  assert.equal(app.button('Isian berikutnya'), undefined);
+  await app.change('NOTULIS', 'Nama Notulis Uji');
+  app.button('Tampilkan semua bagian').props.onClick(); await app.flush();
+  assert.equal(app.focused.at(-1), 'nf-field-search');
+  assert.ok(textPresent(app, 'Bagian 2 dari 4'));
+  assert.equal(sectionToggles(app)[0].props['aria-expanded'], true);
+  assert.equal((await app.showField('NOTULIS')).props.value, 'Nama Notulis Uji');
+});
+
+test('filter kosong mempertahankan isian yang sedang diketik sampai fokus meninggalkan bidangnya', async () => {
+  const app = await fixture();
+  const filterLabel = app.all().find(node => hasClass(node, 'nf-filter'));
+  app.all(filterLabel).find(node => node.type === 'input').props.onChange({ target: { checked: true } }); await app.flush();
+  const field = controls(app).find(node => app.all(node).some(child => child.props.id === 'nf-field-NOM_SUR'));
+  field.props.onFocus(); await app.flush();
+  await app.change('NOM_SUR', '0');
+  assert.equal(app.all().find(node => node.props.id === 'nf-field-NOM_SUR').props.value, '0');
+  await app.change('NOM_SUR', '007/UJI/2026');
+  assert.equal(app.all().find(node => node.props.id === 'nf-field-NOM_SUR').props.value, '007/UJI/2026');
+  controls(app)[0].props.onBlur({ currentTarget: { contains: () => false }, relatedTarget: null }); await app.flush();
+  assert.equal(app.all().find(node => node.props.id === 'nf-field-NOM_SUR'), undefined);
+  assert.ok(textPresent(app, 'Semua isian sudah terisi. Dokumen siap diperiksa.'));
+});
+
+test('tautan gambar membuka panel opsional dan meminta fokus tombol unggah yang terlihat', async () => {
+  const app = await fixture({ extraFields: [{ key: 'LOGO' }] });
+  const link = app.all().find(node => node.type === 'a' && node.children.includes('Buka unggah logo'));
+  let prevented = false;
+  link.props.onClick({ preventDefault() { prevented = true; } }); await app.flush();
+  assert.equal(prevented, true);
+  assert.equal(app.all().find(node => hasClass(node, 'nf-images-disclosure')).props.open, true);
+  assert.equal(app.focused.at(-1), 'nf-upload-trigger-logo');
+  assert.equal(app.all().find(node => node.props.id === 'nf-upload-trigger-logo').type, 'button');
+  assert.equal(app.all().find(node => node.props.id === 'nf-upload-logo').props.hidden, true);
+});
+
+test('lanjut bagian memindahkan permintaan fokus ke judul bagian tujuan', async () => {
+  const app = await fixture();
+  app.button('Lanjut ke bagian berikutnya').props.onClick(); await app.flush();
+  assert.equal(sectionToggles(app)[1].props['aria-expanded'], true);
+  assert.equal(app.focused.at(-1), 'nf-section-1-toggle');
+});
+
+test('ganti dokumen mereset workspace dan preview tetapi mempertahankan draf lintas dokumen', async () => {
+  const app = await fixture({ catalogGroups: [{ id: 'uji', category: 'Mandiri', label: 'Sanggar uji', documents: [
+    { id: 'berita-acara-pembentukan', title: 'Berita Acara Pembentukan', fields: [{ key: 'NAM_SA2' }, { key: 'NOM_SUR' }] },
+    { id: 'keputusan-pembentukan', title: 'Keputusan Pembentukan', fields: [{ key: 'NAM_SA2' }, { key: 'KETUA' }] },
+  ] }] });
+  await app.change('NOM_SUR', '009/DRAF');
+  await app.review();
+  app.button('Ganti dokumen').props.onClick(); await app.flush();
+  app.button('Keputusan Pembentukan').props.onClick(); await app.flush();
+  assert.equal(app.all()[0].props['data-view'], 'edit');
+  assert.equal(app.button('Ganti dokumen').props['aria-expanded'], false);
+  assert.equal(searchField(app).props.value, '');
+  assert.equal(sectionToggles(app)[0].props['aria-expanded'], true);
+  assert.equal(app.all().filter(node => node.type === 'iframe').length, 0);
+  assert.equal(app.focused.at(-1), 'nf-document-title');
+  app.button('Ganti dokumen').props.onClick(); await app.flush();
+  app.button('Berita Acara Pembentukan').props.onClick(); await app.flush();
+  assert.equal((await app.showField('NOM_SUR')).props.value, '009/DRAF');
+});
+
+test('dokumen tanpa isian tetap bisa diperiksa tanpa progres nol atau pencarian kosong', async () => {
+  const group = actualCatalog.groups.find(group => group.documents.some(document => !document.fields.length));
+  const document = group.documents.find(document => !document.fields.length);
+  const app = await fixture({ catalogGroups: [{ ...structuredClone(group), documents: [structuredClone(document)] }] });
+  assert.equal(searchField(app), undefined);
+  assert.equal(app.all().some(node => node.type === 'progress'), false);
+  assert.ok(textPresent(app, 'Dokumen ini tidak memerlukan isian.'));
+  await app.review();
+  assert.equal(app.all().filter(node => node.type === 'iframe').length, 1);
+  assert.ok(app.button('Unduh Word dengan isian'));
+  assert.ok(app.button('Unduh PDF'));
 });

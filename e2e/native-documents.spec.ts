@@ -30,6 +30,9 @@ async function openDocuments(page: Page, errors: string[]) {
   await expectRoute(page, target);
   const documents = page.getByTestId("native-template-page");
   await expect(documents).toBeVisible();
+  await expect(documents).toHaveAttribute("data-view", "edit");
+  await expect(documents.getByRole("button", { name: "Unduh Word dengan isian", exact: true })).toHaveCount(0);
+  await documents.getByRole("button", { name: "Ganti dokumen", exact: true }).click();
   const list = documents.getByRole("navigation", {
     name: "Daftar dokumen",
     exact: true,
@@ -41,6 +44,8 @@ async function openDocuments(page: Page, errors: string[]) {
   await expect(list.getByRole("button").first()).toContainText(
     /Berita Acara (Pembentukan|Forum Penetapan)/,
   );
+  await documents.getByRole("button", { name: "Tutup pilihan dokumen", exact: true }).click();
+  await expect(list).toBeHidden();
   return documents;
 }
 
@@ -83,6 +88,8 @@ test("dokumen native: Pratinjau memuat PDF asli pada iframe", async ({
     .click();
   const response = await responsePromise;
   await assertResponse(response);
+  await expect(documents).toHaveAttribute("data-view", "review");
+  await expect(documents.getByRole("button", { name: "Kembali ke isian", exact: true })).toBeVisible();
   expect(response.headers()["content-type"]).toMatch(
     /^application\/pdf(?:;|$)/,
   );
@@ -106,6 +113,9 @@ for (const format of ["word", "pdf"] as const) {
   }, testInfo: TestInfo) => {
     test.setTimeout(180_000);
     const documents = await openDocuments(page, runtimeErrors);
+    await documents.getByRole("button", { name: "Pratinjau", exact: true }).click();
+    await expect(documents.locator('iframe[title="Pratinjau dokumen beserta lampiran"]')).toHaveAttribute("src", /^blob:/, { timeout: 90_000 });
+    await expect(documents).toHaveAttribute("data-view", "review");
     const responsePromise = waitForRender(page, format);
     const downloadPromise = page.waitForEvent("download", { timeout: 100_000 });
     const action = format === "word" ? "Unduh Word dengan isian" : "Unduh PDF";

@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-09-19T19:10:50.188Z",
+  "mode": "quick",
+  "results": [
+    {
+      "id": "unit",
+      "label": "Logika, dokumen, API & regresi",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 23,
+      "counts": {
+        "tests": 324,
+        "pass": 323,
+        "fail": 0,
+        "skipped": 1
+      }
+    },
+    {
+      "id": "routes",
+      "label": "Cakupan rute dan menu",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 2,
+      "counts": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "id": "types",
+      "label": "TypeScript seluruh workspace",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 17,
+      "counts": {}
+    },
+    {
+      "id": "build",
+      "label": "Build produksi kedua aplikasi dan API",
+      "status": "lulus",
+      "exitCode": 0,
+      "seconds": 31,
+      "counts": {}
+    },
+    {
+      "id": "documents",
+      "label": "Berkas nyata: seluruh template Word dan PDF per kelompok",
+      "args": [
+        "pnpm",
+        "run",
+        "test:documents"
+      ],
+      "omit": true,
+      "status": "belum dijalankan",
+      "seconds": 0
+    },
+    {
+      "id": "e2e",
+      "label": "Browser: 9 peran, navigasi, desktop & ponsel",
+      "args": [
+        "pnpm",
+        "run",
+        "test:e2e"
+      ],
+      "omit": true,
+      "status": "belum dijalankan",
+      "seconds": 0
+    }
+  ]
+}
